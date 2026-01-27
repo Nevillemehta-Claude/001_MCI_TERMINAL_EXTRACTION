@@ -1,0 +1,2964 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>00_ANNOTATED_FILE_GUIDE</title><style>html{font-size:16.000000px;}</style><style>/* copy from https://github.com/sindresorhus/github-markdown-css/ */
+
+html,body{background-color: #feffff;}
+
+.markdown-body {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  line-height: 1.5;
+  color: #333333;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+  font-size: 1rem;
+  word-wrap: break-word;
+}
+
+.markdown-body .octicon {
+  display: inline-block;
+  fill: currentColor;
+  vertical-align: text-bottom;
+}
+
+.markdown-body figure{margin:0;padding:0; display:table;}
+.markdown-body figure figcaption{font-size:92%; text-align:center; color:#09844f;}
+
+.markdown-body .anchor {
+  float: left;
+  line-height: 1;
+  margin-left: -1.25rem;
+  padding-right: 0.25rem;
+}
+
+.markdown-body .anchor:focus {
+  outline: none;
+}
+
+.markdown-body h1 .octicon-link,
+.markdown-body h2 .octicon-link,
+.markdown-body h3 .octicon-link,
+.markdown-body h4 .octicon-link,
+.markdown-body h5 .octicon-link,
+.markdown-body h6 .octicon-link {
+  color: #0595bf;
+  vertical-align: middle;
+  visibility: hidden;
+}
+
+.markdown-body h1:hover .anchor,
+.markdown-body h2:hover .anchor,
+.markdown-body h3:hover .anchor,
+.markdown-body h4:hover .anchor,
+.markdown-body h5:hover .anchor,
+.markdown-body h6:hover .anchor {
+  text-decoration: none;
+}
+
+.markdown-body details {
+  display: block;
+}
+
+.markdown-body summary {
+  display: list-item;
+}
+
+.markdown-body a {
+  background-color: initial;
+}
+
+.markdown-body a:active,
+.markdown-body a:hover {
+  outline-width: 0;
+}
+
+.markdown-body strong {
+  font-weight: inherit;
+  font-weight: bolder;
+}
+.markdown-body strong{
+  color: #333333;
+}
+.markdown-body em{
+  color: #333333;
+}
+
+.markdown-body img {
+  border-style: none;
+}
+
+.markdown-body code,
+.markdown-body kbd,
+.markdown-body pre {
+  font-family: monospace,monospace;
+  font-size: 0.9rem;
+}
+
+.markdown-body hr {
+  box-sizing: initial;
+  height: 0;
+  overflow: visible;
+}
+
+.markdown-body input {
+  font: inherit;
+  margin: 0;
+}
+
+.markdown-body input {
+  overflow: visible;
+}
+
+.markdown-body [type=checkbox] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.markdown-body * {
+  box-sizing: border-box;
+}
+
+.markdown-body input {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.markdown-body a {
+  color: #0366dd;
+  text-decoration: none;
+}
+.markdown-body mjx-container[jax="SVG"] > svg a{fill:#0366dd;stroke: #0366dd;}
+
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+
+.markdown-body strong {
+  font-weight: 600;
+}
+
+.markdown-body hr:after,
+.markdown-body hr:before {
+  display: table;
+  content: "";
+}
+
+.markdown-body hr:after {
+  clear: both;
+}
+
+.markdown-body table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.markdown-body td,
+.markdown-body th {
+  padding: 0;
+}
+
+.markdown-body details summary {
+  cursor: pointer;
+}
+
+.markdown-body kbd {
+  display: inline-block;
+  padding: 0.1875rem 0.3125rem;
+  font: 0.75rem SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  line-height: 0.75rem;
+  color: #09844f;
+  vertical-align: middle;
+  background-color: #f7f8f8;
+  border: 1px solid #e1e2e2;
+  border-radius: 0.1875rem;
+}
+
+.markdown-body p {
+  margin-top: 0;
+  margin-bottom: 0.625rem;
+}
+
+.markdown-body blockquote {
+  margin: 0;
+}
+
+.markdown-body ol,
+.markdown-body ul {
+  padding-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body ol ol,
+.markdown-body ul ol {
+  list-style-type: lower-roman;
+}
+
+.markdown-body ol ol ol,
+.markdown-body ol ul ol,
+.markdown-body ul ol ol,
+.markdown-body ul ul ol {
+  list-style-type: lower-alpha;
+}
+
+.markdown-body dd {
+  margin-left: 0;
+}
+
+.markdown-body code,
+.markdown-body pre {
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  font-size: 0.75rem;
+}
+
+.markdown-body pre {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body input::-webkit-inner-spin-button,
+.markdown-body input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.markdown-body:after,
+.markdown-body:before {
+  display: table;
+  content: "";
+}
+
+.markdown-body:after {
+  clear: both;
+}
+
+.markdown-body>:first-child {
+  margin-top: 0!important;
+}
+
+.markdown-body>:last-child {
+  margin-bottom: 0!important;
+}
+
+.markdown-body a:not([href]) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.markdown-body blockquote,
+.markdown-body details,
+.markdown-body dl,
+.markdown-body ol,
+.markdown-body p,
+.markdown-body pre,
+.markdown-body table,
+.markdown-body ul {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.markdown-body hr {
+  height: .25rem;
+  padding: 0;
+  margin: 1.5rem 0;
+  background-color: #e1e2e2;
+  border: 0;
+}
+
+.markdown-body blockquote {
+  padding: 0 1rem;
+  color: #636363;
+  border-left: .25rem solid #bbbbbb;
+}
+
+.markdown-body blockquote>:first-child {
+  margin-top: 0;
+}
+
+.markdown-body blockquote>:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
+}
+
+.markdown-body h1,
+.markdown-body h2 {
+  padding-bottom: .3rem;
+  border-bottom: 1px solid #e7e8e8;
+  color: #0595bf;
+}
+
+.markdown-body h2 {
+  font-size: 1.5rem;
+  color: #0595bf;
+}
+
+.markdown-body h3 {
+  font-size: 1.25rem;
+  color: #0595bf;
+}
+
+.markdown-body h4 {
+  font-size: 1rem;
+  color: #0595bf;
+}
+
+.markdown-body h5 {
+  font-size: .875rem;
+  color: #0595bf;
+}
+
+.markdown-body h6 {
+  font-size: .85rem;
+  color: #0595bf;
+}
+
+.markdown-body ol,
+.markdown-body ul {
+  padding-left: 2rem;
+}
+
+.markdown-body ol ol,
+.markdown-body ol ul,
+.markdown-body ul ol,
+.markdown-body ul ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body li {
+  word-wrap: break-all;
+}
+
+.markdown-body li>p {
+  margin-top: 1rem;
+}
+
+.markdown-body li+li {
+  margin-top: .25rem;
+}
+
+.markdown-body dl {
+  padding: 0;
+}
+
+.markdown-body dl dt {
+  padding: 0;
+  margin-top: 1rem;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.markdown-body dl dd {
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+}
+
+.markdown-body table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+}
+
+.markdown-body table th {
+  font-weight: 600;
+}
+
+.markdown-body table td,
+.markdown-body table th {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #b9baba;
+}
+
+.markdown-body table tr {
+  background-color: #feffff;
+  border-top: 1px solid #b9baba;
+}
+
+.markdown-body table th {
+  background-color: #e7e8e8;
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background-color: #f8f9f9;
+}
+
+.markdown-body img,.markdown-body video {
+  max-width: 100%;
+  box-sizing: initial;
+}
+
+.markdown-body img[align=right] {
+  padding-left: 1.25rem;
+}
+
+.markdown-body img[align=left] {
+  padding-right: 1.25rem;
+}
+
+.markdown-body code {
+  padding: .2rem .4rem;
+  margin: 0;
+  font-size: 85%;
+  background-color: #f7f8f8;
+  color: #09844f;
+  border-radius: 0.1875rem;
+}
+
+.markdown-body pre {
+  word-wrap: normal;
+}
+
+.markdown-body pre>code {
+  padding: 0;
+  margin: 0;
+   font-size: 100%;
+  word-break: normal;
+  white-space: pre;
+  background: transparent;
+  border: 0;
+}
+
+.markdown-body .highlight {
+  margin-bottom: 1rem;
+}
+
+.markdown-body .highlight pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+
+.markdown-body .highlight pre,
+.markdown-body pre {
+  padding: 1rem;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f8f8;
+  border-radius: 0.1875rem;
+}
+
+.markdown-body pre code {
+  display: inline;
+  max-width: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: initial;
+  border: 0;
+  color: #09844f;
+}
+
+.markdown-body .task-list-item {
+  list-style-type: none;
+}
+
+.markdown-body .task-list-item+.task-list-item {
+  margin-top: 0.1875rem;
+}
+
+.markdown-body .task-list-item input {
+  margin: 0 .2rem .25rem -1.6rem;
+  vertical-align: middle;
+}
+
+.markdown-body .task-list-item input[type="checkbox"]{
+-webkit-appearance: none;-moz-appearance: none;appearance: none;
+width: 0.875rem; height: 0.875rem;outline: none;
+border: 1px solid #0366dd;border-radius: 2px; 
+}
+.markdown-body .task-list-item input[type="checkbox"]:checked {
+  background:no-repeat center/80% url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Cpath%20fill%3D%22%230366dd%22%20d%3D%22M173.898%20439.404l-166.4-166.4c-9.997-9.997-9.997-26.206%200-36.204l36.203-36.204c9.997-9.998%2026.207-9.998%2036.204%200L192%20312.69%20432.095%2072.596c9.997-9.997%2026.207-9.997%2036.204%200l36.203%2036.204c9.997%209.997%209.997%2026.206%200%2036.204l-294.4%20294.401c-9.998%209.997-26.207%209.997-36.204-.001z%22%2F%3E%3C%2Fsvg%3E") ;
+}
+
+.markdown-body section.footnotes{
+    margin-top:3rem;
+    border-top:solid 1px #e1e2e2;
+    padding-top:0px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .markdown-body mark{color: #111;}
+}
+
+/* PrismJS 1.23.0
+https://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1rem;
+    margin: .5rem 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background-color: #f7f8f8;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1rem;
+    border-radius: .3rem;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #8e9c92;
+}
+
+.token.punctuation {
+    color: #2834ce;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #2834ce;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #d32d26;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #$$codeBlockColor$$;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #bc319c;
+}
+
+.token.function,
+.token.class-name {
+    color: #967d41;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #784830;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+  position: relative;
+  padding-left: 3.8rem;
+  counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+  position: relative;
+  white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  font-size: 100%;
+  left: -3.8rem;
+  width: 3rem; /* works for line-numbers below 1000 lines */
+  letter-spacing: -1px;
+  border-right: 1px solid #bfc0c0;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+}
+
+  .line-numbers-rows > span {
+    display: block;
+    counter-increment: linenumber;
+  }
+
+    .line-numbers-rows > span:before {
+      content: counter(linenumber);
+      color: #bfc0c0;
+      display: block;
+      padding-right: 0.8rem;
+      text-align: right;
+    }
+
+
+</style><style>.mweb-charts{background:#fff;}
+body{ box-sizing: border-box;
+    margin: 0 auto;}
+@media print{
+    pre, code, pre code {
+     overflow: visible !important;
+     white-space: pre-wrap !important;       /* css-3 */
+     white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+     white-space: -pre-wrap !important;      /* Opera 4-6 */
+     white-space: -o-pre-wrap !important;    /* Opera 7 */
+     word-wrap: break-word !important;       /* Internet Explorer 5.5+ */
+    }
+    html,body{margin:0;padding:4px;}
+}
+
+
+
+div.code-toolbar {
+  position: relative;
+}
+
+div.code-toolbar > .toolbar {
+  position: absolute;
+  z-index: 10;
+  top: .3em;
+  right: .2em;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+}
+
+div.code-toolbar:hover > .toolbar {
+  opacity: 1;
+}
+
+/* Separate line b/c rules are thrown out if selector is invalid.
+   IE11 and old Edge versions don't support :focus-within. */
+div.code-toolbar:focus-within > .toolbar {
+  opacity: 1;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item {
+  display: inline-block;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item > a {
+  cursor: pointer;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item > button {
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  line-height: normal;
+  overflow: visible;
+  padding: 0;
+  -webkit-user-select: none; /* for button */
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item > a,
+div.code-toolbar > .toolbar > .toolbar-item > button,
+div.code-toolbar > .toolbar > .toolbar-item > span {
+  color: inherit;
+  font-size: .8em;
+  padding: 4px .5em;
+  background: #f5f2f0;
+  background: rgba(224, 224, 224, 0.4);
+  box-shadow: 0 2px 0 0 rgba(0,0,0,0.2);
+  border-radius: .5em;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+div.code-toolbar > .toolbar > .toolbar-item > a:focus,
+div.code-toolbar > .toolbar > .toolbar-item > button:hover,
+div.code-toolbar > .toolbar > .toolbar-item > button:focus,
+div.code-toolbar > .toolbar > .toolbar-item > span:hover,
+div.code-toolbar > .toolbar > .toolbar-item > span:focus {
+  color: inherit;
+  text-decoration: none;
+}
+</style> <style>body{max-width:808px; padding:24px;}</style></head><body><div id='markdown_content' class='markdown-body'><h1><a id="annotated-file-guide-complete-extraction-reference" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ANNOTATED FILE GUIDE - COMPLETE EXTRACTION REFERENCE</h1>
+<p><strong>Purpose:</strong> Explain WHAT each file contains, WHY it exists, WHERE it impacts, and HOW to use it<br />
+<strong>Created:</strong> 2026-01-25<br />
+<strong>For:</strong> Next Phase Decision Making</p>
+<hr />
+<h2><a id="methodology-validation" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>METHODOLOGY VALIDATION</h2>
+<h3><a id="is-this-extraction-methodology-correct" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Is This Extraction Methodology Correct?</h3>
+<p><strong>YES</strong> - The methodology follows industry-standard knowledge extraction patterns:</p>
+<table>
+<thead>
+<tr>
+<th>Principle</th>
+<th>Applied?</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Separation of Concerns</strong></td>
+<td>✓</td>
+<td>8 distinct folders by domain</td>
+</tr>
+<tr>
+<td><strong>Verbatim Preservation</strong></td>
+<td>✓</td>
+<td>35 files preserve exact source text</td>
+</tr>
+<tr>
+<td><strong>Synthesis for Navigation</strong></td>
+<td>✓</td>
+<td>16 files provide organized summaries</td>
+</tr>
+<tr>
+<td><strong>Traceability</strong></td>
+<td>✓</td>
+<td>All content traceable to source JSONL</td>
+</tr>
+<tr>
+<td><strong>Self-Sufficiency</strong></td>
+<td>✓</td>
+<td>Repository can replace source file</td>
+</tr>
+<tr>
+<td><strong>Cross-Referencing</strong></td>
+<td>✓</td>
+<td>Master index links all content</td>
+</tr>
+</tbody>
+</table>
+<h3><a id="what-could-be-improved" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>What Could Be Improved?</h3>
+<table>
+<thead>
+<tr>
+<th>Gap</th>
+<th>Impact</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No search index</td>
+<td>Manual navigation required</td>
+<td>Create CTRL+F-friendly flat file</td>
+</tr>
+<tr>
+<td>Large files</td>
+<td>Some files exceed 300KB</td>
+<td>Consider splitting by topic</td>
+</tr>
+<tr>
+<td>No dependency map</td>
+<td>Unclear file relationships</td>
+<td>Create visual dependency diagram</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2><a id="file-by-file-annotation" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>FILE-BY-FILE ANNOTATION</h2>
+<hr />
+<h1><a id="00-governance-7-files" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>00_GOVERNANCE/ (7 files)</h1>
+<p><strong>FOLDER PURPOSE:</strong> Contains the &quot;constitution&quot; of the MCI project - rules that CANNOT be violated.</p>
+<hr />
+<h3><a id="constitutional-constraints-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CONSTITUTIONAL_CONSTRAINTS.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Synthesized definitions of CR-001 through CR-005</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Quick reference for the 5 sacred rules</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Every component, every function, every decision</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Before writing ANY code, verify it doesn't violate these</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized (my words organizing source content)</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>193</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🔴 SACRED - Never violate</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The 5 CRs:</strong></p>
+<ul>
+<li>CR-001: Token Validity - validate before every execution</li>
+<li>CR-002: Graceful Shutdown - 6-step sequence mandatory</li>
+<li>CR-003: Error Format - WHAT/WHY/HOW structure</li>
+<li>CR-004: Token Expiry - 6:00 AM IST (SACRED TIME)</li>
+<li>CR-005: UXMI States - 7 components × 7 states</li>
+</ul>
+<hr />
+<h3><a id="verbatim-governance-complete-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_GOVERNANCE_COMPLETE.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Every mention of CR-001 to CR-005 from source, verbatim</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Prove CRs were discussed; find exact original wording</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Audit trails, compliance verification</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>When you need the EXACT words used, not summary</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim (exact text from source)</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>355</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Reference - Use for verification</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-cr-definitions-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_CR_DEFINITIONS.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Original CR definition blocks as they appeared</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Preserve the authoritative definition text</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Documentation, onboarding new developers</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Copy these definitions into project docs</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>132</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-ltt-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_LTT.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>84 blocks about Lifecycle Traceability Tree (49 nodes)</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>LTT tracks project health: 69% complete, 13 gaps</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Project management, gap analysis, progress tracking</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Identify what's done vs. what needs work</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>972</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Planning - Use for roadmap</td>
+</tr>
+</tbody>
+</table>
+<p><strong>KEY INSIGHT:</strong> LTT shows 13 architecture gaps that need resolution.</p>
+<hr />
+<h3><a id="verbatim-checkpoints-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_CHECKPOINTS.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>164 checkpoint references (MCI-CHKPT-*)</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Supervised execution requires checkpoints</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Development workflow, quality gates</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Follow these checkpoints when implementing</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,918</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Process - Follow during development</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-protocols-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_PROTOCOLS.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>90 protocol definitions and references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Protocols define HOW things must be done</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Implementation methodology</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Reference when unsure about process</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,275</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Process</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-quality-gates-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_QUALITY_GATES.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>322 quality gate references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>6 gates must be passed before production</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Release decisions, deployment approval</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Checklist before each phase completion</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,184</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Process</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1><a id="01-decisions-2-files" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>01_DECISIONS/ (2 files)</h1>
+<p><strong>FOLDER PURPOSE:</strong> Technical decisions and their rationale - the &quot;WHY&quot; behind choices.</p>
+<hr />
+<h3><a id="decision-registry-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>DECISION_REGISTRY.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Major decisions: RETROFIT, SUPERVISED, tech stack</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Understand why things were decided this way</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Architecture, approach, future changes</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Before proposing changes, check if already decided</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>179</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🔴 Critical - Don't reverse without review</td>
+</tr>
+</tbody>
+</table>
+<p><strong>KEY DECISIONS:</strong></p>
+<ol>
+<li><strong>RETROFIT</strong> (not Fresh Build) - 97% quality code exists</li>
+<li><strong>SUPERVISED</strong> (not Autonomous) - checkpoint-based execution</li>
+<li><strong>CLEAN SLATE</strong> = design supersession, not code destruction</li>
+<li><strong>Tech Stack</strong>: Bun + Hono + React + Zustand + Tailwind</li>
+</ol>
+<hr />
+<h3><a id="verbatim-decisions-complete-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_DECISIONS_COMPLETE.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>All decision-related text from source</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Full context for each decision</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Justification for stakeholders</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>When asked &quot;why did we decide X?&quot;</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>178</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1><a id="02-architecture-15-files" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>02_ARCHITECTURE/ (15 files)</h1>
+<p><strong>FOLDER PURPOSE:</strong> System design, component structure, phase architecture.</p>
+<hr />
+<h3><a id="system-overview-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>SYSTEM_OVERVIEW.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Complete MCI architecture in one document</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Single source of truth for system design</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Everything - this IS the architecture</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Start here for any architecture question</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>250</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🔴 Critical - Canonical architecture</td>
+</tr>
+</tbody>
+</table>
+<p><strong>KEY CONCEPT:</strong> MCI is the COCKPIT, CIA-SIE-PURE is the ENGINE.</p>
+<hr />
+<h3><a id="phase-0-token-capturedesign-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PHASE_0_TOKEN_CAPTURE/DESIGN.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Token capture phase design</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Phase 0 = authentication with brokers</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Login flow, token management</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Reference when building token capture UI</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>75</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Phase-specific</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="phase-1-pre-ignitiondesign-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PHASE_1_PRE_IGNITION/DESIGN.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Pre-ignition scanner design (12-point check)</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Phase 1 = verify system readiness</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Scanner component, readiness logic</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Reference when building scanner UI</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>96</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Phase-specific</td>
+</tr>
+</tbody>
+</table>
+<p><strong>12-POINT SCANNER CHECKS:</strong> Token validity, expiry, market hours, weekend, holiday, circuit breaker, API connectivity, balance, position limits, risk parameters, order queue, system health.</p>
+<hr />
+<h3><a id="phase-2-ignitiondesign-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PHASE_2_IGNITION/DESIGN.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Ignition phase design</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Phase 2 = start the trading engine</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Ignition button, engine start logic</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Reference when building ignition UI</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>117</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Phase-specific</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="phase-3-telemetrydesign-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PHASE_3_TELEMETRY/DESIGN.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Telemetry phase design</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Phase 3 = monitor running engine</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Dashboard, real-time updates, WebSocket/SSE</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Reference when building telemetry dashboard</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>128</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Phase-specific</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="phase-4-shutdowndesign-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PHASE_4_SHUTDOWN/DESIGN.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Shutdown phase design (6-step sequence)</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Phase 4 = graceful termination (CR-002)</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Shutdown button, termination logic</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Reference when building shutdown UI</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>143</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🔴 CR-002 Critical</td>
+</tr>
+</tbody>
+</table>
+<p><strong>6-STEP SHUTDOWN:</strong> Confirm → Notify engine → Wait for ack → Close connections → Log → Complete</p>
+<hr />
+<h3><a id="uxmicomponent-library-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>UXMI/COMPONENT_LIBRARY.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>7 UXMI components × 7 states specification</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>CR-005 requires consistent micro-interactions</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Every UI component in MCI</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Use as component specification</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>257</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🔴 CR-005 Critical</td>
+</tr>
+</tbody>
+</table>
+<p><strong>7 COMPONENTS:</strong> Button, ErrorDisplay, Input, ProgressBar, Spinner, Toast, Tooltip<br />
+<strong>7 STATES:</strong> idle, hover, active, loading, success, error, disabled<br />
+<strong>TIMING:</strong> hover=150ms, active=100ms, tooltip=300ms, toast=5000ms</p>
+<hr />
+<h3><a id="uxmiverbatim-states-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>UXMI/VERBATIM_STATES.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>314 state machine references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Full context on state transitions</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>State machine implementation</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Reference for state logic</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,812</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="uxmiverbatim-uxmi-complete-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>UXMI/VERBATIM_UXMI_COMPLETE.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>All UXMI references from source</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Complete UXMI discussion context</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Component development</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>When building UXMI components</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>315</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-architecture-complete-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_ARCHITECTURE_COMPLETE.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>All architecture references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Full architectural discussion</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>System design decisions</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>For deep architecture questions</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>445</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-diagrams-md-verbatim-diagrams-complete-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_DIAGRAMS.md + VERBATIM_DIAGRAMS_COMPLETE.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>268 ASCII diagrams from session</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Visual representations of architecture</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Documentation, understanding</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Copy diagrams into documentation</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>849 + 838</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Documentation</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-phases-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_PHASES.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>All Phase 0-4 references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Complete phase discussion context</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Phase implementation</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>When working on specific phase</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,841</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-technology-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_TECHNOLOGY.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>336 technology stack references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Tech decisions and discussions</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Tool selection, dependencies</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>When evaluating tech choices</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,618</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-brokers-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_BROKERS.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>168 broker references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>4 Indian brokers integration details</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Broker integration layer</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>When integrating with brokers</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,147</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Reference</td>
+</tr>
+</tbody>
+</table>
+<p><strong>4 BROKERS:</strong> Zerodha Kite, ICICI Direct, HDFC Sky, Kotak Neo</p>
+<hr />
+<h1><a id="03-specifications-7-files" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>03_SPECIFICATIONS/ (7 files)</h1>
+<p><strong>FOLDER PURPOSE:</strong> Feature requirements, API specs, scanner/shutdown details.</p>
+<hr />
+<h3><a id="feature-registry-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>FEATURE_REGISTRY.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>All features documented</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Feature inventory and status</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Development planning</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Check what features exist/needed</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>188</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Planning</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-tables-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_TABLES.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>218 markdown tables from source</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Structured data from session</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Data models, specifications</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Find specific data structures</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,293</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-lists-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_LISTS.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>428 substantive lists</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Enumerated requirements/items</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Checklists, requirements</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Find specific lists/checklists</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,442</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-api-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_API.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>142 API endpoint references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>API design discussions</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Backend routes, API contracts</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>When designing/implementing APIs</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,468</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Development</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-scanner-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_SCANNER.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>354 scanner references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Pre-ignition scanner details</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Scanner component, Phase 1</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>When building scanner</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,079</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Phase 1 specific</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-shutdown-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_SHUTDOWN.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>189 shutdown references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Graceful shutdown details (CR-002)</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Shutdown component, Phase 4</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>When building shutdown</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,321</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🔴 CR-002 Critical</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-specifications-complete-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_SPECIFICATIONS_COMPLETE.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>All specification references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Complete spec discussions</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Requirements clarity</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>For detailed requirements</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>264</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1><a id="04-implementation-5-files" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>04_IMPLEMENTATION/ (5 files)</h1>
+<p><strong>FOLDER PURPOSE:</strong> Code snippets, patterns, file references.</p>
+<hr />
+<h3><a id="verbatim-code-complete-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_CODE_COMPLETE.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>272 code blocks from session</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Actual code discussed/written</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Implementation reference</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Copy/adapt code patterns</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>193</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Development</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-file-references-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_FILE_REFERENCES.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>91 file path references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>File structure discussed</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Project structure</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Understand expected file layout</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>128</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-implementation-complete-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_IMPLEMENTATION_COMPLETE.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>All implementation references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Implementation discussions</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Coding approach</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>For implementation guidance</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>299</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Development</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="patternsimplementation-patterns-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PATTERNS/IMPLEMENTATION_PATTERNS.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Key code patterns (stores, components)</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Reusable patterns identified</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Code consistency</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Follow these patterns</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>299</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Development</td>
+</tr>
+</tbody>
+</table>
+<p><strong>5 ZUSTAND STORES:</strong> tokenStore, scannerStore, ignitionStore, telemetryStore, shutdownStore</p>
+<hr />
+<h1><a id="05-problems-solved-3-files" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>05_PROBLEMS_SOLVED/ (3 files)</h1>
+<p><strong>FOLDER PURPOSE:</strong> Bugs, errors, troubleshooting solutions.</p>
+<hr />
+<h3><a id="bug-registry-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>BUG_REGISTRY.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Known bugs and solutions</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Don't repeat mistakes</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Debugging, prevention</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Check before debugging</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>133</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Development</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-error-handling-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_ERROR_HANDLING.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>216 error handling references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Error patterns discussed (CR-003)</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Error handling code</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>When implementing error handling</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,748</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🔴 CR-003 Critical</td>
+</tr>
+</tbody>
+</table>
+<p><strong>CR-003 ERROR FORMAT:</strong> WHAT happened / WHY it happened / HOW to fix it</p>
+<hr />
+<h3><a id="verbatim-problems-complete-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_PROBLEMS_COMPLETE.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>All problem references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Problem discussion context</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Troubleshooting</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Find similar problems</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>130</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1><a id="06-action-items-1-file" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>06_ACTION_ITEMS/ (1 file)</h1>
+<p><strong>FOLDER PURPOSE:</strong> TODOs, pending work, next steps.</p>
+<hr />
+<h3><a id="todos-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>TODOS.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>All pending action items</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Track what needs to be done</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Sprint planning</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Prioritize next work</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>101</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Planning</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1><a id="07-knowledge-base-14-files" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>07_KNOWLEDGE_BASE/ (14 files)</h1>
+<p><strong>FOLDER PURPOSE:</strong> Navigation, cross-references, complete message archive.</p>
+<hr />
+<h3><a id="master-index-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>MASTER_INDEX.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Complete navigation to all 56 files</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Find anything quickly</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Usability of entire repository</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>START HERE for any lookup</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Meta</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>284</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🔴 Critical - Entry point</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="session-summary-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>SESSION_SUMMARY.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Executive summary of entire session</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Quick overview for stakeholders</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Onboarding, briefings</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Share with new team members</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>191</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Onboarding</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="glossary-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>GLOSSARY.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Terms and definitions</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Consistent terminology</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Communication clarity</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Look up unfamiliar terms</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>156</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="cross-reference-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CROSS_REFERENCE.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Topic linkages across files</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>See relationships</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Understanding connections</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Trace related content</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Synthesized</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>108</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Navigation</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-complete-messages-md%E2%AD%90-largest-file" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_COMPLETE_MESSAGES.md ⭐ LARGEST FILE</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Top 50 longest messages (349 KB)</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Most information-dense content</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Deep reference</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>For detailed explanations</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>5,821</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Deep Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-session-narrative-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_SESSION_NARRATIVE.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>33 rich narrative blocks</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Story of the session</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Understanding flow</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Understand how decisions evolved</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>4,541</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Context</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-user-requests-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_USER_REQUESTS.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>188 user messages</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>What the user actually asked</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Requirements clarity</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Verify understanding of requirements</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>2,843</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Requirements</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-batches-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_BATCHES.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>63 BATCH content blocks</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Batch processing results</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Understanding extraction progress</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Trace batch-by-batch work</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,085</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Process</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-document-refs-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_DOCUMENT_REFS.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>366 document references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>All docs mentioned in session</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Document traceability</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Find related documents</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>2,292</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Reference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-timestamps-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_TIMESTAMPS.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>167 timestamp references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>When things happened/scheduled</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Timeline understanding</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Track chronology</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,563</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Timeline</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="verbatim-versions-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>VERBATIM_VERSIONS.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>106 version references</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Version history</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Version tracking</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Understand version evolution</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Verbatim</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>1,027</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟢 Version Control</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1><a id="08-certification-2-files" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>08_CERTIFICATION/ (2 files)</h1>
+<p><strong>FOLDER PURPOSE:</strong> Extraction verification and source disposition authority.</p>
+<hr />
+<h3><a id="extraction-certificate-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>EXTRACTION_CERTIFICATE.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Certification that extraction is complete</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Official sign-off on extraction</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Authority to proceed</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Reference for completeness</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Meta</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>266</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Governance</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><a id="source-disposition-md" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>SOURCE_DISPOSITION.md</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WHAT</strong></td>
+<td>Authority to archive/delete source JSONL</td>
+</tr>
+<tr>
+<td><strong>WHY</strong></td>
+<td>Confirms extraction is sufficient</td>
+</tr>
+<tr>
+<td><strong>WHERE IMPACTS</strong></td>
+<td>Source file management</td>
+</tr>
+<tr>
+<td><strong>HOW TO USE</strong></td>
+<td>Reference before archiving source</td>
+</tr>
+<tr>
+<td><strong>CONTENT TYPE</strong></td>
+<td>Meta</td>
+</tr>
+<tr>
+<td><strong>LINES</strong></td>
+<td>154</td>
+</tr>
+<tr>
+<td><strong>CRITICAL LEVEL</strong></td>
+<td>🟡 Governance</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1><a id="next-phase-decision-guide" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>NEXT PHASE DECISION GUIDE</h1>
+<h2><a id="what-you-can-do-now" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>What You Can Do Now</h2>
+<h3><a id="option-a-proceed-to-implementation" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>OPTION A: Proceed to Implementation</h3>
+<p>If the extraction is sufficient, you can:</p>
+<ol>
+<li>Archive the source JSONL to cold storage</li>
+<li>Use this repository as the single source of truth</li>
+<li>Begin coding using the synthesized docs as guides</li>
+</ol>
+<h3><a id="option-b-request-more-extraction" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>OPTION B: Request More Extraction</h3>
+<p>If you need more verbatim content:</p>
+<ol>
+<li>Identify specific topics not fully covered</li>
+<li>Request targeted extraction of those topics</li>
+<li>I can extract more from the source JSONL</li>
+</ol>
+<h3><a id="option-c-validate-extraction" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>OPTION C: Validate Extraction</h3>
+<p>If you want to verify completeness:</p>
+<ol>
+<li>Spot-check verbatim files against source</li>
+<li>Search for specific terms you remember</li>
+<li>Confirm critical content is present</li>
+</ol>
+<h3><a id="option-d-create-implementation-plan" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>OPTION D: Create Implementation Plan</h3>
+<p>If you want to move to coding:</p>
+<ol>
+<li>Use 06_ACTION_ITEMS/TODOS.md as starting point</li>
+<li>Prioritize based on LTT gaps (13 architecture gaps)</li>
+<li>Follow SUPERVISED execution model with checkpoints</li>
+</ol>
+<hr />
+<h2><a id="recommended-next-steps" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RECOMMENDED NEXT STEPS</h2>
+<ol>
+<li><strong>Review MASTER_INDEX.md</strong> - Understand navigation</li>
+<li><strong>Read CONSTITUTIONAL_CONSTRAINTS.md</strong> - Know the sacred rules</li>
+<li><strong>Check DECISION_REGISTRY.md</strong> - Understand key decisions</li>
+<li><strong>Scan TODOS.md</strong> - See pending work</li>
+<li><strong>Decide</strong> - Archive source or extract more?</li>
+</ol>
+<hr />
+<p><em>This annotated guide created to support Phase Gate Review</em><br />
+<em>All 56 files documented with WHAT/WHY/WHERE/HOW</em></p>
+</div></body></html>

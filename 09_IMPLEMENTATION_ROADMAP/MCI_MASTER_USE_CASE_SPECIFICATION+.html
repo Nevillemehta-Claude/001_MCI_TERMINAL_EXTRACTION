@@ -1,0 +1,1697 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>MCI_MASTER_USE_CASE_SPECIFICATION</title><style>html{font-size:16.000000px;}</style><style>/* copy from https://github.com/sindresorhus/github-markdown-css/ */
+
+html,body{background-color: #feffff;}
+
+.markdown-body {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  line-height: 1.5;
+  color: #333333;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+  font-size: 1rem;
+  word-wrap: break-word;
+}
+
+.markdown-body .octicon {
+  display: inline-block;
+  fill: currentColor;
+  vertical-align: text-bottom;
+}
+
+.markdown-body figure{margin:0;padding:0; display:table;}
+.markdown-body figure figcaption{font-size:92%; text-align:center; color:#09844f;}
+
+.markdown-body .anchor {
+  float: left;
+  line-height: 1;
+  margin-left: -1.25rem;
+  padding-right: 0.25rem;
+}
+
+.markdown-body .anchor:focus {
+  outline: none;
+}
+
+.markdown-body h1 .octicon-link,
+.markdown-body h2 .octicon-link,
+.markdown-body h3 .octicon-link,
+.markdown-body h4 .octicon-link,
+.markdown-body h5 .octicon-link,
+.markdown-body h6 .octicon-link {
+  color: #0595bf;
+  vertical-align: middle;
+  visibility: hidden;
+}
+
+.markdown-body h1:hover .anchor,
+.markdown-body h2:hover .anchor,
+.markdown-body h3:hover .anchor,
+.markdown-body h4:hover .anchor,
+.markdown-body h5:hover .anchor,
+.markdown-body h6:hover .anchor {
+  text-decoration: none;
+}
+
+.markdown-body details {
+  display: block;
+}
+
+.markdown-body summary {
+  display: list-item;
+}
+
+.markdown-body a {
+  background-color: initial;
+}
+
+.markdown-body a:active,
+.markdown-body a:hover {
+  outline-width: 0;
+}
+
+.markdown-body strong {
+  font-weight: inherit;
+  font-weight: bolder;
+}
+.markdown-body strong{
+  color: #333333;
+}
+.markdown-body em{
+  color: #333333;
+}
+
+.markdown-body img {
+  border-style: none;
+}
+
+.markdown-body code,
+.markdown-body kbd,
+.markdown-body pre {
+  font-family: monospace,monospace;
+  font-size: 0.9rem;
+}
+
+.markdown-body hr {
+  box-sizing: initial;
+  height: 0;
+  overflow: visible;
+}
+
+.markdown-body input {
+  font: inherit;
+  margin: 0;
+}
+
+.markdown-body input {
+  overflow: visible;
+}
+
+.markdown-body [type=checkbox] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.markdown-body * {
+  box-sizing: border-box;
+}
+
+.markdown-body input {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.markdown-body a {
+  color: #0366dd;
+  text-decoration: none;
+}
+.markdown-body mjx-container[jax="SVG"] > svg a{fill:#0366dd;stroke: #0366dd;}
+
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+
+.markdown-body strong {
+  font-weight: 600;
+}
+
+.markdown-body hr:after,
+.markdown-body hr:before {
+  display: table;
+  content: "";
+}
+
+.markdown-body hr:after {
+  clear: both;
+}
+
+.markdown-body table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.markdown-body td,
+.markdown-body th {
+  padding: 0;
+}
+
+.markdown-body details summary {
+  cursor: pointer;
+}
+
+.markdown-body kbd {
+  display: inline-block;
+  padding: 0.1875rem 0.3125rem;
+  font: 0.75rem SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  line-height: 0.75rem;
+  color: #09844f;
+  vertical-align: middle;
+  background-color: #f7f8f8;
+  border: 1px solid #e1e2e2;
+  border-radius: 0.1875rem;
+}
+
+.markdown-body p {
+  margin-top: 0;
+  margin-bottom: 0.625rem;
+}
+
+.markdown-body blockquote {
+  margin: 0;
+}
+
+.markdown-body ol,
+.markdown-body ul {
+  padding-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body ol ol,
+.markdown-body ul ol {
+  list-style-type: lower-roman;
+}
+
+.markdown-body ol ol ol,
+.markdown-body ol ul ol,
+.markdown-body ul ol ol,
+.markdown-body ul ul ol {
+  list-style-type: lower-alpha;
+}
+
+.markdown-body dd {
+  margin-left: 0;
+}
+
+.markdown-body code,
+.markdown-body pre {
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  font-size: 0.75rem;
+}
+
+.markdown-body pre {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body input::-webkit-inner-spin-button,
+.markdown-body input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.markdown-body:after,
+.markdown-body:before {
+  display: table;
+  content: "";
+}
+
+.markdown-body:after {
+  clear: both;
+}
+
+.markdown-body>:first-child {
+  margin-top: 0!important;
+}
+
+.markdown-body>:last-child {
+  margin-bottom: 0!important;
+}
+
+.markdown-body a:not([href]) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.markdown-body blockquote,
+.markdown-body details,
+.markdown-body dl,
+.markdown-body ol,
+.markdown-body p,
+.markdown-body pre,
+.markdown-body table,
+.markdown-body ul {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.markdown-body hr {
+  height: .25rem;
+  padding: 0;
+  margin: 1.5rem 0;
+  background-color: #e1e2e2;
+  border: 0;
+}
+
+.markdown-body blockquote {
+  padding: 0 1rem;
+  color: #636363;
+  border-left: .25rem solid #bbbbbb;
+}
+
+.markdown-body blockquote>:first-child {
+  margin-top: 0;
+}
+
+.markdown-body blockquote>:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
+}
+
+.markdown-body h1,
+.markdown-body h2 {
+  padding-bottom: .3rem;
+  border-bottom: 1px solid #e7e8e8;
+  color: #0595bf;
+}
+
+.markdown-body h2 {
+  font-size: 1.5rem;
+  color: #0595bf;
+}
+
+.markdown-body h3 {
+  font-size: 1.25rem;
+  color: #0595bf;
+}
+
+.markdown-body h4 {
+  font-size: 1rem;
+  color: #0595bf;
+}
+
+.markdown-body h5 {
+  font-size: .875rem;
+  color: #0595bf;
+}
+
+.markdown-body h6 {
+  font-size: .85rem;
+  color: #0595bf;
+}
+
+.markdown-body ol,
+.markdown-body ul {
+  padding-left: 2rem;
+}
+
+.markdown-body ol ol,
+.markdown-body ol ul,
+.markdown-body ul ol,
+.markdown-body ul ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body li {
+  word-wrap: break-all;
+}
+
+.markdown-body li>p {
+  margin-top: 1rem;
+}
+
+.markdown-body li+li {
+  margin-top: .25rem;
+}
+
+.markdown-body dl {
+  padding: 0;
+}
+
+.markdown-body dl dt {
+  padding: 0;
+  margin-top: 1rem;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.markdown-body dl dd {
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+}
+
+.markdown-body table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+}
+
+.markdown-body table th {
+  font-weight: 600;
+}
+
+.markdown-body table td,
+.markdown-body table th {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #b9baba;
+}
+
+.markdown-body table tr {
+  background-color: #feffff;
+  border-top: 1px solid #b9baba;
+}
+
+.markdown-body table th {
+  background-color: #e7e8e8;
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background-color: #f8f9f9;
+}
+
+.markdown-body img,.markdown-body video {
+  max-width: 100%;
+  box-sizing: initial;
+}
+
+.markdown-body img[align=right] {
+  padding-left: 1.25rem;
+}
+
+.markdown-body img[align=left] {
+  padding-right: 1.25rem;
+}
+
+.markdown-body code {
+  padding: .2rem .4rem;
+  margin: 0;
+  font-size: 85%;
+  background-color: #f7f8f8;
+  color: #09844f;
+  border-radius: 0.1875rem;
+}
+
+.markdown-body pre {
+  word-wrap: normal;
+}
+
+.markdown-body pre>code {
+  padding: 0;
+  margin: 0;
+   font-size: 100%;
+  word-break: normal;
+  white-space: pre;
+  background: transparent;
+  border: 0;
+}
+
+.markdown-body .highlight {
+  margin-bottom: 1rem;
+}
+
+.markdown-body .highlight pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+
+.markdown-body .highlight pre,
+.markdown-body pre {
+  padding: 1rem;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f8f8;
+  border-radius: 0.1875rem;
+}
+
+.markdown-body pre code {
+  display: inline;
+  max-width: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: initial;
+  border: 0;
+  color: #09844f;
+}
+
+.markdown-body .task-list-item {
+  list-style-type: none;
+}
+
+.markdown-body .task-list-item+.task-list-item {
+  margin-top: 0.1875rem;
+}
+
+.markdown-body .task-list-item input {
+  margin: 0 .2rem .25rem -1.6rem;
+  vertical-align: middle;
+}
+
+.markdown-body .task-list-item input[type="checkbox"]{
+-webkit-appearance: none;-moz-appearance: none;appearance: none;
+width: 0.875rem; height: 0.875rem;outline: none;
+border: 1px solid #0366dd;border-radius: 2px; 
+}
+.markdown-body .task-list-item input[type="checkbox"]:checked {
+  background:no-repeat center/80% url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Cpath%20fill%3D%22%230366dd%22%20d%3D%22M173.898%20439.404l-166.4-166.4c-9.997-9.997-9.997-26.206%200-36.204l36.203-36.204c9.997-9.998%2026.207-9.998%2036.204%200L192%20312.69%20432.095%2072.596c9.997-9.997%2026.207-9.997%2036.204%200l36.203%2036.204c9.997%209.997%209.997%2026.206%200%2036.204l-294.4%20294.401c-9.998%209.997-26.207%209.997-36.204-.001z%22%2F%3E%3C%2Fsvg%3E") ;
+}
+
+.markdown-body section.footnotes{
+    margin-top:3rem;
+    border-top:solid 1px #e1e2e2;
+    padding-top:0px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .markdown-body mark{color: #111;}
+}
+
+/* PrismJS 1.23.0
+https://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1rem;
+    margin: .5rem 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background-color: #f7f8f8;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1rem;
+    border-radius: .3rem;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #8e9c92;
+}
+
+.token.punctuation {
+    color: #2834ce;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #2834ce;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #d32d26;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #$$codeBlockColor$$;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #bc319c;
+}
+
+.token.function,
+.token.class-name {
+    color: #967d41;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #784830;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+  position: relative;
+  padding-left: 3.8rem;
+  counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+  position: relative;
+  white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  font-size: 100%;
+  left: -3.8rem;
+  width: 3rem; /* works for line-numbers below 1000 lines */
+  letter-spacing: -1px;
+  border-right: 1px solid #bfc0c0;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+}
+
+  .line-numbers-rows > span {
+    display: block;
+    counter-increment: linenumber;
+  }
+
+    .line-numbers-rows > span:before {
+      content: counter(linenumber);
+      color: #bfc0c0;
+      display: block;
+      padding-right: 0.8rem;
+      text-align: right;
+    }
+
+
+</style><script>(n=>{"use strict";let s,r,e;const l=["cdn.jsdelivr.net","fastly.jsdelivr.net","gcore.jsdelivr.net","cdn.zenless.top","testingcf.jsdelivr.net"],t="//",i=l[0],o=Date.now(),a=2e3,c="jsdelivr-auto-fallback",f="/gh/PipecraftNet/jsdelivr-auto-fallback@main/empty.css?",d=e=>e&&e.includes(t+i),m=e=>e.replace(t+i,t+s),u=window.setTimeout,v=n.querySelectorAll.bind(n),b=()=>{let e,t;for(e of v('link[rel="stylesheet"]'))t=e.href,d(t)&&!t.includes(f)&&(e.href=m(t));for(e of v("script"))if(t=e.src,d(t)){const s=n.createElement("script");s.src=m(t),e.defer=!0,e.src="",e.before(s),e.remove()}for(e of v("img"))t=e.src,d(t)&&(e.src="",e.src=m(t));for(e of v("*[style]"))t=e.getAttribute("style"),d(t)&&e.setAttribute("style",m(t));for(e of v("style"))t=e.innerHTML,d(t)&&(e.innerHTML=m(t))},h=()=>{!e&&r&&s&&(console.warn(i+" is not available. Use "+s),e=!0,u(b,0),u(b,20),setInterval(b,500))},g=(()=>{try{return Object.assign({},JSON.parse(localStorage.getItem(c)||"{}"))}catch{return{}}})(),y=()=>{g.time=o,g.failed=!1,g.fastNode=null;for(const t of l)((e,t)=>{let s;const r=n.createElement("link"),l=e=>{s&&(clearTimeout(s),s=0,e||(r.href="data:text/css;base64,"),r.remove(),t(e))};s=u(l,a),r.addEventListener("error",()=>l(!1)),r.addEventListener("load",()=>l(!0)),r.rel="stylesheet",r.text="text/css",r.href=e+f+o,n.head.insertAdjacentElement("afterbegin",r)})("https://"+t,e=>{e||t!==i||(r=!0,g.failed=!0),e&&!s&&(s=t),e&&!g.fastNode&&(g.fastNode=t),h()});u(()=>{r&&!s&&(s=l[1],h()),localStorage.setItem(c,JSON.stringify(g))},a+100)};if(g.time&&o-g.time<36e5&&g.failed&&g.fastNode)r=!0,s=g.fastNode,h(),u(y,1e3);else if(n.head)y();else{const j=new MutationObserver(()=>{n.head&&(j.disconnect(),y())});j.observe(n,{childList:!0,subtree:!0})}})(document);</script>
+<style>.mweb-charts{background:#fff;}
+body{ box-sizing: border-box;
+    margin: 0 auto;}
+@media print{
+    pre, code, pre code {
+     overflow: visible !important;
+     white-space: pre-wrap !important;       /* css-3 */
+     white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+     white-space: -pre-wrap !important;      /* Opera 4-6 */
+     white-space: -o-pre-wrap !important;    /* Opera 7 */
+     word-wrap: break-word !important;       /* Internet Explorer 5.5+ */
+    }
+    html,body{margin:0;padding:4px;}
+}
+
+
+
+div.code-toolbar {
+  position: relative;
+}
+
+div.code-toolbar > .toolbar {
+  position: absolute;
+  z-index: 10;
+  top: .3em;
+  right: .2em;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+}
+
+div.code-toolbar:hover > .toolbar {
+  opacity: 1;
+}
+
+/* Separate line b/c rules are thrown out if selector is invalid.
+   IE11 and old Edge versions don't support :focus-within. */
+div.code-toolbar:focus-within > .toolbar {
+  opacity: 1;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item {
+  display: inline-block;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item > a {
+  cursor: pointer;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item > button {
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  line-height: normal;
+  overflow: visible;
+  padding: 0;
+  -webkit-user-select: none; /* for button */
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item > a,
+div.code-toolbar > .toolbar > .toolbar-item > button,
+div.code-toolbar > .toolbar > .toolbar-item > span {
+  color: inherit;
+  font-size: .8em;
+  padding: 4px .5em;
+  background: #f5f2f0;
+  background: rgba(224, 224, 224, 0.4);
+  box-shadow: 0 2px 0 0 rgba(0,0,0,0.2);
+  border-radius: .5em;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+div.code-toolbar > .toolbar > .toolbar-item > a:focus,
+div.code-toolbar > .toolbar > .toolbar-item > button:hover,
+div.code-toolbar > .toolbar > .toolbar-item > button:focus,
+div.code-toolbar > .toolbar > .toolbar-item > span:hover,
+div.code-toolbar > .toolbar > .toolbar-item > span:focus {
+  color: inherit;
+  text-decoration: none;
+}
+</style><script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script><script>!function(){if("undefined"!=typeof Prism&&"undefined"!=typeof document){var e=[],t={},n=function(){};Prism.plugins.toolbar={};var a=Prism.plugins.toolbar.registerButton=function(n,a){var r;r="function"==typeof a?a:function(e){var t;return"function"==typeof a.onClick?((t=document.createElement("button")).type="button",t.addEventListener("click",(function(){a.onClick.call(this,e)}))):"string"==typeof a.url?(t=document.createElement("a")).href=a.url:t=document.createElement("span"),a.className&&t.classList.add(a.className),t.textContent=a.text,t},n in t?console.warn('There is a button with the key "'+n+'" registered already.'):e.push(t[n]=r)},r=Prism.plugins.toolbar.hook=function(a){var r=a.element.parentNode;var l=a.element.classList;if(l.contains('language-mermaid') || l.contains('language-echarts') || l.contains('language-plantuml')){return;} if(r&&/pre/i.test(r.nodeName)&&!r.parentNode.classList.contains("code-toolbar")){var o=document.createElement("div");o.classList.add("code-toolbar"),r.parentNode.insertBefore(o,r),o.appendChild(r);var i=document.createElement("div");i.classList.add("toolbar");var l=e,d=function(e){for(;e;){var t=e.getAttribute("data-toolbar-order");if(null!=t)return(t=t.trim()).length?t.split(/\s*,\s*/g):[];e=e.parentElement}}(a.element);d&&(l=d.map((function(e){return t[e]||n}))),l.forEach((function(e){var t=e(a);if(t){var n=document.createElement("div");n.classList.add("toolbar-item"),n.appendChild(t),i.appendChild(n)}})),o.appendChild(i)}};a("label",(function(e){var t=e.element.parentNode;if(t&&/pre/i.test(t.nodeName)&&t.hasAttribute("data-label")){var n,a,r=t.getAttribute("data-label");try{a=document.querySelector("template#"+r)}catch(e){}return a?n=a.content:(t.hasAttribute("data-url")?(n=document.createElement("a")).href=t.getAttribute("data-url"):n=document.createElement("span"),n.textContent=r),n}})),Prism.hooks.add("complete",r)}}();</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/toolbar/prism-toolbar.min.css"><script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script><style>div.code-toolbar > .toolbar > .toolbar-item > a, div.code-toolbar > .toolbar > .toolbar-item > button, div.code-toolbar > .toolbar > .toolbar-item > span {padding: 4px .5em; background: #f5f2f0; background: rgba(224, 224, 224, 0.4);}</style><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" /><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script><script>!function(){function clearTmpElement(){for(var e=document.body.childNodes,t=0;t<e.length;t++){var n=e[t];n.id&&n.id.includes("mweb-chart-ele")&&document.body.removeChild(n)}}function drawMermaid(e,t){var n=e+"-0";clearTmpElement();var a=document.createElement("div");a.style.display="none",a.id=n,a.className="mweb_tmp_ele_class",document.body.appendChild(a);try{ setTimeout(function(){mermaid.render(n,t).then(( { svg, fun }) => {  var e0 = document.getElementById(e);e0.innerHTML = '<div>'+ svg + '</div>';});  },0); }catch(e){}}function drawECharts(eleIID,txt){var ele=document.getElementById(eleIID);try{eval(txt);var myoption=option;myoption.animation=!1,void 0!==myoption.width?ele.style.width=myoption.width+10+"px":ele.style.width="100%",void 0!==myoption.height?ele.style.height=myoption.height+10+"px":ele.style.height="350px";var myChart=echarts.init(ele);myChart.setOption(myoption)}catch(e){}}function drawInlineMath(e,t){var n=document.getElementById(e),a=MathJax.getMetricsFor(n);a.display=!1,MathJax.tex2chtmlPromise(t,a).then(function(e){n.appendChild(e)}).catch(function(e){n.innerText=e.message})}function drawBlockMath(e,t){var n=document.getElementById(e);n.className="";var a=MathJax.getMetricsFor(n);a.display=!0,MathJax.tex2chtmlPromise(t,a).then(function(e){n.appendChild(e)}).catch(function(e){n.innerText=e.message})}var init=function(){var e=[];"undefined"!=typeof mermaid&&e.push(["code.language-mermaid",drawMermaid,!0]),"undefined"!=typeof echarts&&e.push(["code.language-echarts",drawECharts,!0]);for(var t=window.mweb_render_charts_ele_gl_number,n=0;n<e.length;n++)for(var a=e[n][0],i=e[n][1],r=e[n][2],d=document.querySelectorAll(a),o=0;o<d.length;o++){var l=d[o],m=l.innerText||l.textContent,c=r?"div":"span",s=document.createElement(c),h="mweb-chart-ele-"+t;if(t++,r){var u=l.parentElement;u.hasAttribute("data-sourcepos")&&s.setAttribute("data-sourcepos",u.getAttribute("data-sourcepos")),s.innerHTML="<"+c+' class="mweb-charts" id="'+h+'"></'+c+">",u.parentNode.replaceChild(s,u)}else s.id=h,l.parentNode.replaceChild(s,l);window.mweb_render_charts_ele_gl_number=t,i(h,m)}};document.addEventListener("DOMContentLoaded",function(e){window.mweb_render_all_charts=init,window.mweb_render_charts_ele_gl_number=0,"undefined"!=typeof mermaid&&mermaid.initialize({startOnLoad:!0}),init()})}();</script> <style>body{max-width:808px; padding:24px;}</style></head><body><div id='markdown_content' class='markdown-body'><h1><a id="mci-master-use-case-specification" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>MCI MASTER USE CASE SPECIFICATION</h1>
+<blockquote>
+<p><strong>Document Classification:</strong> MISSION CRITICAL - TIER 1<br />
+<strong>Created:</strong> 2026-01-24<br />
+<strong>Authority:</strong> Claude Opus 4.5 (IRONCLAD Protocol)<br />
+<strong>Rigor Standard:</strong> NASA Flight Systems / Medical Device / Financial Trading<br />
+<strong>Purpose:</strong> Definitive Use Case Specification for MCI Application</p>
+</blockquote>
+<hr />
+<pre><code class="language-plain_text">╔═══════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                           ║
+║   ███╗   ███╗ ██████╗██╗    ██╗   ██╗███████╗███████╗     ██████╗ █████╗ ███████╗███████╗ ║
+║   ████╗ ████║██╔════╝██║    ██║   ██║██╔════╝██╔════╝    ██╔════╝██╔══██╗██╔════╝██╔════╝ ║
+║   ██╔████╔██║██║     ██║    ██║   ██║███████╗█████╗      ██║     ███████║███████╗█████╗   ║
+║   ██║╚██╔╝██║██║     ██║    ██║   ██║╚════██║██╔══╝      ██║     ██╔══██║╚════██║██╔══╝   ║
+║   ██║ ╚═╝ ██║╚██████╗██║    ╚██████╔╝███████║███████╗    ╚██████╗██║  ██║███████║███████╗ ║
+║   ╚═╝     ╚═╝ ╚═════╝╚═╝     ╚═════╝ ╚══════╝╚══════╝     ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝ ║
+║                                                                                           ║
+║   MASTER USE CASE SPECIFICATION                                                           ║
+║   ═══════════════════════════════                                                         ║
+║                                                                                           ║
+║   Classification:    MISSION CRITICAL                                                     ║
+║   Rigor Level:       NASA Flight Systems Grade                                            ║
+║   Failure Mode:      UNACCEPTABLE - Zero Tolerance                                        ║
+║   Clean Slate:       ALL PREVIOUS CODE TO BE ERADICATED                                   ║
+║                                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════╝
+</code></pre>
+<hr />
+<h1><a id="part-i-foundational-declaration" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PART I: FOUNDATIONAL DECLARATION</h1>
+<h2><a id="1-1-the-problem-statement" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.1 THE PROBLEM STATEMENT</h2>
+<pre><code class="language-plain_text">╔═══════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                           ║
+║   THE PROBLEM                                                                             ║
+║   ═══════════                                                                             ║
+║                                                                                           ║
+║   CIA-SIE-PURE is a sophisticated algorithmic trading engine (Python/FastAPI).            ║
+║   It operates as a HEADLESS SYSTEM - powerful but invisible.                              ║
+║                                                                                           ║
+║   WITHOUT a control interface:                                                            ║
+║   • The operator cannot START the trading engine safely                                   ║
+║   • The operator cannot MONITOR the engine's vital signs                                  ║
+║   • The operator cannot STOP the engine in emergencies                                    ║
+║   • The operator has NO VISIBILITY into positions, health, or errors                      ║
+║   • Token management (Kite) requires manual intervention                                  ║
+║                                                                                           ║
+║   This is equivalent to:                                                                  ║
+║   • An airplane with engines but NO COCKPIT                                               ║
+║   • A nuclear reactor with NO CONTROL ROOM                                                ║
+║   • A patient on life support with NO MONITORS                                            ║
+║                                                                                           ║
+║   THE RISK: Operating a trading system blind is CATASTROPHIC.                             ║
+║                                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════╝
+</code></pre>
+<h2><a id="1-2-the-solution-statement" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.2 THE SOLUTION STATEMENT</h2>
+<pre><code class="language-plain_text">╔═══════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                           ║
+║   THE SOLUTION: MCI (Mission Control Interface)                                           ║
+║   ═════════════════════════════════════════════                                           ║
+║                                                                                           ║
+║   MCI is the COCKPIT for CIA-SIE-PURE.                                                    ║
+║                                                                                           ║
+║   It provides:                                                                            ║
+║   ┌─────────────────────────────────────────────────────────────────────────────────┐     ║
+║   │  IGNITION      │  Start/Stop the trading engine with safety interlocks          │     ║
+║   │  TELEMETRY     │  Real-time visibility into positions, health, performance      │     ║
+║   │  ALERTING      │  Immediate notification of errors, warnings, anomalies         │     ║
+║   │  TOKEN MGMT    │  Secure capture and validation of Kite authentication          │     ║
+║   │  EMERGENCY     │  One-click shutdown with position closure                       │     ║
+║   └─────────────────────────────────────────────────────────────────────────────────┘     ║
+║                                                                                           ║
+║   MCI does NOT:                                                                           ║
+║   • Execute trades (that's the ENGINE's job)                                              ║
+║   • Make trading decisions (that's the ENGINE's job)                                      ║
+║   • Connect to brokers directly (that's the ENGINE's job)                                 ║
+║   • Store trading data (that's the ENGINE's job)                                          ║
+║                                                                                           ║
+║   MCI ONLY observes and controls. It is the EYES and HANDS, not the BRAIN.               ║
+║                                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════╝
+</code></pre>
+<hr />
+<h1><a id="part-ii-the-why-existential-justification" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PART II: THE WHY - EXISTENTIAL JUSTIFICATION</h1>
+<h2><a id="2-1-why-does-mci-need-to-exist" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.1 Why Does MCI Need to Exist?</h2>
+<pre><code class="language-mermaid">mindmap
+  root((WHY MCI EXISTS))
+    SAFETY
+      Cannot operate blind
+      Need emergency shutdown
+      Need health monitoring
+      Financial risk mitigation
+    VISIBILITY
+      Position awareness
+      Performance tracking
+      Error detection
+      System health
+    CONTROL
+      Start trading operations
+      Stop trading operations
+      Mode selection
+      Configuration
+    COMPLIANCE
+      Audit trail visibility
+      Token management
+      Session tracking
+      Constitutional requirements
+    HUMAN FACTORS
+      Reduce cognitive load
+      Single point of control
+      Intuitive interface
+      Stress reduction
+</code></pre>
+<h2><a id="2-2-the-consequence-of-not-having-mci" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.2 The Consequence of NOT Having MCI</h2>
+<pre><code class="language-plain_text">╔═══════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                           ║
+║   WITHOUT MCI                              WITH MCI                                       ║
+║   ═══════════                              ════════                                       ║
+║                                                                                           ║
+║   ✗ Start engine via CLI commands          ✓ One-click ignition with safety checks       ║
+║   ✗ No visibility into positions           ✓ Real-time position dashboard                ║
+║   ✗ No health monitoring                   ✓ Live health gauges and alerts               ║
+║   ✗ Manual token entry in config           ✓ Secure token capture UI                     ║
+║   ✗ Emergency stop via kill signals        ✓ Emergency shutdown button                   ║
+║   ✗ Check logs for errors                  ✓ Instant error notifications                 ║
+║   ✗ No P&amp;L visibility                      ✓ Real-time P&amp;L display                       ║
+║   ✗ SSH into server for status             ✓ Web-based dashboard anywhere                ║
+║                                                                                           ║
+║   RISK LEVEL: CATASTROPHIC                 RISK LEVEL: MANAGED                           ║
+║                                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════╝
+</code></pre>
+<hr />
+<h1><a id="part-iii-the-what-functional-specification" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PART III: THE WHAT - FUNCTIONAL SPECIFICATION</h1>
+<h2><a id="3-1-use-case-diagram" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3.1 Use Case Diagram</h2>
+<pre><code class="language-mermaid">flowchart TB
+    subgraph ACTORS[&quot;ACTORS&quot;]
+        USER[&quot;Human Operator&lt;br/&gt;(The Pilot)&quot;]
+        ENGINE[&quot;CIA-SIE-PURE&lt;br/&gt;(The Engine)&quot;]
+        TIME[&quot;System Clock&lt;br/&gt;(Automated Triggers)&quot;]
+    end
+
+    subgraph MCI_SYSTEM[&quot;MCI SYSTEM BOUNDARY&quot;]
+        subgraph UC_TOKEN[&quot;TOKEN MANAGEMENT&quot;]
+            UC1[&quot;UC-001: Capture Kite Token&quot;]
+            UC2[&quot;UC-002: Validate Token&quot;]
+            UC3[&quot;UC-003: Monitor Token Expiry&quot;]
+        end
+
+        subgraph UC_IGNITION[&quot;IGNITION CONTROL&quot;]
+            UC4[&quot;UC-004: Start Trading Engine&quot;]
+            UC5[&quot;UC-005: Stop Trading Engine&quot;]
+            UC6[&quot;UC-006: Emergency Shutdown&quot;]
+        end
+
+        subgraph UC_TELEMETRY[&quot;TELEMETRY DISPLAY&quot;]
+            UC7[&quot;UC-007: View Positions&quot;]
+            UC8[&quot;UC-008: View Health Status&quot;]
+            UC9[&quot;UC-009: View P&amp;L&quot;]
+            UC10[&quot;UC-010: View Order Status&quot;]
+        end
+
+        subgraph UC_ALERTS[&quot;ALERTING&quot;]
+            UC11[&quot;UC-011: Receive Error Alerts&quot;]
+            UC12[&quot;UC-012: Receive Warning Alerts&quot;]
+            UC13[&quot;UC-013: Acknowledge Alerts&quot;]
+        end
+    end
+
+    USER --&gt; UC1
+    USER --&gt; UC4
+    USER --&gt; UC5
+    USER --&gt; UC6
+    USER --&gt; UC7
+    USER --&gt; UC8
+    USER --&gt; UC9
+    USER --&gt; UC13
+
+    ENGINE --&gt; UC7
+    ENGINE --&gt; UC8
+    ENGINE --&gt; UC10
+    ENGINE --&gt; UC11
+    ENGINE --&gt; UC12
+
+    TIME --&gt; UC3
+
+    style MCI_SYSTEM fill:#1a1a2e,stroke:#e94560,stroke-width:2px
+</code></pre>
+<h2><a id="3-2-complete-use-case-inventory" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3.2 Complete Use Case Inventory</h2>
+<table>
+<thead>
+<tr>
+<th>UC-ID</th>
+<th>Use Case Name</th>
+<th>Actor</th>
+<th>Priority</th>
+<th>Criticality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UC-001</td>
+<td>Capture Kite Token</td>
+<td>Operator</td>
+<td>P0</td>
+<td>CRITICAL</td>
+</tr>
+<tr>
+<td>UC-002</td>
+<td>Validate Token</td>
+<td>System</td>
+<td>P0</td>
+<td>CRITICAL</td>
+</tr>
+<tr>
+<td>UC-003</td>
+<td>Monitor Token Expiry</td>
+<td>Clock</td>
+<td>P1</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td>UC-004</td>
+<td>Start Trading Engine</td>
+<td>Operator</td>
+<td>P0</td>
+<td>CRITICAL</td>
+</tr>
+<tr>
+<td>UC-005</td>
+<td>Stop Trading Engine</td>
+<td>Operator</td>
+<td>P0</td>
+<td>CRITICAL</td>
+</tr>
+<tr>
+<td>UC-006</td>
+<td>Emergency Shutdown</td>
+<td>Operator</td>
+<td>P0</td>
+<td>CRITICAL</td>
+</tr>
+<tr>
+<td>UC-007</td>
+<td>View Positions</td>
+<td>Operator</td>
+<td>P0</td>
+<td>CRITICAL</td>
+</tr>
+<tr>
+<td>UC-008</td>
+<td>View Health Status</td>
+<td>Operator</td>
+<td>P0</td>
+<td>CRITICAL</td>
+</tr>
+<tr>
+<td>UC-009</td>
+<td>View P&amp;L</td>
+<td>Operator</td>
+<td>P1</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td>UC-010</td>
+<td>View Order Status</td>
+<td>Operator</td>
+<td>P1</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td>UC-011</td>
+<td>Receive Error Alerts</td>
+<td>System</td>
+<td>P0</td>
+<td>CRITICAL</td>
+</tr>
+<tr>
+<td>UC-012</td>
+<td>Receive Warning Alerts</td>
+<td>System</td>
+<td>P1</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td>UC-013</td>
+<td>Acknowledge Alerts</td>
+<td>Operator</td>
+<td>P1</td>
+<td>HIGH</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1><a id="part-iv-the-how-operational-workflow" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PART IV: THE HOW - OPERATIONAL WORKFLOW</h1>
+<h2><a id="4-1-complete-operational-circuit" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4.1 Complete Operational Circuit</h2>
+<pre><code class="language-mermaid">flowchart TB
+    subgraph PHASE_0[&quot;PHASE 0: TOKEN CAPTURE&quot;]
+        A1[/&quot;Operator Opens MCI&quot;/]
+        A2[&quot;Token Capture Form Displayed&quot;]
+        A3[&quot;Operator Pastes Kite Token&quot;]
+        A4{&quot;Token Valid?&quot;}
+        A5[&quot;Token Stored in Engine&quot;]
+        A6[&quot;Error: Invalid Token&quot;]
+    end
+
+    subgraph PHASE_1[&quot;PHASE 1: PRE-IGNITION&quot;]
+        B1[&quot;Pre-Ignition Scanner Runs&quot;]
+        B2{&quot;All Systems Ready?&quot;}
+        B3[&quot;Display Ready Status&quot;]
+        B4[&quot;Display Blockers&quot;]
+    end
+
+    subgraph PHASE_2[&quot;PHASE 2: IGNITION&quot;]
+        C1[&quot;Ignition Button Enabled&quot;]
+        C2[&quot;Operator Clicks IGNITION&quot;]
+        C3[&quot;Engine Initializes&quot;]
+        C4[&quot;Broker Connections Established&quot;]
+        C5[&quot;Engine Status: RUNNING&quot;]
+    end
+
+    subgraph PHASE_3[&quot;PHASE 3: TELEMETRY&quot;]
+        D1[&quot;Telemetry Loop Begins&quot;]
+        D2[&quot;Positions Displayed&quot;]
+        D3[&quot;Health Gauges Updated&quot;]
+        D4[&quot;P&amp;L Calculated&quot;]
+        D5[&quot;Alerts Processed&quot;]
+    end
+
+    subgraph PHASE_4[&quot;PHASE 4: SHUTDOWN&quot;]
+        E1[&quot;Operator Clicks SHUTDOWN&quot;]
+        E2[&quot;Confirmation Required&quot;]
+        E3[&quot;Engine Closes Positions&quot;]
+        E4[&quot;Broker Disconnected&quot;]
+        E5[&quot;Engine Status: STOPPED&quot;]
+    end
+
+    A1 --&gt; A2 --&gt; A3 --&gt; A4
+    A4 --&gt;|Yes| A5
+    A4 --&gt;|No| A6
+    A6 --&gt; A3
+
+    A5 --&gt; B1 --&gt; B2
+    B2 --&gt;|Yes| B3
+    B2 --&gt;|No| B4
+    B4 --&gt; B1
+
+    B3 --&gt; C1 --&gt; C2 --&gt; C3 --&gt; C4 --&gt; C5
+
+    C5 --&gt; D1 --&gt; D2 --&gt; D3 --&gt; D4 --&gt; D5
+    D5 --&gt; D1
+
+    D1 -.-&gt;|&quot;At Any Time&quot;| E1
+    E1 --&gt; E2 --&gt; E3 --&gt; E4 --&gt; E5
+    E5 -.-&gt;|&quot;Restart Possible&quot;| A1
+
+    style PHASE_0 fill:#2d3436,stroke:#00b894,stroke-width:2px
+    style PHASE_1 fill:#2d3436,stroke:#fdcb6e,stroke-width:2px
+    style PHASE_2 fill:#2d3436,stroke:#e17055,stroke-width:2px
+    style PHASE_3 fill:#2d3436,stroke:#0984e3,stroke-width:2px
+    style PHASE_4 fill:#2d3436,stroke:#6c5ce7,stroke-width:2px
+</code></pre>
+<h2><a id="4-2-user-journey-map" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4.2 User Journey Map</h2>
+<pre><code class="language-mermaid">journey
+    title MCI Operator Daily Journey
+    section Morning Preparation
+      Open MCI Dashboard: 5: Operator
+      Check Token Status: 3: Operator
+      Capture New Kite Token: 4: Operator
+      Validate Token Success: 5: System
+    section Pre-Trading
+      Review Pre-Ignition Status: 4: Operator
+      Verify All Systems Green: 5: Operator
+      Click Ignition Button: 5: Operator
+      Confirm Engine Running: 5: System
+    section Active Trading
+      Monitor Positions: 4: Operator
+      Check Health Gauges: 4: Operator
+      Receive Alert Notification: 3: System
+      Acknowledge Alert: 4: Operator
+    section End of Day
+      Click Shutdown Button: 5: Operator
+      Confirm Shutdown: 4: Operator
+      Verify Positions Closed: 5: System
+      Engine Stopped: 5: System
+</code></pre>
+<hr />
+<h1><a id="part-v-criticality-analysis" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PART V: CRITICALITY ANALYSIS</h1>
+<h2><a id="5-1-failure-mode-and-effects-analysis-fmea" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5.1 Failure Mode and Effects Analysis (FMEA)</h2>
+<pre><code class="language-plain_text">╔═══════════════════════════════════════════════════════════════════════════════════════════╗
+║                      FAILURE MODE AND EFFECTS ANALYSIS (FMEA)                             ║
+╠═══════════════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                           ║
+║   COMPONENT          FAILURE MODE           EFFECT              SEVERITY   MITIGATION    ║
+║   ─────────────────────────────────────────────────────────────────────────────────────   ║
+║   Token Capture      Token rejected         Cannot start        CRITICAL   Retry + Help  ║
+║   Token Capture      Token expires          Engine stops        HIGH       Expiry alert  ║
+║   Ignition           Engine won't start     No trading          CRITICAL   Error display ║
+║   Ignition           Partial start          Undefined state     CRITICAL   Rollback      ║
+║   Telemetry          Data stale             Wrong decisions     HIGH       Staleness ind ║
+║   Telemetry          Connection lost        No visibility       CRITICAL   Reconnect     ║
+║   Positions          Display wrong          Wrong perception    CRITICAL   Validation    ║
+║   Health             False positive         Unnecessary panic   MEDIUM     Thresholds    ║
+║   Health             False negative         Missed problem      CRITICAL   Redundancy    ║
+║   Shutdown           Button unresponsive    Cannot stop         CRITICAL   Fallback      ║
+║   Shutdown           Incomplete closure     Orphan positions    CRITICAL   Verification  ║
+║   Alerts             Not delivered          Missed errors       CRITICAL   Multi-channel ║
+║   UI                 Freezes                No interaction      HIGH       Watchdog      ║
+║                                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════╝
+</code></pre>
+<h2><a id="5-2-critical-path-identification" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5.2 Critical Path Identification</h2>
+<pre><code class="language-mermaid">flowchart LR
+    subgraph CRITICAL_PATH[&quot;CRITICAL PATH - ZERO TOLERANCE FOR FAILURE&quot;]
+        CP1[&quot;Token&lt;br/&gt;Capture&quot;]
+        CP2[&quot;Token&lt;br/&gt;Validation&quot;]
+        CP3[&quot;Ignition&lt;br/&gt;Command&quot;]
+        CP4[&quot;Engine&lt;br/&gt;Response&quot;]
+        CP5[&quot;Telemetry&lt;br/&gt;Loop&quot;]
+        CP6[&quot;Shutdown&lt;br/&gt;Command&quot;]
+        CP7[&quot;Position&lt;br/&gt;Closure&quot;]
+    end
+
+    CP1 --&gt;|&quot;MUST SUCCEED&quot;| CP2
+    CP2 --&gt;|&quot;MUST SUCCEED&quot;| CP3
+    CP3 --&gt;|&quot;MUST SUCCEED&quot;| CP4
+    CP4 --&gt;|&quot;MUST SUCCEED&quot;| CP5
+    CP5 --&gt;|&quot;CONTINUOUS&quot;| CP5
+    CP5 --&gt;|&quot;MUST SUCCEED&quot;| CP6
+    CP6 --&gt;|&quot;MUST SUCCEED&quot;| CP7
+
+    style CP1 fill:#c0392b,color:#fff
+    style CP2 fill:#c0392b,color:#fff
+    style CP3 fill:#c0392b,color:#fff
+    style CP4 fill:#c0392b,color:#fff
+    style CP5 fill:#c0392b,color:#fff
+    style CP6 fill:#c0392b,color:#fff
+    style CP7 fill:#c0392b,color:#fff
+</code></pre>
+<p><strong>CRITICAL PATH RULE</strong>: If ANY component on this path fails, the ENTIRE system is compromised. Each component must have:</p>
+<ul>
+<li>Error handling</li>
+<li>Retry logic</li>
+<li>Fallback mechanism</li>
+<li>User notification</li>
+<li>Recovery procedure</li>
+</ul>
+<hr />
+<h1><a id="part-vi-clean-slate-protocol" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PART VI: CLEAN SLATE PROTOCOL</h1>
+<h2><a id="6-1-declaration-of-eradication" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>6.1 Declaration of Eradication</h2>
+<pre><code class="language-plain_text">╔═══════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                           ║
+║                           CLEAN SLATE PROTOCOL                                            ║
+║                           ════════════════════                                            ║
+║                                                                                           ║
+║   DECLARATION:                                                                            ║
+║   ────────────                                                                            ║
+║   All previous implementations of the MCI interface are hereby declared VOID.             ║
+║                                                                                           ║
+║   This includes:                                                                          ║
+║   • Alpaca-based implementation (VOID)                                                    ║
+║   • Current implementation in 04_IMPLEMENTATION/mci/ (VOID)                               ║
+║   • All associated components, hooks, stores, and tests (VOID)                            ║
+║   • All dependencies and configurations (VOID)                                            ║
+║                                                                                           ║
+║   REASON:                                                                                 ║
+║   ───────                                                                                 ║
+║   Previous implementations were built WITHOUT proper use case understanding.              ║
+║   They do not align with the TRUE PURPOSE of MCI as defined in this document.             ║
+║   Retrofitting would introduce technical debt and architectural compromise.               ║
+║                                                                                           ║
+║   MANDATE:                                                                                ║
+║   ────────                                                                                ║
+║   The new implementation MUST be built from scratch, following this specification.        ║
+║   The new implementation MUST implement Phase 3.5 (UXMI) from the foundation.             ║
+║   The new implementation MUST NOT reference or reuse any previous code.                   ║
+║                                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════╝
+</code></pre>
+<h2><a id="6-2-what-must-be-eradicated" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>6.2 What Must Be Eradicated</h2>
+<pre><code class="language-mermaid">flowchart TB
+    subgraph ERADICATE[&quot;TO BE ERADICATED&quot;]
+        direction TB
+        E1[&quot;04_IMPLEMENTATION/mci/src/&quot;]
+        E2[&quot;All React Components&quot;]
+        E3[&quot;All Hono Routes&quot;]
+        E4[&quot;All State Stores&quot;]
+        E5[&quot;All Test Files&quot;]
+        E6[&quot;All Config Files&quot;]
+        E7[&quot;node_modules/&quot;]
+        E8[&quot;package.json&quot;]
+        E9[&quot;Any Alpaca References&quot;]
+    end
+
+    subgraph PRESERVE[&quot;TO BE PRESERVED&quot;]
+        direction TB
+        P1[&quot;00_MASTER_DOCUMENTS/&quot;]
+        P2[&quot;01_SOURCE_DOCUMENTS/&quot;]
+        P3[&quot;02_SPECIFICATIONS/&quot;]
+        P4[&quot;03_ARCHITECTURE/&quot;]
+        P5[&quot;05_AUDITS_AND_REPORTS/&quot;]
+        P6[&quot;_SESSION_CHECKPOINTS/&quot;]
+        P7[&quot;This Use Case Specification&quot;]
+    end
+
+    subgraph BUILD_NEW[&quot;TO BE BUILT NEW&quot;]
+        direction TB
+        N1[&quot;Fresh 04_IMPLEMENTATION/&quot;]
+        N2[&quot;UXMI Component Library&quot;]
+        N3[&quot;Token Capture Module&quot;]
+        N4[&quot;Ignition Control&quot;]
+        N5[&quot;Telemetry Dashboard&quot;]
+        N6[&quot;Alert System&quot;]
+        N7[&quot;Shutdown Protocol&quot;]
+    end
+
+    ERADICATE --&gt;|&quot;DELETE ALL&quot;| BUILD_NEW
+    PRESERVE --&gt;|&quot;INFORMS&quot;| BUILD_NEW
+
+    style ERADICATE fill:#c0392b,stroke:#e74c3c,stroke-width:3px,color:#fff
+    style PRESERVE fill:#27ae60,stroke:#2ecc71,stroke-width:2px,color:#fff
+    style BUILD_NEW fill:#2980b9,stroke:#3498db,stroke-width:2px,color:#fff
+</code></pre>
+<hr />
+<h1><a id="part-vii-phase-progression-circuit" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PART VII: PHASE PROGRESSION CIRCUIT</h1>
+<h2><a id="7-1-complete-phase-map" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>7.1 Complete Phase Map</h2>
+<pre><code class="language-mermaid">flowchart TB
+    subgraph FOUNDATION[&quot;FOUNDATION DOCUMENTS&quot;]
+        F1[&quot;Project Brief&lt;br/&gt;BCI-001&quot;]
+        F2[&quot;Technology Selection&lt;br/&gt;Lifecycle Spec&quot;]
+        F3[&quot;This Use Case&lt;br/&gt;Specification&quot;]
+    end
+
+    subgraph PHASE_0[&quot;PHASE 0: TOKEN CAPTURE&quot;]
+        P0_1[&quot;ADDENDUM_001&lt;br/&gt;Token Capture Module&quot;]
+        P0_2[&quot;6 Module Specification&quot;]
+        P0_3[&quot;Implementation&quot;]
+    end
+
+    subgraph PHASE_1[&quot;PHASE 1: PRE-IGNITION&quot;]
+        P1_1[&quot;Scanner Specification&quot;]
+        P1_2[&quot;Readiness Checks&quot;]
+        P1_3[&quot;Implementation&quot;]
+    end
+
+    subgraph PHASE_2[&quot;PHASE 2: IGNITION&quot;]
+        P2_1[&quot;Ignition Protocol&quot;]
+        P2_2[&quot;Backend Selector&quot;]
+        P2_3[&quot;Implementation&quot;]
+    end
+
+    subgraph PHASE_3[&quot;PHASE 3: TELEMETRY&quot;]
+        P3_1[&quot;Dashboard Specification&quot;]
+        P3_2[&quot;Gauge Components&quot;]
+        P3_3[&quot;Implementation&quot;]
+    end
+
+    subgraph PHASE_35[&quot;PHASE 3.5: UXMI (CR-005)&quot;]
+        P35_1[&quot;ADDENDUM_002&lt;br/&gt;UXMI Specification&quot;]
+        P35_2[&quot;7 Components&lt;br/&gt;7 States&quot;]
+        P35_3[&quot;MUST BE BUILT FIRST&quot;]
+    end
+
+    subgraph PHASE_4[&quot;PHASE 4: SHUTDOWN&quot;]
+        P4_1[&quot;Shutdown Protocol&quot;]
+        P4_2[&quot;Position Closure&quot;]
+        P4_3[&quot;Implementation&quot;]
+    end
+
+    subgraph PRODUCTION[&quot;PRODUCTION READY&quot;]
+        PR1[&quot;Integration Testing&quot;]
+        PR2[&quot;Quality Gates 1-6&quot;]
+        PR3[&quot;DEPLOYMENT&quot;]
+    end
+
+    F1 --&gt; F2 --&gt; F3
+    F3 --&gt; P35_1
+
+    P35_1 --&gt; P35_2 --&gt; P35_3
+    P35_3 --&gt; P0_1
+
+    P0_1 --&gt; P0_2 --&gt; P0_3
+    P0_3 --&gt; P1_1
+
+    P1_1 --&gt; P1_2 --&gt; P1_3
+    P1_3 --&gt; P2_1
+
+    P2_1 --&gt; P2_2 --&gt; P2_3
+    P2_3 --&gt; P3_1
+
+    P3_1 --&gt; P3_2 --&gt; P3_3
+    P3_3 --&gt; P4_1
+
+    P4_1 --&gt; P4_2 --&gt; P4_3
+    P4_3 --&gt; PR1
+
+    PR1 --&gt; PR2 --&gt; PR3
+
+    style PHASE_35 fill:#e74c3c,stroke:#c0392b,stroke-width:4px,color:#fff
+    style PRODUCTION fill:#27ae60,stroke:#2ecc71,stroke-width:3px,color:#fff
+</code></pre>
+<h2><a id="7-2-build-order-critical" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>7.2 Build Order (CRITICAL)</h2>
+<pre><code class="language-plain_text">╔═══════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                           ║
+║                            MANDATORY BUILD ORDER                                          ║
+║                            ═════════════════════                                          ║
+║                                                                                           ║
+║   ┌─────────────────────────────────────────────────────────────────────────────────┐     ║
+║   │  STEP 1: BUILD UXMI COMPONENT LIBRARY FIRST                                     │     ║
+║   │  ════════════════════════════════════════════                                   │     ║
+║   │                                                                                 │     ║
+║   │  Before ANY other component is built, the UXMI library must exist:              │     ║
+║   │  • Tooltip.tsx      (7 states)                                                  │     ║
+║   │  • Button.tsx       (7 states)                                                  │     ║
+║   │  • Input.tsx        (7 states)                                                  │     ║
+║   │  • Spinner.tsx      (7 states)                                                  │     ║
+║   │  • ProgressBar.tsx  (7 states)                                                  │     ║
+║   │  • Toast.tsx        (7 states)                                                  │     ║
+║   │  • ErrorDisplay.tsx (7 states)                                                  │     ║
+║   │                                                                                 │     ║
+║   │  WHY: Every subsequent component MUST use these UXMI components.                │     ║
+║   │  Building without UXMI first = building on sand.                                │     ║
+║   └─────────────────────────────────────────────────────────────────────────────────┘     ║
+║                                                                                           ║
+║   ┌─────────────────────────────────────────────────────────────────────────────────┐     ║
+║   │  STEP 2: BUILD TOKEN CAPTURE MODULE                                             │     ║
+║   │  ═══════════════════════════════════                                            │     ║
+║   │  Using UXMI components, build the 6-module Token Capture system.                │     ║
+║   └─────────────────────────────────────────────────────────────────────────────────┘     ║
+║                                                                                           ║
+║   ┌─────────────────────────────────────────────────────────────────────────────────┐     ║
+║   │  STEP 3: BUILD PRE-IGNITION SCANNER                                             │     ║
+║   │  ═══════════════════════════════════                                            │     ║
+║   │  Using UXMI components, build the readiness scanner.                            │     ║
+║   └─────────────────────────────────────────────────────────────────────────────────┘     ║
+║                                                                                           ║
+║   ┌─────────────────────────────────────────────────────────────────────────────────┐     ║
+║   │  STEP 4: BUILD IGNITION CONTROL                                                 │     ║
+║   │  ═══════════════════════════════                                                │     ║
+║   │  Using UXMI components, build the ignition button and backend selector.         │     ║
+║   └─────────────────────────────────────────────────────────────────────────────────┘     ║
+║                                                                                           ║
+║   ┌─────────────────────────────────────────────────────────────────────────────────┐     ║
+║   │  STEP 5: BUILD TELEMETRY DASHBOARD                                              │     ║
+║   │  ═════════════════════════════════                                              │     ║
+║   │  Using UXMI components, build position displays, health gauges, P&amp;L.            │     ║
+║   └─────────────────────────────────────────────────────────────────────────────────┘     ║
+║                                                                                           ║
+║   ┌─────────────────────────────────────────────────────────────────────────────────┐     ║
+║   │  STEP 6: BUILD SHUTDOWN PROTOCOL                                                │     ║
+║   │  ════════════════════════════════                                               │     ║
+║   │  Using UXMI components, build shutdown button, confirmation, status.            │     ║
+║   └─────────────────────────────────────────────────────────────────────────────────┘     ║
+║                                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════╝
+</code></pre>
+<hr />
+<h1><a id="part-viii-constitutional-requirements" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PART VIII: CONSTITUTIONAL REQUIREMENTS</h1>
+<h2><a id="8-1-the-five-commandments" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>8.1 The Five Commandments</h2>
+<pre><code class="language-mermaid">flowchart TB
+    subgraph CONSTITUTION[&quot;THE FIVE CONSTITUTIONAL REQUIREMENTS&quot;]
+        CR1[&quot;CR-001&lt;br/&gt;═══════════════════════════════════════&lt;br/&gt;DECISION-SUPPORT, NOT DECISION-MAKING&lt;br/&gt;═══════════════════════════════════════&lt;br/&gt;MCI displays information.&lt;br/&gt;MCI does NOT recommend actions.&lt;br/&gt;The human decides.&quot;]
+
+        CR2[&quot;CR-002&lt;br/&gt;═══════════════════════════════════════&lt;br/&gt;EXPOSE CONTRADICTIONS, NEVER RESOLVE&lt;br/&gt;═══════════════════════════════════════&lt;br/&gt;If positions conflict, SHOW both.&lt;br/&gt;Do NOT hide or average.&lt;br/&gt;Transparency is sacred.&quot;]
+
+        CR3[&quot;CR-003&lt;br/&gt;═══════════════════════════════════════&lt;br/&gt;DESCRIPTIVE AI, NOT PRESCRIPTIVE AI&lt;br/&gt;═══════════════════════════════════════&lt;br/&gt;Describe what IS happening.&lt;br/&gt;Never prescribe what SHOULD happen.&lt;br/&gt;Observations only.&quot;]
+
+        CR4[&quot;CR-004&lt;br/&gt;═══════════════════════════════════════&lt;br/&gt;TOKEN LIFECYCLE ACCURACY&lt;br/&gt;═══════════════════════════════════════&lt;br/&gt;Token state must be accurate.&lt;br/&gt;Expiry must be tracked.&lt;br/&gt;No false positives/negatives.&quot;]
+
+        CR5[&quot;CR-005&lt;br/&gt;═══════════════════════════════════════&lt;br/&gt;USER EXPERIENCE MICRO-INTERACTIONS&lt;br/&gt;═══════════════════════════════════════&lt;br/&gt;Every element has 7 states.&lt;br/&gt;Tooltips explain everything.&lt;br/&gt;Errors are helpful, not cryptic.&quot;]
+    end
+
+    style CR1 fill:#2c3e50,stroke:#e74c3c,stroke-width:2px,color:#fff
+    style CR2 fill:#2c3e50,stroke:#e74c3c,stroke-width:2px,color:#fff
+    style CR3 fill:#2c3e50,stroke:#e74c3c,stroke-width:2px,color:#fff
+    style CR4 fill:#2c3e50,stroke:#e74c3c,stroke-width:2px,color:#fff
+    style CR5 fill:#2c3e50,stroke:#e74c3c,stroke-width:2px,color:#fff
+</code></pre>
+<hr />
+<h1><a id="part-ix-component-dependency-circuit" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PART IX: COMPONENT DEPENDENCY CIRCUIT</h1>
+<h2><a id="9-1-complete-dependency-map" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>9.1 Complete Dependency Map</h2>
+<pre><code class="language-mermaid">flowchart TB
+    subgraph UXMI_LAYER[&quot;UXMI COMPONENT LIBRARY (FOUNDATION)&quot;]
+        U1[&quot;Tooltip&quot;]
+        U2[&quot;Button&quot;]
+        U3[&quot;Input&quot;]
+        U4[&quot;Spinner&quot;]
+        U5[&quot;ProgressBar&quot;]
+        U6[&quot;Toast&quot;]
+        U7[&quot;ErrorDisplay&quot;]
+    end
+
+    subgraph TOKEN_LAYER[&quot;TOKEN CAPTURE MODULE&quot;]
+        T1[&quot;TokenCaptureForm&quot;]
+        T2[&quot;TokenPasteInput&quot;]
+        T3[&quot;TokenValidationStatus&quot;]
+        T4[&quot;TokenTimer&quot;]
+        T5[&quot;TokenExpiryAlert&quot;]
+        T6[&quot;TokenHelpTooltip&quot;]
+    end
+
+    subgraph SCANNER_LAYER[&quot;PRE-IGNITION SCANNER&quot;]
+        S1[&quot;ScannerPanel&quot;]
+        S2[&quot;SystemCheckList&quot;]
+        S3[&quot;ReadinessIndicator&quot;]
+        S4[&quot;BlockerDisplay&quot;]
+    end
+
+    subgraph IGNITION_LAYER[&quot;IGNITION CONTROL&quot;]
+        I1[&quot;IgnitionButton&quot;]
+        I2[&quot;BackendSelector&quot;]
+        I3[&quot;IgnitionConfirmation&quot;]
+        I4[&quot;IgnitionStatus&quot;]
+    end
+
+    subgraph TELEMETRY_LAYER[&quot;TELEMETRY DASHBOARD&quot;]
+        D1[&quot;PositionPanel&quot;]
+        D2[&quot;HealthGauges&quot;]
+        D3[&quot;PLDisplay&quot;]
+        D4[&quot;OrderStatusPanel&quot;]
+        D5[&quot;AlertNotifications&quot;]
+    end
+
+    subgraph SHUTDOWN_LAYER[&quot;SHUTDOWN PROTOCOL&quot;]
+        X1[&quot;ShutdownButton&quot;]
+        X2[&quot;ShutdownConfirmation&quot;]
+        X3[&quot;PositionClosureStatus&quot;]
+        X4[&quot;ShutdownComplete&quot;]
+    end
+
+    %% UXMI Dependencies
+    U1 --&gt; T6
+    U2 --&gt; T1
+    U2 --&gt; I1
+    U2 --&gt; X1
+    U3 --&gt; T2
+    U4 --&gt; T3
+    U4 --&gt; S3
+    U4 --&gt; I4
+    U5 --&gt; T4
+    U5 --&gt; X3
+    U6 --&gt; T5
+    U6 --&gt; D5
+    U7 --&gt; S4
+
+    %% Layer Dependencies
+    TOKEN_LAYER --&gt; SCANNER_LAYER
+    SCANNER_LAYER --&gt; IGNITION_LAYER
+    IGNITION_LAYER --&gt; TELEMETRY_LAYER
+    TELEMETRY_LAYER --&gt; SHUTDOWN_LAYER
+
+    style UXMI_LAYER fill:#c0392b,stroke:#e74c3c,stroke-width:4px,color:#fff
+    style TOKEN_LAYER fill:#27ae60,stroke:#2ecc71,stroke-width:2px,color:#fff
+    style SCANNER_LAYER fill:#f39c12,stroke:#f1c40f,stroke-width:2px,color:#fff
+    style IGNITION_LAYER fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff
+    style TELEMETRY_LAYER fill:#3498db,stroke:#2980b9,stroke-width:2px,color:#fff
+    style SHUTDOWN_LAYER fill:#9b59b6,stroke:#8e44ad,stroke-width:2px,color:#fff
+</code></pre>
+<hr />
+<h1><a id="part-x-quality-gates" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PART X: QUALITY GATES</h1>
+<h2><a id="10-1-gate-progression" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>10.1 Gate Progression</h2>
+<pre><code class="language-mermaid">flowchart LR
+    subgraph GATES[&quot;QUALITY GATES&quot;]
+        QG1[&quot;QG-1&lt;br/&gt;═════════&lt;br/&gt;UXMI&lt;br/&gt;Complete&quot;]
+        QG2[&quot;QG-2&lt;br/&gt;═════════&lt;br/&gt;Token&lt;br/&gt;Capture&quot;]
+        QG3[&quot;QG-3&lt;br/&gt;═════════&lt;br/&gt;Pre-Ignition&lt;br/&gt;Scanner&quot;]
+        QG4[&quot;QG-4&lt;br/&gt;═════════&lt;br/&gt;Ignition&lt;br/&gt;Control&quot;]
+        QG5[&quot;QG-5&lt;br/&gt;═════════&lt;br/&gt;Telemetry&lt;br/&gt;Dashboard&quot;]
+        QG6[&quot;QG-6&lt;br/&gt;═════════&lt;br/&gt;Shutdown&lt;br/&gt;Protocol&quot;]
+    end
+
+    QG1 --&gt;|&quot;PASS&quot;| QG2
+    QG2 --&gt;|&quot;PASS&quot;| QG3
+    QG3 --&gt;|&quot;PASS&quot;| QG4
+    QG4 --&gt;|&quot;PASS&quot;| QG5
+    QG5 --&gt;|&quot;PASS&quot;| QG6
+    QG6 --&gt;|&quot;PASS&quot;| PRODUCTION[&quot;PRODUCTION&lt;br/&gt;READY&quot;]
+
+    style QG1 fill:#c0392b,color:#fff
+    style PRODUCTION fill:#27ae60,color:#fff
+</code></pre>
+<h2><a id="10-2-gate-criteria" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>10.2 Gate Criteria</h2>
+<table>
+<thead>
+<tr>
+<th>Gate</th>
+<th>Component</th>
+<th>Criteria</th>
+<th>Evidence Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>QG-1</td>
+<td>UXMI</td>
+<td>All 7 components implemented with all 7 states</td>
+<td>Unit tests pass, visual review</td>
+</tr>
+<tr>
+<td>QG-2</td>
+<td>Token</td>
+<td>Token capture, validation, timer, expiry alert</td>
+<td>Integration test with mock</td>
+</tr>
+<tr>
+<td>QG-3</td>
+<td>Scanner</td>
+<td>All system checks implemented and displayed</td>
+<td>Readiness verification</td>
+</tr>
+<tr>
+<td>QG-4</td>
+<td>Ignition</td>
+<td>Start/stop commands work with Engine</td>
+<td>End-to-end test</td>
+</tr>
+<tr>
+<td>QG-5</td>
+<td>Telemetry</td>
+<td>All panels display accurate data</td>
+<td>Data validation tests</td>
+</tr>
+<tr>
+<td>QG-6</td>
+<td>Shutdown</td>
+<td>Complete shutdown with position closure</td>
+<td>Full cycle test</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1><a id="part-xi-final-circuit-diagram" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PART XI: FINAL CIRCUIT DIAGRAM</h1>
+<h2><a id="11-1-the-complete-last-mile-connection" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>11.1 The Complete Last-Mile Connection</h2>
+<pre><code class="language-mermaid">flowchart TB
+    subgraph INPUTS[&quot;INPUTS (WHAT WE HAVE)&quot;]
+        I1[&quot;Project Brief&lt;br/&gt;BCI-001&quot;]
+        I2[&quot;Technology Spec&quot;]
+        I3[&quot;ADDENDUM_001&lt;br/&gt;Token Capture&quot;]
+        I4[&quot;ADDENDUM_002&lt;br/&gt;UXMI&quot;]
+        I5[&quot;Master Spec&lt;br/&gt;v1.0.0&quot;]
+        I6[&quot;C4 Architecture&quot;]
+        I7[&quot;This Use Case&lt;br/&gt;Specification&quot;]
+    end
+
+    subgraph PROCESS[&quot;PROCESS (WHAT WE DO)&quot;]
+        P1[&quot;ERADICATE&lt;br/&gt;Previous Code&quot;]
+        P2[&quot;BUILD&lt;br/&gt;UXMI Library&quot;]
+        P3[&quot;BUILD&lt;br/&gt;Token Capture&quot;]
+        P4[&quot;BUILD&lt;br/&gt;Scanner&quot;]
+        P5[&quot;BUILD&lt;br/&gt;Ignition&quot;]
+        P6[&quot;BUILD&lt;br/&gt;Telemetry&quot;]
+        P7[&quot;BUILD&lt;br/&gt;Shutdown&quot;]
+        P8[&quot;INTEGRATE&lt;br/&gt;&amp; TEST&quot;]
+    end
+
+    subgraph OUTPUTS[&quot;OUTPUTS (WHAT WE GET)&quot;]
+        O1[&quot;Production-Ready&lt;br/&gt;MCI Application&quot;]
+        O2[&quot;Connected to&lt;br/&gt;CIA-SIE-PURE&quot;]
+        O3[&quot;Full Visibility&lt;br/&gt;&amp; Control&quot;]
+        O4[&quot;Safe Trading&lt;br/&gt;Operations&quot;]
+    end
+
+    I1 --&gt; P1
+    I2 --&gt; P1
+    I3 --&gt; P3
+    I4 --&gt; P2
+    I5 --&gt; P1
+    I6 --&gt; P1
+    I7 --&gt; P1
+
+    P1 --&gt; P2
+    P2 --&gt; P3
+    P3 --&gt; P4
+    P4 --&gt; P5
+    P5 --&gt; P6
+    P6 --&gt; P7
+    P7 --&gt; P8
+
+    P8 --&gt; O1
+    O1 --&gt; O2
+    O2 --&gt; O3
+    O3 --&gt; O4
+
+    style INPUTS fill:#2c3e50,stroke:#34495e,stroke-width:2px,color:#fff
+    style PROCESS fill:#c0392b,stroke:#e74c3c,stroke-width:3px,color:#fff
+    style OUTPUTS fill:#27ae60,stroke:#2ecc71,stroke-width:3px,color:#fff
+</code></pre>
+<hr />
+<h1><a id="part-xii-executive-summary" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>PART XII: EXECUTIVE SUMMARY</h1>
+<pre><code class="language-plain_text">╔═══════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                           ║
+║                              EXECUTIVE SUMMARY                                            ║
+║                              ═════════════════                                            ║
+║                                                                                           ║
+║   WHAT IS MCI?                                                                            ║
+║   ────────────                                                                            ║
+║   MCI is the Mission Control Interface - the COCKPIT for the CIA-SIE-PURE trading        ║
+║   engine. It provides VISIBILITY and CONTROL without performing trading operations.       ║
+║                                                                                           ║
+║   WHY DOES MCI EXIST?                                                                     ║
+║   ───────────────────                                                                     ║
+║   To enable safe operation of CIA-SIE-PURE. Without MCI, the trading engine operates     ║
+║   blind - no visibility, no control, no safety. MCI is not optional; it is essential.    ║
+║                                                                                           ║
+║   WHAT MUST BE DONE?                                                                      ║
+║   ──────────────────                                                                      ║
+║   1. ERADICATE all previous implementations (Alpaca, current code)                        ║
+║   2. BUILD UXMI component library FIRST (CR-005)                                          ║
+║   3. BUILD each module in order: Token → Scanner → Ignition → Telemetry → Shutdown       ║
+║   4. PASS each Quality Gate before proceeding                                             ║
+║   5. INTEGRATE with CIA-SIE-PURE                                                          ║
+║   6. DEPLOY production-ready application                                                  ║
+║                                                                                           ║
+║   WHAT ARE THE CONSTRAINTS?                                                               ║
+║   ─────────────────────────                                                               ║
+║   Five Constitutional Requirements (CR-001 to CR-005) govern all development.             ║
+║   These are NON-NEGOTIABLE. Any violation invalidates the implementation.                 ║
+║                                                                                           ║
+║   WHAT IS THE OUTCOME?                                                                    ║
+║   ────────────────────                                                                    ║
+║   A production-ready dashboard that enables safe, visible, controlled operation           ║
+║   of the CIA-SIE-PURE trading engine. The pilot can finally see and control the plane.   ║
+║                                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════╝
+</code></pre>
+<hr />
+<h2><a id="document-metadata" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>DOCUMENT METADATA</h2>
+<pre><code class="language-plain_text">╔═══════════════════════════════════════════════════════════════════════════════════════════╗
+║   Document:        MCI_MASTER_USE_CASE_SPECIFICATION.md                                   ║
+║   Location:        00_MASTER_DOCUMENTS/                                                   ║
+║   Created:         2026-01-24                                                             ║
+║   Author:          Claude Opus 4.5                                                        ║
+║   Protocol:        IRONCLAD SUPERVISED                                                    ║
+║   Classification:  MISSION CRITICAL - TIER 1                                              ║
+║   Rigor Standard:  NASA Flight Systems / Medical Device / Financial Trading               ║
+║   Diagrams:        15 Mermaid charts                                                      ║
+║   Purpose:         Definitive Use Case Specification for MCI Application                  ║
+║   Supersedes:      All previous understanding of MCI purpose and scope                    ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════╝
+</code></pre>
+<hr />
+<p><em>This document establishes the canonical, fail-safe, NASA-grade understanding of the MCI application.</em><br />
+<em>It defines WHY MCI exists, WHAT it must do, and HOW it must be built.</em><br />
+<em>All subsequent development MUST align with this specification.</em><br />
+<em>Deviation is not permitted without formal amendment to this document.</em></p>
+</div></body></html>

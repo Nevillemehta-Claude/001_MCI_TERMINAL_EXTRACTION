@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<!-- saved from url=(0088)file:///Users/nevillemehta/Downloads/PROJECTS/01_MCI/MCI_DOCUMENT_ANALYSIS_COMPLETE.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCI Document Analysis - Complete Contextual Flow</title>
+    <style>
+        :root {
+            --color-fresh: #22C55E;
+            --color-recent: #EAB308;
+            --color-stale: #DC2626;
+            --color-primary: #3B82F6;
+            --color-sacred: #F59E0B;
+            --color-bg-dark: #0F172A;
+            --color-bg-card: #1E293B;
+            --color-bg-hover: #334155;
+            --color-text: #F8FAFC;
+            --color-text-muted: #94A3B8;
+            --color-border: #475569;
+            --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--color-bg-dark);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+            border-bottom: 1px solid var(--color-border);
+            padding: 2rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-fresh));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            color: var(--color-text-muted);
+            font-size: 1rem;
+        }
+
+        .header .timestamp {
+            color: var(--color-sacred);
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--color-bg-card);
+            padding: 1rem 2rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 120px;
+            z-index: 99;
+        }
+
+        .nav-btn {
+            background: var(--color-bg-dark);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Section Styling */
+        .section {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: linear-gradient(90deg, var(--color-bg-hover), var(--color-bg-card));
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .section-header:hover {
+            background: var(--color-bg-hover);
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-header .badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-weight: 600;
+        }
+
+        .badge-complete { background: var(--color-fresh); color: #000; }
+        .badge-progress { background: var(--color-sacred); color: #000; }
+        .badge-critical { background: var(--color-stale); color: #fff; }
+        .badge-info { background: var(--color-primary); color: #fff; }
+
+        .section-content {
+            padding: 1.5rem;
+            display: none;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        .chevron {
+            transition: transform 0.3s;
+            font-size: 1.5rem;
+        }
+
+        .section.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Phase Diagram */
+        .phase-diagram {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .phase-box {
+            background: var(--color-bg-dark);
+            border: 2px solid var(--color-border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .phase-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .phase-box.complete { border-color: var(--color-fresh); }
+        .phase-box.progress { border-color: var(--color-sacred); }
+        .phase-box.divergent { border-color: var(--color-stale); }
+
+        .phase-box .phase-num {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .phase-box .phase-name {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .phase-box .phase-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            display: inline-block;
+        }
+
+        .phase-box .arrow {
+            position: absolute;
+            right: -1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-border);
+            font-size: 1.25rem;
+        }
+
+        .phase-box:nth-child(6) .arrow,
+        .phase-box:nth-child(12) .arrow {
+            display: none;
+        }
+
+        /* Gate Boxes */
+        .gates-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .gate-box {
+            background: linear-gradient(135deg, var(--color-bg-hover), var(--color-bg-dark));
+            border: 2px solid var(--color-primary);
+            border-radius: 1rem;
+            padding: 1.25rem 1.5rem;
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .gate-box.passed { border-color: var(--color-fresh); }
+        .gate-box.pending { border-color: var(--color-text-muted); }
+
+        .gate-box .gate-num {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-fresh));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gate-box .gate-name {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Constitutional Requirements */
+        .cr-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .cr-item {
+            background: var(--color-bg-dark);
+            border-left: 4px solid var(--color-primary);
+            padding: 1.25rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            transition: all 0.2s;
+        }
+
+        .cr-item:hover {
+            background: var(--color-bg-hover);
+            transform: translateX(4px);
+        }
+
+        .cr-item.sacred {
+            border-left-color: var(--color-sacred);
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.1), transparent);
+        }
+
+        .cr-item .cr-id {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .cr-item.sacred .cr-id {
+            color: var(--color-sacred);
+        }
+
+        .cr-item .cr-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .cr-item .cr-desc {
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+        }
+
+        .sacred-badge {
+            background: var(--color-sacred);
+            color: #000;
+            font-size: 0.625rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-left: 0.5rem;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Tool Arsenal */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .tool-card {
+            background: var(--color-bg-dark);
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            transition: all 0.3s;
+        }
+
+        .tool-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+        }
+
+        .tool-card.primary {
+            border-color: var(--color-fresh);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), transparent);
+        }
+
+        .tool-card .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .tool-card .tool-name {
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .tool-card .tool-percent {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--color-fresh);
+        }
+
+        .tool-card .tool-role {
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-card .tool-phases {
+            font-size: 0.75rem;
+            color: var(--color-primary);
+        }
+
+        /* UXMI Components */
+        .uxmi-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .uxmi-table th, .uxmi-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .uxmi-table th {
+            background: var(--color-bg-dark);
+            font-weight: 600;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .uxmi-table tr:hover td {
+            background: var(--color-bg-hover);
+        }
+
+        .state-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .state-tag {
+            background: var(--color-bg-dark);
+            border: 1px solid var(--color-border);
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.625rem;
+            font-family: var(--font-mono);
+        }
+
+        /* Remediation Status */
+        .remediation-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .remediation-item {
+            background: var(--color-bg-dark);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .remediation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--color-bg-hover);
+        }
+
+        .priority-badge {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+        }
+
+        .priority-p1 { background: var(--color-stale); }
+        .priority-p2 { background: var(--color-sacred); color: #000; }
+        .priority-p3 { background: var(--color-primary); }
+        .priority-p4 { background: var(--color-text-muted); color: #000; }
+
+        .remediation-body {
+            padding: 1.25rem;
+        }
+
+        .remediation-body h4 {
+            color: var(--color-text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-list {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--color-fresh);
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: #0D1117;
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .code-block .comment { color: #6A9955; }
+        .code-block .keyword { color: #569CD6; }
+        .code-block .string { color: #CE9178; }
+        .code-block .function { color: #DCDCAA; }
+        .code-block .number { color: #B5CEA8; }
+
+        /* Conversation Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--color-border);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            border: 2px solid var(--color-bg-card);
+        }
+
+        .timeline-item.user::before { background: var(--color-fresh); }
+        .timeline-item.assistant::before { background: var(--color-primary); }
+        .timeline-item.system::before { background: var(--color-sacred); }
+
+        .timeline-time {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-content {
+            background: var(--color-bg-dark);
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        /* Status Indicators */
+        .status-complete { color: var(--color-fresh); }
+        .status-progress { color: var(--color-sacred); }
+        .status-error { color: var(--color-stale); }
+        .status-pending { color: var(--color-text-muted); }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .data-table th, .data-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .data-table th {
+            background: var(--color-bg-dark);
+            font-weight: 600;
+            color: var(--color-text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .data-table tr:hover td {
+            background: var(--color-bg-hover);
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .summary-card {
+            background: var(--color-bg-dark);
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .summary-card .value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-fresh));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .summary-card .label {
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Print Styles */
+        @media print {
+            .header { position: static; }
+            .nav { display: none; }
+            .section-content { display: block !important; }
+            .chevron { display: none; }
+            body { background: #fff; color: #000; }
+            .section { break-inside: avoid; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .phase-diagram {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .phase-box .arrow {
+                display: none;
+            }
+            .header h1 {
+                font-size: 1.75rem;
+            }
+            .nav {
+                top: 100px;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Diagram Container */
+        .diagram-box {
+            background: var(--color-bg-dark);
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            white-space: pre;
+            overflow-x: auto;
+            line-height: 1.4;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);
+            border: 1px solid var(--color-primary);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .highlight-box.sacred {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), transparent);
+            border-color: var(--color-sacred);
+        }
+
+        .highlight-box.success {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), transparent);
+            border-color: var(--color-fresh);
+        }
+
+        .highlight-box.error {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), transparent);
+            border-color: var(--color-stale);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--color-text-muted);
+            border-top: 1px solid var(--color-border);
+            margin-top: 2rem;
+        }
+
+        .footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>MCI Document Analysis</h1>
+        <p class="subtitle">Complete Contextual Flow - Gold Standard Lifecycle Framework</p>
+        <p class="timestamp">Session Recovery: 2026-01-23 | Project: Mission Control Interface</p>
+    </header>
+
+    <nav class="nav">
+        <button class="nav-btn" onclick="scrollToSection(&#39;overview&#39;)">Overview</button>
+        <button class="nav-btn active" onclick="scrollToSection(&#39;lifecycle&#39;)">12-Phase Lifecycle</button>
+        <button class="nav-btn" onclick="scrollToSection(&#39;gates&#39;)">6 Gates</button>
+        <button class="nav-btn" onclick="scrollToSection(&#39;constitutional&#39;)">5 CRs</button>
+        <button class="nav-btn" onclick="scrollToSection(&#39;arsenal&#39;)">9-Tool Arsenal</button>
+        <button class="nav-btn" onclick="scrollToSection(&#39;uxmi&#39;)">UXMI Components</button>
+        <button class="nav-btn" onclick="scrollToSection(&#39;remediation&#39;)">P1-P4 Remediation</button>
+        <button class="nav-btn" onclick="scrollToSection(&#39;timeline&#39;)">Session Timeline</button>
+    </nav>
+
+    <main class="container">
+        <!-- Overview Section -->
+        <section class="section open fade-in" id="overview">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><span>📊</span> Executive Overview <span class="badge badge-complete">COMPLETE</span></h2>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="section-content active">
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="value">12</div>
+                        <div class="label">Lifecycle Phases</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="value">6</div>
+                        <div class="label">Quality Gates</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="value">5</div>
+                        <div class="label">Constitutional Requirements</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="value">9</div>
+                        <div class="label">Tools in Arsenal</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="value">7</div>
+                        <div class="label">UXMI Components</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="value">4</div>
+                        <div class="label">P1-P4 Fixes Complete</div>
+                    </div>
+                </div>
+
+                <div class="highlight-box success">
+                    <h3 style="margin-bottom: 1rem;">Current Status Summary</h3>
+                    <table class="data-table">
+                        <tbody><tr>
+                            <td>Compliance Status</td>
+                            <td><span class="status-complete">62% Compliant</span> | 6% Partial | 23% Remediated | 9% Created</td>
+                        </tr>
+                        <tr>
+                            <td>CR-004 (SACRED)</td>
+                            <td><span class="status-complete">✓ FIXED</span> - 6:00 AM IST Token Expiry Implemented</td>
+                        </tr>
+                        <tr>
+                            <td>Backend Integration</td>
+                            <td><span class="status-complete">✓ FIXED</span> - 4 Indian Brokers (ICICI, HDFC, Kotak, Zerodha)</td>
+                        </tr>
+                        <tr>
+                            <td>API Integration</td>
+                            <td><span class="status-complete">✓ FIXED</span> - Kite Connect API (Previously Alpaca)</td>
+                        </tr>
+                        <tr>
+                            <td>Runtime Verification</td>
+                            <td><span class="status-complete">✓ PASSED</span> - All phases tested successfully</td>
+                        </tr>
+                    </tbody></table>
+                </div>
+
+                <div class="highlight-box">
+                    <h3 style="margin-bottom: 1rem;">Project Constitution</h3>
+                    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+                        MCI (Mission Control Interface) is a decision-support trading dashboard for the Indian market.
+                        It operates under strict constitutional constraints that ensure it remains an information display
+                        system and NEVER executes trades autonomously.
+                    </p>
+                    <ul style="color: var(--color-text-muted); padding-left: 1.5rem;">
+                        <li><strong>Decision-Support ONLY</strong> - No buy/sell buttons</li>
+                        <li><strong>Descriptive AI</strong> - Never prescriptive recommendations</li>
+                        <li><strong>6:00 AM IST Token Expiry</strong> - Sacred, inviolable timing</li>
+                        <li><strong>Equal Visual Weight</strong> - Bullish = Bearish presentation</li>
+                        <li><strong>7-State UXMI</strong> - All interactive elements have full state coverage</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 12-Phase Lifecycle Section -->
+        <section class="section fade-in open" id="lifecycle">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><span>🔄</span> 12-Phase Gold Standard Lifecycle <span class="badge badge-info">FRAMEWORK</span></h2>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="section-content active">
+                <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">
+                    The Gold Standard Lifecycle defines 12 sequential phases with mandatory gates between key transitions.
+                    Each phase has specific deliverables, tools, and exit criteria.
+                </p>
+
+                <h3 style="margin-bottom: 1rem;">Phases 1-6: Planning &amp; Development</h3>
+                <div class="phase-diagram">
+                    <div class="phase-box complete">
+                        <div class="phase-num">PHASE 1</div>
+                        <div class="phase-name">Ideation</div>
+                        <div class="phase-status badge-complete">✓ COMPLETE</div>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="phase-box complete">
+                        <div class="phase-num">PHASE 2</div>
+                        <div class="phase-name">Concept</div>
+                        <div class="phase-status badge-complete">✓ COMPLETE</div>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="phase-box complete">
+                        <div class="phase-num">PHASE 3</div>
+                        <div class="phase-name">Requirements</div>
+                        <div class="phase-status badge-complete">✓ COMPLETE</div>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="phase-box complete">
+                        <div class="phase-num">PHASE 3.5</div>
+                        <div class="phase-name">UI/UX</div>
+                        <div class="phase-status badge-complete">✓ COMPLETE</div>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="phase-box complete">
+                        <div class="phase-num">PHASE 4</div>
+                        <div class="phase-name">Architecture</div>
+                        <div class="phase-status badge-complete">✓ COMPLETE</div>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="phase-box complete">
+                        <div class="phase-num">PHASE 5</div>
+                        <div class="phase-name">Specification</div>
+                        <div class="phase-status badge-complete">✓ COMPLETE</div>
+                    </div>
+                </div>
+
+                <h3 style="margin: 2rem 0 1rem;">Phases 6-11: Development &amp; Operations</h3>
+                <div class="phase-diagram">
+                    <div class="phase-box complete">
+                        <div class="phase-num">PHASE 6</div>
+                        <div class="phase-name">Development</div>
+                        <div class="phase-status badge-complete">✓ REMEDIATED</div>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="phase-box progress">
+                        <div class="phase-num">PHASE 7</div>
+                        <div class="phase-name">Integration</div>
+                        <div class="phase-status badge-progress">IN PROGRESS</div>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="phase-box">
+                        <div class="phase-num">PHASE 8</div>
+                        <div class="phase-name">Verification</div>
+                        <div class="phase-status" style="background: var(--color-text-muted); color: #000;">PENDING</div>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="phase-box">
+                        <div class="phase-num">PHASE 9</div>
+                        <div class="phase-name">Documentation</div>
+                        <div class="phase-status" style="background: var(--color-text-muted); color: #000;">PENDING</div>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="phase-box">
+                        <div class="phase-num">PHASE 10</div>
+                        <div class="phase-name">Deployment</div>
+                        <div class="phase-status" style="background: var(--color-text-muted); color: #000;">PENDING</div>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="phase-box">
+                        <div class="phase-num">PHASE 11</div>
+                        <div class="phase-name">Operations</div>
+                        <div class="phase-status" style="background: var(--color-text-muted); color: #000;">PENDING</div>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3 style="margin-bottom: 1rem;">Phase Details</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Phase</th>
+                                <th>Purpose</th>
+                                <th>Primary Tool</th>
+                                <th>Key Deliverable</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1. Ideation</td>
+                                <td>Identify problem and opportunity</td>
+                                <td>CLAUDE</td>
+                                <td>PROJECT_BRIEF_BCI_001.md</td>
+                            </tr>
+                            <tr>
+                                <td>2. Concept</td>
+                                <td>Transform idea into defined concept</td>
+                                <td>CLAUDE</td>
+                                <td>MASTER_SYNTHESIS_CIA-SIE_ECOSYSTEM.md</td>
+                            </tr>
+                            <tr>
+                                <td>3. Requirements</td>
+                                <td>Define what system must do</td>
+                                <td>CLAUDE</td>
+                                <td>Constitutional Constraints (CR-001 to CR-005)</td>
+                            </tr>
+                            <tr>
+                                <td>3.5. UI/UX</td>
+                                <td>Visual approval before architecture</td>
+                                <td>CLAUDE CODE + REPLIT</td>
+                                <td>Interactive Prototype</td>
+                            </tr>
+                            <tr>
+                                <td>4. Architecture</td>
+                                <td>Define system structure</td>
+                                <td>CLAUDE</td>
+                                <td>MCI_C4_ARCHITECTURE.html</td>
+                            </tr>
+                            <tr>
+                                <td>5. Specification</td>
+                                <td>Define precise behaviors</td>
+                                <td>CLAUDE</td>
+                                <td>MCI_MASTER_SPECIFICATION_v1.0.0.html</td>
+                            </tr>
+                            <tr>
+                                <td>6. Development</td>
+                                <td>Build components to spec</td>
+                                <td>CLAUDE CODE (80%)</td>
+                                <td>Source code in /src</td>
+                            </tr>
+                            <tr>
+                                <td>7. Integration</td>
+                                <td>Connect components</td>
+                                <td>CLAUDE CODE + GITHUB</td>
+                                <td>Integrated system</td>
+                            </tr>
+                            <tr>
+                                <td>8. Verification</td>
+                                <td>Validate against requirements</td>
+                                <td>VITEST + PLAYWRIGHT</td>
+                                <td>Test reports</td>
+                            </tr>
+                            <tr>
+                                <td>9. Documentation</td>
+                                <td>Create user/dev docs</td>
+                                <td>CLAUDE</td>
+                                <td>Documentation set</td>
+                            </tr>
+                            <tr>
+                                <td>10. Deployment</td>
+                                <td>Release to production</td>
+                                <td>VERCEL + DOCKER</td>
+                                <td>Production deployment</td>
+                            </tr>
+                            <tr>
+                                <td>11. Operations</td>
+                                <td>Monitor and maintain</td>
+                                <td>SENTRY</td>
+                                <td>Operational dashboards</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6 Gates Section -->
+        <section class="section" id="gates">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><span>🚪</span> 6 Quality Gates <span class="badge badge-info">CHECKPOINTS</span></h2>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="section-content">
+                <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">
+                    Gates are mandatory checkpoints between phases. No phase can proceed until its gate criteria are met.
+                    Principal approval is required at each gate.
+                </p>
+
+                <div class="gates-row">
+                    <div class="gate-box passed">
+                        <div class="gate-num">0.5</div>
+                        <div class="gate-name">UI/UX Approval</div>
+                        <div style="color: var(--color-fresh); font-size: 0.75rem; margin-top: 0.5rem;">✓ PASSED</div>
+                    </div>
+                    <div class="gate-box passed">
+                        <div class="gate-num">1</div>
+                        <div class="gate-name">Design Review</div>
+                        <div style="color: var(--color-fresh); font-size: 0.75rem; margin-top: 0.5rem;">✓ PASSED</div>
+                    </div>
+                    <div class="gate-box passed">
+                        <div class="gate-num">2</div>
+                        <div class="gate-name">Spec Review</div>
+                        <div style="color: var(--color-fresh); font-size: 0.75rem; margin-top: 0.5rem;">✓ PASSED</div>
+                    </div>
+                    <div class="gate-box passed">
+                        <div class="gate-num">3</div>
+                        <div class="gate-name">Code Review</div>
+                        <div style="color: var(--color-fresh); font-size: 0.75rem; margin-top: 0.5rem;">✓ REMEDIATED</div>
+                    </div>
+                    <div class="gate-box pending">
+                        <div class="gate-num">4</div>
+                        <div class="gate-name">Integration Review</div>
+                        <div style="color: var(--color-text-muted); font-size: 0.75rem; margin-top: 0.5rem;">PENDING</div>
+                    </div>
+                    <div class="gate-box pending">
+                        <div class="gate-num">5</div>
+                        <div class="gate-name">Release Review</div>
+                        <div style="color: var(--color-text-muted); font-size: 0.75rem; margin-top: 0.5rem;">PENDING</div>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3 style="margin-bottom: 1rem;">Gate Criteria</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Gate</th>
+                                <th>Entry From</th>
+                                <th>Exit To</th>
+                                <th>Criteria</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Gate 0.5</strong></td>
+                                <td>Phase 3.5 UI/UX</td>
+                                <td>Phase 4 Architecture</td>
+                                <td>Interactive prototype approved, CR-001 to CR-005 verified in UI</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gate 1</strong></td>
+                                <td>Phase 4 Architecture</td>
+                                <td>Phase 5 Specification</td>
+                                <td>C4 diagrams complete, technology decisions documented</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gate 2</strong></td>
+                                <td>Phase 5 Specification</td>
+                                <td>Phase 6 Development</td>
+                                <td>100% requirement traceability, all APIs specified</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gate 3</strong></td>
+                                <td>Phase 6 Development</td>
+                                <td>Phase 7 Integration</td>
+                                <td>All code reviews passed, unit tests &gt;90%, no divergence</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gate 4</strong></td>
+                                <td>Phase 7 Integration</td>
+                                <td>Phase 8 Verification</td>
+                                <td>Integration tests pass, all components connected</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gate 5</strong></td>
+                                <td>Phase 8 Verification</td>
+                                <td>Phase 10 Deployment</td>
+                                <td>All test pyramids pass, security audit complete</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Constitutional Requirements Section -->
+        <section class="section" id="constitutional">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><span>📜</span> 5 Constitutional Requirements <span class="badge badge-critical">INVIOLABLE</span></h2>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="section-content">
+                <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">
+                    Constitutional Requirements (CRs) are inviolable constraints that define the fundamental nature of the system.
+                    Violation of any CR is grounds for immediate rollback and remediation.
+                </p>
+
+                <div class="cr-grid">
+                    <div class="cr-item">
+                        <div class="cr-id">CR-001</div>
+                        <div class="cr-title">Decision-Support, NOT Decision-Making</div>
+                        <div class="cr-desc">
+                            <p>The system provides information to support human decisions but NEVER makes trading decisions.</p>
+                            <ul style="margin-top: 0.5rem; padding-left: 1.25rem;">
+                                <li>ZERO trading signal generation</li>
+                                <li>NO buy/sell buttons anywhere in the UI</li>
+                                <li>Display information ONLY, never act on it</li>
+                                <li>All execution happens externally in broker platforms</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="cr-item">
+                        <div class="cr-id">CR-002</div>
+                        <div class="cr-title">Expose Contradictions, NEVER Resolve</div>
+                        <div class="cr-desc">
+                            <p>When data sources conflict, the system displays all perspectives with equal weight.</p>
+                            <ul style="margin-top: 0.5rem; padding-left: 1.25rem;">
+                                <li>Show conflicting states side-by-side</li>
+                                <li>Equal visual weight for bullish and bearish signals</li>
+                                <li>NEVER auto-fix or auto-reconcile conflicts</li>
+                                <li>User interprets contradictions themselves</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="cr-item">
+                        <div class="cr-id">CR-003</div>
+                        <div class="cr-title">Descriptive AI, NOT Prescriptive AI</div>
+                        <div class="cr-desc">
+                            <p>AI components describe what IS, never what SHOULD BE.</p>
+                            <ul style="margin-top: 0.5rem; padding-left: 1.25rem;">
+                                <li>Observations only: "Position is X"</li>
+                                <li>NEVER recommend: "You should do Y"</li>
+                                <li>No action verbs in AI output (buy, sell, hold)</li>
+                                <li>Purely informational language</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="cr-item sacred">
+                        <div class="cr-id">CR-004 <span class="sacred-badge">SACRED</span></div>
+                        <div class="cr-title">Token Lifecycle Accuracy - 6:00 AM IST Expiry</div>
+                        <div class="cr-desc">
+                            <p><strong>This constraint is SACRED and inviolable.</strong></p>
+                            <ul style="margin-top: 0.5rem; padding-left: 1.25rem;">
+                                <li>Kite tokens expire at exactly 6:00 AM IST (00:30 UTC)</li>
+                                <li>Never approximate, never round</li>
+                                <li>Countdown must be to-the-second accurate</li>
+                                <li>System must gracefully handle expiry transition</li>
+                                <li>No 24-hour countdown - FIXED DAILY TIME</li>
+                            </ul>
+                            <div class="code-block" style="margin-top: 1rem;">
+<span class="comment">// CR-004 Implementation (SACRED)</span>
+<span class="keyword">const</span> <span class="function">calculateNext6AMIST</span> = () =&gt; {
+  <span class="keyword">const</span> expiry = <span class="keyword">new</span> Date();
+  expiry.setUTCHours(<span class="number">0</span>, <span class="number">30</span>, <span class="number">0</span>, <span class="number">0</span>); <span class="comment">// 6:00 AM IST = 00:30 UTC</span>
+  <span class="keyword">if</span> (<span class="keyword">new</span> Date() &gt;= expiry) {
+    expiry.setDate(expiry.getDate() + <span class="number">1</span>);
+  }
+  <span class="keyword">return</span> expiry.getTime();
+};
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cr-item">
+                        <div class="cr-id">CR-005</div>
+                        <div class="cr-title">User Experience Micro-Interactions (UXMI)</div>
+                        <div class="cr-desc">
+                            <p>All interactive elements must implement the 7-state UXMI specification.</p>
+                            <ul style="margin-top: 0.5rem; padding-left: 1.25rem;">
+                                <li>7 states: DEFAULT, HOVER, ACTIVE, FOCUS, DISABLED, LOADING, ERROR</li>
+                                <li>Tooltips with 300ms hover delay</li>
+                                <li>Error messages in WHAT/WHY/HOW format</li>
+                                <li>Consistent animation curves (ease-out, 200ms)</li>
+                                <li>7 components: Tooltip, Button, Input, Spinner, ProgressBar, Toast, ErrorDisplay</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9-Tool Arsenal Section -->
+        <section class="section" id="arsenal">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><span>🛠️</span> 9-Tool Arsenal <span class="badge badge-info">ECOSYSTEM</span></h2>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="section-content">
+                <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">
+                    The 9-Tool Arsenal defines the complete toolchain for MCI development, deployment, and operations.
+                    Each tool has a specific role and phase deployment.
+                </p>
+
+                <div class="tool-grid">
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-name">1. CLAUDE</span>
+                            <span class="tool-percent">Strategy</span>
+                        </div>
+                        <div class="tool-role">Strategist &amp; Architect</div>
+                        <div class="tool-phases">Phases: 1-5, 9 (Planning &amp; Documentation)</div>
+                    </div>
+
+                    <div class="tool-card primary">
+                        <div class="tool-header">
+                            <span class="tool-name">2. CLAUDE CODE</span>
+                            <span class="tool-percent">80%</span>
+                        </div>
+                        <div class="tool-role">Primary Component Generator</div>
+                        <div class="tool-phases">Phases: 3.5, 6-8 (BULK GENERATION)</div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-name">3. CURSOR</span>
+                            <span class="tool-percent">20%</span>
+                        </div>
+                        <div class="tool-role">Refinement &amp; Debugging</div>
+                        <div class="tool-phases">Phases: 6-7 (Interactive Refinement)</div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-name">4. REPLIT</span>
+                            <span class="tool-percent">Validation</span>
+                        </div>
+                        <div class="tool-role">Rapid Prototyping</div>
+                        <div class="tool-phases">Phases: 3.5, 6 (UI Experiments)</div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-name">5. VERCEL</span>
+                            <span class="tool-percent">E2E</span>
+                        </div>
+                        <div class="tool-role">Staging &amp; E2E Validation</div>
+                        <div class="tool-phases">Phases: 7-8, 10 (Preview &amp; Deploy)</div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-name">6. GITHUB</span>
+                            <span class="tool-percent">CI/CD</span>
+                        </div>
+                        <div class="tool-role">Automation Backbone</div>
+                        <div class="tool-phases">Phases: 6-10 (All Code Phases)</div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-name">7. SENTRY</span>
+                            <span class="tool-percent">Monitoring</span>
+                        </div>
+                        <div class="tool-role">Runtime Verification</div>
+                        <div class="tool-phases">Phases: 8, 10-11 (Verify &amp; Ops)</div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-name">8. COWORK</span>
+                            <span class="tool-percent">3x Speed</span>
+                        </div>
+                        <div class="tool-role">Parallel Execution</div>
+                        <div class="tool-phases">Phases: 6-7 (Multi-Agent Building)</div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-name">9. DOCKER</span>
+                            <span class="tool-percent">Infra</span>
+                        </div>
+                        <div class="tool-role">Containerization</div>
+                        <div class="tool-phases">Phases: 6-10 (Environment Parity)</div>
+                    </div>
+                </div>
+
+                <div class="diagram-box" style="margin-top: 2rem;">
+                                         ┌─────────────┐
+                                         │   CLAUDE    │
+                                         │  (Strategy) │
+                                         └──────┬──────┘
+                                                │
+                                Defines requirements &amp;
+                                constitutional constraints
+                                                │
+                                                ▼
+                     ┌──────────────────────────────────────────────────┐
+                     │                 CLAUDE CODE (80%)                │
+                     │               PRIMARY GENERATOR                  │
+                     └───────────────────────┬──────────────────────────┘
+                                             │
+                     ┌───────────────────────┼───────────────────────┐
+                     │                       │                       │
+                     ▼                       ▼                       ▼
+             ┌─────────────┐         ┌─────────────┐         ┌─────────────┐
+             │   REPLIT    │         │   CURSOR    │         │   COWORK    │
+             │  (Validate) │         │   (Refine)  │         │  (Parallel) │
+             └──────┬──────┘         └──────┬──────┘         └──────┬──────┘
+                    │                       │                       │
+                    └───────────────────────┼───────────────────────┘
+                                            │
+                                            ▼
+                     ┌──────────────────────────────────────────────────┐
+                     │                    GITHUB                        │
+                     │               CI/CD BACKBONE                     │
+                     └───────────────────────┬──────────────────────────┘
+                                             │
+                                             ▼
+                     ┌──────────────────────────────────────────────────┐
+                     │                    VERCEL                        │
+                     │              PREVIEW DEPLOYMENT                  │
+                     └───────────────────────┬──────────────────────────┘
+                                             │
+                                             ▼
+                     ┌──────────────────────────────────────────────────┐
+                     │                    SENTRY                        │
+                     │               ERROR MONITORING                   │
+                     └──────────────────────────────────────────────────┘
+                </div>
+            </div>
+        </section>
+
+        <!-- UXMI Components Section -->
+        <section class="section" id="uxmi">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><span>🎨</span> UXMI Component Library <span class="badge badge-complete">CR-005 COMPLIANT</span></h2>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="section-content">
+                <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">
+                    The UXMI (User Experience Micro-Interactions) specification defines 7 components, each with 7 mandatory states.
+                    This ensures consistent, accessible, and responsive UI across the entire application.
+                </p>
+
+                <table class="uxmi-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Component</th>
+                            <th>Purpose</th>
+                            <th>7 States</th>
+                            <th>Special Rules</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><strong>Tooltip</strong></td>
+                            <td>Contextual information on hover</td>
+                            <td>
+                                <div class="state-tags">
+                                    <span class="state-tag">DEFAULT</span>
+                                    <span class="state-tag">HOVER</span>
+                                    <span class="state-tag">ACTIVE</span>
+                                    <span class="state-tag">FOCUS</span>
+                                    <span class="state-tag">DISABLED</span>
+                                    <span class="state-tag">LOADING</span>
+                                    <span class="state-tag">ERROR</span>
+                                </div>
+                            </td>
+                            <td>300ms hover delay</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><strong>Button</strong></td>
+                            <td>User action triggers</td>
+                            <td>
+                                <div class="state-tags">
+                                    <span class="state-tag">DEFAULT</span>
+                                    <span class="state-tag">HOVER</span>
+                                    <span class="state-tag">ACTIVE</span>
+                                    <span class="state-tag">FOCUS</span>
+                                    <span class="state-tag">DISABLED</span>
+                                    <span class="state-tag">LOADING</span>
+                                    <span class="state-tag">ERROR</span>
+                                </div>
+                            </td>
+                            <td>Spinner in LOADING state</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><strong>Input</strong></td>
+                            <td>Data entry fields</td>
+                            <td>
+                                <div class="state-tags">
+                                    <span class="state-tag">DEFAULT</span>
+                                    <span class="state-tag">HOVER</span>
+                                    <span class="state-tag">ACTIVE</span>
+                                    <span class="state-tag">FOCUS</span>
+                                    <span class="state-tag">DISABLED</span>
+                                    <span class="state-tag">LOADING</span>
+                                    <span class="state-tag">ERROR</span>
+                                </div>
+                            </td>
+                            <td>Validation on blur</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><strong>Spinner</strong></td>
+                            <td>Loading indication</td>
+                            <td>
+                                <div class="state-tags">
+                                    <span class="state-tag">DEFAULT</span>
+                                    <span class="state-tag">HOVER</span>
+                                    <span class="state-tag">ACTIVE</span>
+                                    <span class="state-tag">FOCUS</span>
+                                    <span class="state-tag">DISABLED</span>
+                                    <span class="state-tag">LOADING</span>
+                                    <span class="state-tag">ERROR</span>
+                                </div>
+                            </td>
+                            <td>60fps animation</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td><strong>ProgressBar</strong></td>
+                            <td>Operation progress</td>
+                            <td>
+                                <div class="state-tags">
+                                    <span class="state-tag">DEFAULT</span>
+                                    <span class="state-tag">HOVER</span>
+                                    <span class="state-tag">ACTIVE</span>
+                                    <span class="state-tag">FOCUS</span>
+                                    <span class="state-tag">DISABLED</span>
+                                    <span class="state-tag">LOADING</span>
+                                    <span class="state-tag">ERROR</span>
+                                </div>
+                            </td>
+                            <td>300ms transition</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td><strong>Toast</strong></td>
+                            <td>Notifications</td>
+                            <td>
+                                <div class="state-tags">
+                                    <span class="state-tag">SUCCESS</span>
+                                    <span class="state-tag">INFO</span>
+                                    <span class="state-tag">WARNING</span>
+                                    <span class="state-tag">ERROR</span>
+                                    <span class="state-tag">ENTERING</span>
+                                    <span class="state-tag">VISIBLE</span>
+                                    <span class="state-tag">EXITING</span>
+                                </div>
+                            </td>
+                            <td>200ms enter/exit, auto-dismiss 5s</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td><strong>ErrorDisplay</strong></td>
+                            <td>Error presentation</td>
+                            <td>
+                                <div class="state-tags">
+                                    <span class="state-tag">WHAT</span>
+                                    <span class="state-tag">WHY</span>
+                                    <span class="state-tag">HOW</span>
+                                    <span class="state-tag">INLINE</span>
+                                    <span class="state-tag">BANNER</span>
+                                    <span class="state-tag">MODAL</span>
+                                    <span class="state-tag">TOAST</span>
+                                </div>
+                            </td>
+                            <td>WHAT/WHY/HOW format required</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="highlight-box" style="margin-top: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem;">Design Tokens</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Token</th>
+                                <th>Value</th>
+                                <th>Usage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>--color-fresh</code></td>
+                                <td style="color: #22C55E;">#22C55E</td>
+                                <td>Fresh/valid state, success indicators</td>
+                            </tr>
+                            <tr>
+                                <td><code>--color-recent</code></td>
+                                <td style="color: #EAB308;">#EAB308</td>
+                                <td>Recent/warning state, pending items</td>
+                            </tr>
+                            <tr>
+                                <td><code>--color-stale</code></td>
+                                <td style="color: #DC2626;">#DC2626</td>
+                                <td>Stale/error state, critical alerts</td>
+                            </tr>
+                            <tr>
+                                <td><code>--color-primary</code></td>
+                                <td style="color: #3B82F6;">#3B82F6</td>
+                                <td>Primary actions, links, focus states</td>
+                            </tr>
+                            <tr>
+                                <td><code>--font-primary</code></td>
+                                <td>Plus Jakarta Sans</td>
+                                <td>Headings, body text, UI labels</td>
+                            </tr>
+                            <tr>
+                                <td><code>--font-mono</code></td>
+                                <td>JetBrains Mono</td>
+                                <td>Code, data, numbers, timestamps</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- P1-P4 Remediation Section -->
+        <section class="section" id="remediation">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><span>🔧</span> P1-P4 Remediation Complete <span class="badge badge-complete">ALL FIXED</span></h2>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="section-content">
+                <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">
+                    The remediation addressed all divergences from specification identified during the document analysis.
+                    All fixes have been implemented, tested, and committed to the feature branch.
+                </p>
+
+                <div class="remediation-grid">
+                    <!-- P1 -->
+                    <div class="remediation-item">
+                        <div class="remediation-header">
+                            <div>
+                                <span class="priority-badge priority-p1">P1</span>
+                                <strong style="margin-left: 1rem;">CR-004 Token Expiry (SACRED)</strong>
+                            </div>
+                            <span class="status-complete">✓ FIXED</span>
+                        </div>
+                        <div class="remediation-body">
+                            <h4>Issue</h4>
+                            <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+                                Token expiry used 24-hour countdown instead of fixed 6:00 AM IST daily expiry.
+                            </p>
+                            <h4>Files Modified</h4>
+                            <div class="file-list">
+                                <div>src/client/stores/tokenStore.ts</div>
+                                <div>src/client/components/phase0/TokenCaptureForm.tsx</div>
+                                <div>src/server/routes/auth.ts</div>
+                            </div>
+                            <h4 style="margin-top: 1rem;">Solution</h4>
+                            <div class="code-block">
+<span class="comment">// BEFORE (WRONG):</span>
+expiresAt: Date.now() + <span class="number">24</span> * <span class="number">60</span> * <span class="number">60</span> * <span class="number">1000</span>
+
+<span class="comment">// AFTER (CORRECT):</span>
+expiresAt: <span class="function">calculateNext6AMIST</span>()
+<span class="comment">// Returns next 6:00 AM IST (00:30 UTC)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- P2 -->
+                    <div class="remediation-item">
+                        <div class="remediation-header">
+                            <div>
+                                <span class="priority-badge priority-p2">P2</span>
+                                <strong style="margin-left: 1rem;">Backend Selection (4 Indian Brokers)</strong>
+                            </div>
+                            <span class="status-complete">✓ FIXED</span>
+                        </div>
+                        <div class="remediation-body">
+                            <h4>Issue</h4>
+                            <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+                                Backend selector showed Paper/Live toggle instead of 4 Indian broker options.
+                            </p>
+                            <h4>Files Modified</h4>
+                            <div class="file-list">
+                                <div>src/client/stores/ignitionStore.ts</div>
+                                <div>src/client/components/phase2/BackendSelector.tsx</div>
+                            </div>
+                            <h4 style="margin-top: 1rem;">Solution</h4>
+                            <div class="code-block">
+<span class="comment">// BEFORE (WRONG):</span>
+<span class="keyword">type</span> BackendType = <span class="string">'paper'</span> | <span class="string">'live'</span>
+
+<span class="comment">// AFTER (CORRECT):</span>
+<span class="keyword">type</span> BackendType = <span class="string">'icici'</span> | <span class="string">'hdfc'</span> | <span class="string">'kotak'</span> | <span class="string">'zerodha'</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- P3 -->
+                    <div class="remediation-item">
+                        <div class="remediation-header">
+                            <div>
+                                <span class="priority-badge priority-p3">P3</span>
+                                <strong style="margin-left: 1rem;">Scanner Checks (NSE/BSE)</strong>
+                            </div>
+                            <span class="status-complete">✓ FIXED</span>
+                        </div>
+                        <div class="remediation-body">
+                            <h4>Issue</h4>
+                            <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+                                Scanner checks referenced Alpaca/US market instead of Kite/Indian market.
+                            </p>
+                            <h4>Files Modified</h4>
+                            <div class="file-list">
+                                <div>src/client/stores/scannerStore.ts</div>
+                                <div>src/server/routes/scan.ts</div>
+                            </div>
+                            <h4 style="margin-top: 1rem;">Solution</h4>
+                            <div class="code-block">
+<span class="comment">// Market hours changed from US to India:</span>
+marketOpen: <span class="string">'9:15 AM IST'</span>   <span class="comment">// NSE/BSE open</span>
+marketClose: <span class="string">'3:30 PM IST'</span>  <span class="comment">// NSE/BSE close</span>
+
+<span class="comment">// Scanner checks updated:</span>
+- Kite token validation
+- NSE/BSE data feed check
+- 4 Indian broker connectivity
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- P4 -->
+                    <div class="remediation-item">
+                        <div class="remediation-header">
+                            <div>
+                                <span class="priority-badge priority-p4">P4</span>
+                                <strong style="margin-left: 1rem;">Kite API Service (New File)</strong>
+                            </div>
+                            <span class="status-complete">✓ CREATED</span>
+                        </div>
+                        <div class="remediation-body">
+                            <h4>Issue</h4>
+                            <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+                                Kite API service file was missing entirely.
+                            </p>
+                            <h4>File Created</h4>
+                            <div class="file-list">
+                                <div>src/server/services/kite.ts (NEW)</div>
+                            </div>
+                            <h4 style="margin-top: 1rem;">Implementation</h4>
+                            <div class="code-block">
+<span class="comment">// Kite API Service provides:</span>
+- REST API: https://api.kite.trade
+- WebSocket: wss://ws.kite.trade
+- Profile, quotes, orders, positions, holdings, margins
+- Token validation
+- Real-time tick data subscription
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlight-box success" style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">Runtime Verification Results</h3>
+                    <table class="data-table">
+                        <tbody><tr>
+                            <td>Phase 0: Token Capture</td>
+                            <td><span class="status-complete">✓ VERIFIED</span> - Kite credentials accepted, 6:00 AM IST countdown shown</td>
+                        </tr>
+                        <tr>
+                            <td>Phase 1: Validation</td>
+                            <td><span class="status-complete">✓ VERIFIED</span> - Token validated against Kite API</td>
+                        </tr>
+                        <tr>
+                            <td>Phase 2: Broker Selection</td>
+                            <td><span class="status-complete">✓ VERIFIED</span> - All 4 Indian brokers displayed</td>
+                        </tr>
+                        <tr>
+                            <td>Phase 2: Ignition</td>
+                            <td><span class="status-complete">✓ VERIFIED</span> - System armed and ignition successful</td>
+                        </tr>
+                        <tr>
+                            <td>Phase 3: Mission Control</td>
+                            <td><span class="status-complete">✓ VERIFIED</span> - Telemetry dashboard rendered</td>
+                        </tr>
+                        <tr>
+                            <td>Build Status</td>
+                            <td><span class="status-complete">✓ PASSING</span> - No TypeScript errors</td>
+                        </tr>
+                    </tbody></table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Session Timeline Section -->
+        <section class="section" id="timeline">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><span>📅</span> Session Timeline <span class="badge badge-info">RECOVERED</span></h2>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="section-content">
+                <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">
+                    Complete timeline of the document analysis session recovered from Claude logs.
+                </p>
+
+                <div class="timeline">
+                    <div class="timeline-item system">
+                        <div class="timeline-time">2:17 PM IST</div>
+                        <div class="timeline-content">
+                            <strong>Session Recovery Initiated</strong>
+                            <p style="color: var(--color-text-muted); margin-top: 0.5rem;">
+                                Stalled terminal session detected. JSONL transcript file located at
+                                /Users/nevillemehta/.claude/projects/-Users-nevillemehta/d9222c70-c067-4084-905b-695a215e81cb.jsonl
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item assistant">
+                        <div class="timeline-time">2:30 PM IST</div>
+                        <div class="timeline-content">
+                            <strong>Content Extraction</strong>
+                            <p style="color: var(--color-text-muted); margin-top: 0.5rem;">
+                                Extracted 757 entries from 17MB JSONL file. Multiple session files found (74MB, 51MB, 42MB, 36MB).
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item assistant">
+                        <div class="timeline-time">3:00 PM IST</div>
+                        <div class="timeline-content">
+                            <strong>Gold Standard Framework Analysis</strong>
+                            <p style="color: var(--color-text-muted); margin-top: 0.5rem;">
+                                Identified 12-Phase Lifecycle, 6 Gates, 5 Constitutional Requirements (CR-001 to CR-005),
+                                9-Tool Arsenal configuration.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item assistant">
+                        <div class="timeline-time">3:30 PM IST</div>
+                        <div class="timeline-content">
+                            <strong>Divergence Identification</strong>
+                            <p style="color: var(--color-text-muted); margin-top: 0.5rem;">
+                                Found CR-004 SACRED violation (24h vs 6:00 AM IST), Alpaca vs Kite API mismatch,
+                                Paper/Live vs Indian broker selection.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item assistant">
+                        <div class="timeline-time">3:45 PM IST</div>
+                        <div class="timeline-content">
+                            <strong>CIA-SIE-PURE Reference Audit</strong>
+                            <p style="color: var(--color-text-muted); margin-top: 0.5rem;">
+                                Identified 7 incorrect references to CIA-SIE-PURE in MASTER_EXECUTION_ROADMAP.
+                                All corrected to point to /01_MCI/ paths.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item assistant">
+                        <div class="timeline-time">4:00 PM IST</div>
+                        <div class="timeline-content">
+                            <strong>P1-P4 Remediation Plan</strong>
+                            <p style="color: var(--color-text-muted); margin-top: 0.5rem;">
+                                Created detailed execution plan for 4 priority fixes across 9 files.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item user">
+                        <div class="timeline-time">4:15 PM IST</div>
+                        <div class="timeline-content">
+                            <strong>Git Repository Setup</strong>
+                            <p style="color: var(--color-text-muted); margin-top: 0.5rem;">
+                                Confirmed repository at github.com/Nevillemehta-Claude/01_MCI.git.
+                                Created feature/p1-p4-remediation branch for isolated changes.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item assistant">
+                        <div class="timeline-time">4:20 PM - 5:30 PM IST</div>
+                        <div class="timeline-content">
+                            <strong>P1-P4 Implementation</strong>
+                            <p style="color: var(--color-text-muted); margin-top: 0.5rem;">
+                                Executed all remediation tasks. Build verified passing after each phase.
+                                Commit 61017ef contains all P1-P4 changes.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item system">
+                        <div class="timeline-time">5:45 PM IST</div>
+                        <div class="timeline-content">
+                            <strong>Sentry Configuration</strong>
+                            <p style="color: var(--color-text-muted); margin-top: 0.5rem;">
+                                Configured frontend and backend Sentry DSNs. Updated credential sanitization
+                                from Alpaca/Polygon to Kite references.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item user">
+                        <div class="timeline-time">6:00 PM IST</div>
+                        <div class="timeline-content">
+                            <strong>Runtime Verification</strong>
+                            <p style="color: var(--color-text-muted); margin-top: 0.5rem;">
+                                Started frontend and backend servers. Navigated through all phases successfully.
+                                Token capture, broker selection, and ignition all working.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item assistant">
+                        <div class="timeline-time">6:15 PM IST</div>
+                        <div class="timeline-content">
+                            <strong>Session Archive Created</strong>
+                            <p style="color: var(--color-text-muted); margin-top: 0.5rem;">
+                                Created FULL_LIFECYCLE_ROADMAP_EXTRACTION.txt (6,795 lines),
+                                SESSION_3PM_TO_430PM_EXTRACTION.txt, RECOVERED_SESSION_20260123_162232.txt.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlight-box" style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">Files Created for Session Recovery</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>File</th>
+                                <th>Lines</th>
+                                <th>Content</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>FULL_LIFECYCLE_ROADMAP_EXTRACTION.txt</code></td>
+                                <td>6,795</td>
+                                <td>Complete lifecycle discussion, all phases and gates</td>
+                            </tr>
+                            <tr>
+                                <td><code>SESSION_3PM_TO_430PM_EXTRACTION.txt</code></td>
+                                <td>~2,890</td>
+                                <td>Time-specific extraction of document analysis</td>
+                            </tr>
+                            <tr>
+                                <td><code>RECOVERED_SESSION_20260123_162232.txt</code></td>
+                                <td>3,569</td>
+                                <td>Full session transcript recovery</td>
+                            </tr>
+                            <tr>
+                                <td><code>MCI_DOCUMENT_ANALYSIS_COMPLETE.html</code></td>
+                                <td>--</td>
+                                <td>This interactive document</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>
+            <strong>MCI Document Analysis</strong> | Generated: 2026-01-23<br>
+            <span style="color: var(--color-text-muted);">
+                Gold Standard Lifecycle Framework | IRONCLAD Protocol Compliant
+            </span>
+        </p>
+        <p style="margin-top: 1rem;">
+            Project: <a href="https://github.com/Nevillemehta-Claude/01_MCI">github.com/Nevillemehta-Claude/01_MCI</a>
+        </p>
+    </footer>
+
+    <script>
+        // Toggle section expansion
+        function toggleSection(header) {
+            const section = header.parentElement;
+            const content = section.querySelector('.section-content');
+
+            section.classList.toggle('open');
+            content.classList.toggle('active');
+        }
+
+        // Scroll to section
+        function scrollToSection(id) {
+            const section = document.getElementById(id);
+            if (section) {
+                // Open the section if closed
+                if (!section.classList.contains('open')) {
+                    section.classList.add('open');
+                    section.querySelector('.section-content').classList.add('active');
+                }
+
+                // Scroll to section
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                // Update nav buttons
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+        }
+
+        // Initialize - open first section
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add fade-in animation to sections as they scroll into view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.section').forEach(section => {
+                observer.observe(section);
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                // Close all sections
+                document.querySelectorAll('.section.open').forEach(section => {
+                    section.classList.remove('open');
+                    section.querySelector('.section-content').classList.remove('active');
+                });
+            }
+        });
+    </script>
+
+
+</body></html>

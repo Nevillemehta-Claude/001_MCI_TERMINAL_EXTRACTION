@@ -1,0 +1,2295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCI Project - Interactive File Tree | Gold Standard Phase Map</title>
+    <style>
+        :root {
+            /* Phase Colors - Gold Standard */
+            --phase-0: #FF6B6B;      /* Token Capture - Red */
+            --phase-1: #FF8E53;      /* Pre-Ignition - Orange */
+            --phase-2: #FFC107;      /* Architecture - Yellow */
+            --phase-3: #4CAF50;      /* Telemetry - Green */
+            --phase-35: #00BCD4;     /* UXMI - Cyan */
+            --phase-4: #2196F3;      /* Shutdown - Blue */
+            --phase-45: #3F51B5;     /* Implementation - Indigo */
+            --phase-6: #9C27B0;      /* QA/Audits - Purple */
+            --phase-8: #E91E63;      /* Deployment - Pink */
+            --phase-9: #795548;      /* Sentry - Brown */
+            --cross-phase: #607D8B;  /* Cross-Phase - Blue Grey */
+            --infra: #9E9E9E;        /* Infrastructure - Grey */
+            --historical: #BDBDBD;   /* Historical - Light Grey */
+            --external: #78909C;     /* External - Blue Grey Light */
+
+            /* UI Colors */
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-tertiary: #0f3460;
+            --text-primary: #e8e8e8;
+            --text-secondary: #a0a0a0;
+            --accent: #e94560;
+            --border: #2a2a4a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--accent), #ff8a80);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+        }
+
+        .meta-info {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: var(--bg-primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .meta-label {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+        }
+
+        .meta-value {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95em;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Legend */
+        .legend {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .legend h3 {
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85em;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        /* Tree Container */
+        .tree-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid var(--border);
+        }
+
+        /* Tree Styles */
+        .tree {
+            list-style: none;
+        }
+
+        .tree ul {
+            list-style: none;
+            padding-left: 25px;
+            margin-left: 10px;
+            border-left: 1px dashed var(--border);
+        }
+
+        .tree li {
+            position: relative;
+            padding: 4px 0;
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .tree-item:hover {
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .tree-item.highlight {
+            background: rgba(233, 69, 96, 0.2);
+            border: 1px solid var(--accent);
+        }
+
+        /* Toggle Icon */
+        .toggle {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            transition: transform 0.2s ease;
+        }
+
+        .toggle.expanded {
+            transform: rotate(90deg);
+        }
+
+        .toggle.empty {
+            visibility: hidden;
+        }
+
+        /* File/Folder Icons */
+        .icon {
+            font-size: 1.1em;
+        }
+
+        .folder-icon { color: #FFC107; }
+        .file-icon { color: #90CAF9; }
+        .ts-icon { color: #3178C6; }
+        .tsx-icon { color: #61DAFB; }
+        .md-icon { color: #083fa1; }
+        .html-icon { color: #E34F26; }
+        .json-icon { color: #F7DF1E; }
+        .css-icon { color: #264DE4; }
+        .test-icon { color: #99425B; }
+
+        /* Item Name */
+        .item-name {
+            flex: 1;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+
+        .item-name.folder {
+            font-weight: 600;
+        }
+
+        /* Phase Badge */
+        .phase-badge {
+            font-size: 0.7em;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .phase-0 { background: var(--phase-0); color: #fff; }
+        .phase-1 { background: var(--phase-1); color: #fff; }
+        .phase-2 { background: var(--phase-2); color: #000; }
+        .phase-3 { background: var(--phase-3); color: #fff; }
+        .phase-35 { background: var(--phase-35); color: #fff; }
+        .phase-4 { background: var(--phase-4); color: #fff; }
+        .phase-45 { background: var(--phase-45); color: #fff; }
+        .phase-6 { background: var(--phase-6); color: #fff; }
+        .phase-8 { background: var(--phase-8); color: #fff; }
+        .phase-9 { background: var(--phase-9); color: #fff; }
+        .cross-phase { background: var(--cross-phase); color: #fff; }
+        .infra { background: var(--infra); color: #000; }
+        .historical { background: var(--historical); color: #000; }
+        .external { background: var(--external); color: #fff; }
+        .deprecated { background: #f44336; color: #fff; }
+        .cr { background: #ff5722; color: #fff; }
+        .qg { background: #673ab7; color: #fff; }
+
+        /* Annotation */
+        .annotation {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            font-style: italic;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* File Count Badge */
+        .count-badge {
+            font-size: 0.7em;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: 2px 6px;
+            border-radius: 8px;
+        }
+
+        /* Hidden items */
+        .hidden {
+            display: none;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            padding: 15px 20px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        /* Impact Analysis Section */
+        .impact-section {
+            margin-top: 30px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .impact-section h3 {
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        .impact-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .impact-table th,
+        .impact-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .impact-table th {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .impact-table tr:hover {
+            background: rgba(233, 69, 96, 0.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .meta-info {
+                flex-direction: column;
+            }
+
+            .legend-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .annotation {
+                display: none;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+
+            .controls, button {
+                display: none;
+            }
+
+            .tree-container, .legend, header {
+                border: 1px solid #ccc;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MCI Interactive Project Tree</h1>
+            <p class="subtitle">Market Control Interface - Gold Standard Phase Map | Impact Analysis Tool</p>
+            <div class="meta-info">
+                <div class="meta-item">
+                    <div class="meta-label">Checkpoint</div>
+                    <div class="meta-value">MCI-CHKPT-2026-01-24-SYNTHESIS</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Total Files</div>
+                    <div class="meta-value">180</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Protocol</div>
+                    <div class="meta-value">IRONCLAD SUPERVISED</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Generated</div>
+                    <div class="meta-value">2026-01-24</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="controls">
+            <button onclick="expandAll()">Expand All</button>
+            <button onclick="collapseAll()">Collapse All</button>
+            <button onclick="expandPhase('phase-0')">Show Phase 0</button>
+            <button onclick="expandPhase('phase-3')">Show Phase 3</button>
+            <button onclick="expandPhase('phase-35')">Show UXMI</button>
+            <button onclick="showCritical()">Show CRs/QGs</button>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search files... (e.g., 'token', 'test', '.tsx')" onkeyup="searchTree()">
+            </div>
+        </div>
+
+        <div class="legend">
+            <h3>Phase Legend (Gold Standard 12-Phase Lifecycle)</h3>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--phase-0)"></div>
+                    <span>Phase 0 - Token Capture</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--phase-1)"></div>
+                    <span>Phase 1 - Pre-Ignition</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--phase-2)"></div>
+                    <span>Phase 2 - Architecture</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--phase-3)"></div>
+                    <span>Phase 3 - Telemetry</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--phase-35)"></div>
+                    <span>Phase 3.5 - UXMI (CR-005)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--phase-4)"></div>
+                    <span>Phase 4 - Shutdown</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--phase-45)"></div>
+                    <span>Phase 4-5 - Implementation</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--phase-6)"></div>
+                    <span>Phase 6 - QA/Audits</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--phase-9)"></div>
+                    <span>Phase 9 - Sentry</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--cross-phase)"></div>
+                    <span>Cross-Phase Governance</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--infra)"></div>
+                    <span>Infrastructure/Config</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--historical)"></div>
+                    <span>Historical/Archives</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-value">54</span>
+                <span class="stat-label">Documentation</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">102</span>
+                <span class="stat-label">Source Code</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">18</span>
+                <span class="stat-label">Config Files</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">5</span>
+                <span class="stat-label">Constitutional (CR)</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">6</span>
+                <span class="stat-label">Quality Gates</span>
+            </div>
+        </div>
+
+        <div class="tree-container">
+            <ul class="tree" id="fileTree">
+                <!-- ROOT: 01_MCI -->
+                <li>
+                    <div class="tree-item" onclick="toggleNode(this)">
+                        <span class="toggle expanded">&#9654;</span>
+                        <span class="icon folder-icon">&#128193;</span>
+                        <span class="item-name folder">01_MCI</span>
+                        <span class="phase-badge cross-phase">ROOT</span>
+                        <span class="annotation">Market Control Interface - Trading Platform</span>
+                        <span class="count-badge">180 files</span>
+                    </div>
+                    <ul>
+                        <!-- 00_MASTER_DOCUMENTS -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">00_MASTER_DOCUMENTS</span>
+                                <span class="phase-badge cross-phase">GOVERNANCE</span>
+                                <span class="annotation">Strategic governance, standards</span>
+                                <span class="count-badge">8 files</span>
+                            </div>
+                            <ul class="hidden">
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">FILE_INDEX.md</span>
+                                        <span class="phase-badge cross-phase">Cross</span>
+                                        <span class="annotation">Project file registry</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">CIA-SIE_ECOSYSTEM_ARCHITECTURE.md</span>
+                                        <span class="phase-badge cr">CRITICAL</span>
+                                        <span class="annotation">Engine/Cockpit architecture (Mermaid)</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">MCI_MASTER_USE_CASE_SPECIFICATION.md</span>
+                                        <span class="phase-badge cr">CRITICAL</span>
+                                        <span class="annotation">NASA-grade Use Case Spec (15 Mermaid)</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">MCI_PRODUCTION_LIFECYCLE_MASTER_MANIFEST.md</span>
+                                        <span class="phase-badge cross-phase">Cross</span>
+                                        <span class="annotation">Master lifecycle manifest</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">PROJECT_STATUS_EXECUTION_AUTHORITY.md</span>
+                                        <span class="phase-badge cross-phase">Cross</span>
+                                        <span class="annotation">Status + execution matrix</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">SUPERVISED_MISSION_DIRECTIVE_v1.0.md</span>
+                                        <span class="phase-badge cr">IRONCLAD</span>
+                                        <span class="annotation">SUPERVISED execution protocol - ACTIVE</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">MCI_COMPLETE_PROJECT_SYNTHESIS.md</span>
+                                        <span class="phase-badge cross-phase">Cross</span>
+                                        <span class="annotation">180-file phase-wise synthesis</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon html-icon">&#128196;</span>
+                                        <span class="item-name">MCI_INTERACTIVE_PROJECT_TREE.html</span>
+                                        <span class="phase-badge cross-phase">Cross</span>
+                                        <span class="annotation">THIS FILE - Interactive tree</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- 01_SOURCE_DOCUMENTS -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">01_SOURCE_DOCUMENTS</span>
+                                <span class="phase-badge phase-0">PHASE 0-1</span>
+                                <span class="annotation">Input requirements, vision</span>
+                                <span class="count-badge">5 files</span>
+                            </div>
+                            <ul class="hidden">
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">PROJECT_BRIEF_BCI_001.md</span>
+                                        <span class="phase-badge phase-0">Phase 0</span>
+                                        <span class="annotation">THE GENESIS DOCUMENT</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">ADDENDUM_001_TOKEN_CAPTURE_MODULE.md</span>
+                                        <span class="phase-badge cr">CR-004</span>
+                                        <span class="annotation">Token Capture 6-module spec - CONSTITUTIONAL</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">ADDENDUM_002_UX_MICRO_INTERACTIONS.md</span>
+                                        <span class="phase-badge cr">CR-005</span>
+                                        <span class="annotation">UXMI spec - CONSTITUTIONAL TIER 1</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">SOFTWARE_LANGUAGE_SELECTION_GUIDE.md</span>
+                                        <span class="phase-badge phase-1">Phase 1</span>
+                                        <span class="annotation">Language selection framework</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">TECHNOLOGY_SELECTION_LIFECYCLE_SPECIFICATION.md</span>
+                                        <span class="phase-badge phase-1">Phase 1-2</span>
+                                        <span class="annotation">11-Phase lifecycle, NASA-grade</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- 02_SPECIFICATIONS -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">02_SPECIFICATIONS</span>
+                                <span class="phase-badge phase-2">PHASE 2-3.5</span>
+                                <span class="annotation">Technical specifications</span>
+                                <span class="count-badge">5 files</span>
+                            </div>
+                            <ul class="hidden">
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon html-icon">&#128196;</span>
+                                        <span class="item-name">MCI_MASTER_SPECIFICATION_v1.0.0.html</span>
+                                        <span class="phase-badge phase-2">Phase 2</span>
+                                        <span class="annotation">Interactive HTML Master Spec</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon file-icon">&#128196;</span>
+                                        <span class="item-name">MCI_MASTER_SPECIFICATION_v1.0.0.docx</span>
+                                        <span class="phase-badge phase-2">Phase 2</span>
+                                        <span class="annotation">Master Spec (Word format)</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">UI_FUNCTIONAL_SPECIFICATION.md</span>
+                                        <span class="phase-badge phase-35">Phase 3.5</span>
+                                        <span class="annotation">Screen inventory, nav flow</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">UI_UX_DESIGN_SYSTEM.md</span>
+                                        <span class="phase-badge phase-35">Phase 3.5</span>
+                                        <span class="annotation">Color palette, design tokens</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">PROTOTYPE_REVIEW.md</span>
+                                        <span class="phase-badge phase-35">Phase 3.5</span>
+                                        <span class="annotation">Hi-fi mockups, approval</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- 03_ARCHITECTURE -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">03_ARCHITECTURE</span>
+                                <span class="phase-badge phase-2">PHASE 2</span>
+                                <span class="annotation">System design</span>
+                                <span class="count-badge">1 file</span>
+                            </div>
+                            <ul class="hidden">
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon html-icon">&#128196;</span>
+                                        <span class="item-name">MCI_C4_ARCHITECTURE.html</span>
+                                        <span class="phase-badge phase-2">Phase 2</span>
+                                        <span class="annotation">C4 Model architecture diagrams</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- 04_IMPLEMENTATION -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">04_IMPLEMENTATION</span>
+                                <span class="phase-badge phase-8">PHASE 8-9</span>
+                                <span class="annotation">Implementation guides</span>
+                                <span class="count-badge">4 items</span>
+                            </div>
+                            <ul class="hidden">
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">COMPLETE_EXECUTION_GUIDE.md</span>
+                                        <span class="phase-badge phase-8">Phase 8</span>
+                                        <span class="annotation">Production execution guide</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">SECTION_N_SENTRY_OPERATIONS.md</span>
+                                        <span class="phase-badge phase-9">Phase 9</span>
+                                        <span class="annotation">Sentry operations guide</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">SENTRY_IRONCLAD_EXPLOITATION.md</span>
+                                        <span class="phase-badge phase-9">Phase 9</span>
+                                        <span class="annotation">IRONCLAD+ Sentry integration</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item" onclick="toggleNode(this)">
+                                        <span class="toggle">&#9654;</span>
+                                        <span class="icon folder-icon">&#128193;</span>
+                                        <span class="item-name folder">mci/</span>
+                                        <span class="phase-badge infra">Build</span>
+                                        <span class="annotation">Implementation artifacts</span>
+                                    </div>
+                                    <ul class="hidden">
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon file-icon">&#128196;</span>
+                                                <span class="item-name">[Build artifacts]</span>
+                                                <span class="phase-badge infra">Build</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- 05_AUDITS_AND_REPORTS -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">05_AUDITS_AND_REPORTS</span>
+                                <span class="phase-badge phase-6">PHASE 6</span>
+                                <span class="annotation">Compliance audits, testing</span>
+                                <span class="count-badge">3 files</span>
+                            </div>
+                            <ul class="hidden">
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">CR-005_UXMI_RETROFIT_AUDIT_REPORT_v2.md</span>
+                                        <span class="phase-badge qg">QG Audit</span>
+                                        <span class="annotation">UXMI audit v2 (IRONCLAD)</span>
+                                    </div>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">MCI_CODE_AUDIT_REPORT_2026-01-24.md</span>
+                                        <span class="phase-badge qg">QG Audit</span>
+                                        <span class="annotation">Fresh Build vs Retrofit Decision - RETROFIT RECOMMENDED</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">IMPLEMENTATION_REPORT.md</span>
+                                        <span class="phase-badge phase-45">Phase 4-5</span>
+                                        <span class="annotation">Implementation status report</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- _SESSION_CHECKPOINTS -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">_SESSION_CHECKPOINTS</span>
+                                <span class="phase-badge cross-phase">SESSION</span>
+                                <span class="annotation">Session continuity system</span>
+                                <span class="count-badge">2 files</span>
+                            </div>
+                            <ul class="hidden">
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">MASTER_CONTEXT.md</span>
+                                        <span class="phase-badge cr">CRITICAL</span>
+                                        <span class="annotation">Living context - REHYDRATION SOURCE</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">SESSION_ARCHIVE_2026-01-24_DOC_CLASSIFICATION.md</span>
+                                        <span class="phase-badge historical">Archive</span>
+                                        <span class="annotation">Session archive</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- src -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">src</span>
+                                <span class="phase-badge cross-phase">SOURCE</span>
+                                <span class="annotation">Application source code</span>
+                                <span class="count-badge">95 files</span>
+                            </div>
+                            <ul class="hidden">
+                                <!-- src/client -->
+                                <li>
+                                    <div class="tree-item" onclick="toggleNode(this)">
+                                        <span class="toggle">&#9654;</span>
+                                        <span class="icon folder-icon">&#128193;</span>
+                                        <span class="item-name folder">client</span>
+                                        <span class="phase-badge cross-phase">FRONTEND</span>
+                                        <span class="annotation">React application</span>
+                                        <span class="count-badge">78 files</span>
+                                    </div>
+                                    <ul class="hidden">
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon tsx-icon">&#128196;</span>
+                                                <span class="item-name">App.tsx</span>
+                                                <span class="phase-badge cross-phase">Core</span>
+                                                <span class="annotation">Main application component</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon tsx-icon">&#128196;</span>
+                                                <span class="item-name">main.tsx</span>
+                                                <span class="phase-badge cross-phase">Core</span>
+                                                <span class="annotation">Application entry point</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon css-icon">&#128196;</span>
+                                                <span class="item-name">index.css</span>
+                                                <span class="phase-badge phase-35">UXMI</span>
+                                                <span class="annotation">Global styles</span>
+                                            </div>
+                                        </li>
+
+                                        <!-- src/client/components -->
+                                        <li>
+                                            <div class="tree-item" onclick="toggleNode(this)">
+                                                <span class="toggle">&#9654;</span>
+                                                <span class="icon folder-icon">&#128193;</span>
+                                                <span class="item-name folder">components</span>
+                                                <span class="phase-badge cross-phase">UI</span>
+                                                <span class="annotation">React components by phase</span>
+                                                <span class="count-badge">52 files</span>
+                                            </div>
+                                            <ul class="hidden">
+                                                <!-- phase0 -->
+                                                <li>
+                                                    <div class="tree-item" onclick="toggleNode(this)">
+                                                        <span class="toggle">&#9654;</span>
+                                                        <span class="icon folder-icon">&#128193;</span>
+                                                        <span class="item-name folder">phase0</span>
+                                                        <span class="phase-badge phase-0">TOKEN CAPTURE</span>
+                                                        <span class="annotation">CR-004 implementation</span>
+                                                        <span class="count-badge">6 files</span>
+                                                    </div>
+                                                    <ul class="hidden">
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon ts-icon">&#128196;</span>
+                                                                <span class="item-name">index.ts</span>
+                                                                <span class="phase-badge phase-0">Phase 0</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">CredentialsHelper.tsx</span>
+                                                                <span class="phase-badge phase-0">Phase 0</span>
+                                                                <span class="annotation">Credentials helper</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">TokenCaptureForm.tsx</span>
+                                                                <span class="phase-badge cr">CR-004</span>
+                                                                <span class="annotation">Token capture form - CONSTITUTIONAL</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">TokenTimer.tsx</span>
+                                                                <span class="phase-badge cr">CR-004</span>
+                                                                <span class="annotation">Token expiry timer - 6AM IST</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon test-icon">&#128196;</span>
+                                                                <span class="item-name">__tests__/TokenCaptureForm.test.tsx</span>
+                                                                <span class="phase-badge qg">QG-1</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon test-icon">&#128196;</span>
+                                                                <span class="item-name">__tests__/TokenTimer.test.tsx</span>
+                                                                <span class="phase-badge qg">QG-1</span>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+
+                                                <!-- phase1 -->
+                                                <li>
+                                                    <div class="tree-item" onclick="toggleNode(this)">
+                                                        <span class="toggle">&#9654;</span>
+                                                        <span class="icon folder-icon">&#128193;</span>
+                                                        <span class="item-name folder">phase1</span>
+                                                        <span class="phase-badge phase-1">PRE-IGNITION</span>
+                                                        <span class="annotation">System readiness scanner</span>
+                                                        <span class="count-badge">5 files</span>
+                                                    </div>
+                                                    <ul class="hidden">
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon ts-icon">&#128196;</span>
+                                                                <span class="item-name">index.ts</span>
+                                                                <span class="phase-badge phase-1">Phase 1</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">PreIgnitionScanner.tsx</span>
+                                                                <span class="phase-badge phase-1">Phase 1</span>
+                                                                <span class="annotation">System readiness scanner</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">ScanCheckItem.tsx</span>
+                                                                <span class="phase-badge phase-1">Phase 1</span>
+                                                                <span class="annotation">Individual check item</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon test-icon">&#128196;</span>
+                                                                <span class="item-name">__tests__/PreIgnitionScanner.test.tsx</span>
+                                                                <span class="phase-badge qg">QG-1</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon test-icon">&#128196;</span>
+                                                                <span class="item-name">__tests__/ScanCheckItem.test.tsx</span>
+                                                                <span class="phase-badge qg">QG-1</span>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+
+                                                <!-- phase2 -->
+                                                <li>
+                                                    <div class="tree-item" onclick="toggleNode(this)">
+                                                        <span class="toggle">&#9654;</span>
+                                                        <span class="icon folder-icon">&#128193;</span>
+                                                        <span class="item-name folder">phase2</span>
+                                                        <span class="phase-badge phase-2">IGNITION</span>
+                                                        <span class="annotation">System ignition sequence</span>
+                                                        <span class="count-badge">5 files</span>
+                                                    </div>
+                                                    <ul class="hidden">
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon ts-icon">&#128196;</span>
+                                                                <span class="item-name">index.ts</span>
+                                                                <span class="phase-badge phase-2">Phase 2</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">BackendSelector.tsx</span>
+                                                                <span class="phase-badge phase-2">Phase 2</span>
+                                                                <span class="annotation">Backend broker selection</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">IgnitionButton.tsx</span>
+                                                                <span class="phase-badge phase-2">Phase 2</span>
+                                                                <span class="annotation">System ignition trigger</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon test-icon">&#128196;</span>
+                                                                <span class="item-name">__tests__/BackendSelector.test.tsx</span>
+                                                                <span class="phase-badge qg">QG-1</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon test-icon">&#128196;</span>
+                                                                <span class="item-name">__tests__/IgnitionButton.test.tsx</span>
+                                                                <span class="phase-badge qg">QG-1</span>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+
+                                                <!-- phase3 -->
+                                                <li>
+                                                    <div class="tree-item" onclick="toggleNode(this)">
+                                                        <span class="toggle">&#9654;</span>
+                                                        <span class="icon folder-icon">&#128193;</span>
+                                                        <span class="item-name folder">phase3</span>
+                                                        <span class="phase-badge phase-3">TELEMETRY</span>
+                                                        <span class="annotation">Main operational dashboard</span>
+                                                        <span class="count-badge">15 files</span>
+                                                    </div>
+                                                    <ul class="hidden">
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon ts-icon">&#128196;</span>
+                                                                <span class="item-name">index.ts</span>
+                                                                <span class="phase-badge phase-3">Phase 3</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">TelemetryDashboard.tsx</span>
+                                                                <span class="phase-badge cr">CR-001</span>
+                                                                <span class="annotation">Main dashboard - Real-time data</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">AccountPanel.tsx</span>
+                                                                <span class="phase-badge phase-3">Phase 3</span>
+                                                                <span class="annotation">Account information</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">ActivityLogPanel.tsx</span>
+                                                                <span class="phase-badge cr">CR-003</span>
+                                                                <span class="annotation">Activity logging - WHAT/WHY/HOW</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">MarketDataPanel.tsx</span>
+                                                                <span class="phase-badge cr">CR-001</span>
+                                                                <span class="annotation">Market data - Real-time</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">OrdersPanel.tsx</span>
+                                                                <span class="phase-badge phase-3">Phase 3</span>
+                                                                <span class="annotation">Orders management</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">PositionsPanel.tsx</span>
+                                                                <span class="phase-badge phase-3">Phase 3</span>
+                                                                <span class="annotation">Positions tracking</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">SystemHealthPanel.tsx</span>
+                                                                <span class="phase-badge phase-3">Phase 3</span>
+                                                                <span class="annotation">System health monitoring</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon test-icon">&#128196;</span>
+                                                                <span class="item-name">__tests__/*.test.tsx</span>
+                                                                <span class="phase-badge qg">QG-1</span>
+                                                                <span class="annotation">7 test files</span>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+
+                                                <!-- phase4 -->
+                                                <li>
+                                                    <div class="tree-item" onclick="toggleNode(this)">
+                                                        <span class="toggle">&#9654;</span>
+                                                        <span class="icon folder-icon">&#128193;</span>
+                                                        <span class="item-name folder">phase4</span>
+                                                        <span class="phase-badge phase-4">SHUTDOWN</span>
+                                                        <span class="annotation">CR-002 6-step sequence</span>
+                                                        <span class="count-badge">3 files</span>
+                                                    </div>
+                                                    <ul class="hidden">
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon ts-icon">&#128196;</span>
+                                                                <span class="item-name">index.ts</span>
+                                                                <span class="phase-badge phase-4">Phase 4</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">ShutdownPanel.tsx</span>
+                                                                <span class="phase-badge cr">CR-002</span>
+                                                                <span class="annotation">Graceful shutdown - CONSTITUTIONAL</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon test-icon">&#128196;</span>
+                                                                <span class="item-name">__tests__/ShutdownPanel.test.tsx</span>
+                                                                <span class="phase-badge qg">QG-1</span>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+
+                                                <!-- uxmi -->
+                                                <li>
+                                                    <div class="tree-item" onclick="toggleNode(this)">
+                                                        <span class="toggle">&#9654;</span>
+                                                        <span class="icon folder-icon">&#128193;</span>
+                                                        <span class="item-name folder">uxmi</span>
+                                                        <span class="phase-badge phase-35">PHASE 3.5</span>
+                                                        <span class="annotation">CR-005 7-component system</span>
+                                                        <span class="count-badge">15 files</span>
+                                                    </div>
+                                                    <ul class="hidden">
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon ts-icon">&#128196;</span>
+                                                                <span class="item-name">index.ts</span>
+                                                                <span class="phase-badge phase-35">UXMI</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">Button.tsx</span>
+                                                                <span class="phase-badge cr">CR-005</span>
+                                                                <span class="annotation">7-state button - CONSTITUTIONAL</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">ErrorDisplay.tsx</span>
+                                                                <span class="phase-badge cr">CR-005</span>
+                                                                <span class="annotation">WHAT/WHY/HOW format</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">Input.tsx</span>
+                                                                <span class="phase-badge cr">CR-005</span>
+                                                                <span class="annotation">Accessible input</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">ProgressBar.tsx</span>
+                                                                <span class="phase-badge cr">CR-005</span>
+                                                                <span class="annotation">Progress indication</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">Spinner.tsx</span>
+                                                                <span class="phase-badge cr">CR-005</span>
+                                                                <span class="annotation">Loading spinner</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">Toast.tsx</span>
+                                                                <span class="phase-badge cr">CR-005</span>
+                                                                <span class="annotation">Notifications</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon tsx-icon">&#128196;</span>
+                                                                <span class="item-name">Tooltip.tsx</span>
+                                                                <span class="phase-badge cr">CR-005</span>
+                                                                <span class="annotation">Accessible tooltips</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="tree-item">
+                                                                <span class="toggle empty">&#9654;</span>
+                                                                <span class="icon test-icon">&#128196;</span>
+                                                                <span class="item-name">__tests__/*.test.tsx</span>
+                                                                <span class="phase-badge qg">QG-1</span>
+                                                                <span class="annotation">7 test files</span>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+
+                                        <!-- src/client/stores -->
+                                        <li>
+                                            <div class="tree-item" onclick="toggleNode(this)">
+                                                <span class="toggle">&#9654;</span>
+                                                <span class="icon folder-icon">&#128193;</span>
+                                                <span class="item-name folder">stores</span>
+                                                <span class="phase-badge cross-phase">STATE</span>
+                                                <span class="annotation">Zustand state management</span>
+                                                <span class="count-badge">15 files</span>
+                                            </div>
+                                            <ul class="hidden">
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">index.ts</span>
+                                                        <span class="phase-badge cross-phase">Core</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">tokenStore.ts</span>
+                                                        <span class="phase-badge cr">CR-004</span>
+                                                        <span class="annotation">Token state - CONSTITUTIONAL</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">scannerStore.ts</span>
+                                                        <span class="phase-badge phase-1">Phase 1</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">ignitionStore.ts</span>
+                                                        <span class="phase-badge phase-2">Phase 2</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">telemetryStore.ts</span>
+                                                        <span class="phase-badge cr">CR-001</span>
+                                                        <span class="annotation">Real-time data - CONSTITUTIONAL</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">shutdownStore.ts</span>
+                                                        <span class="phase-badge cr">CR-002</span>
+                                                        <span class="annotation">Shutdown state - CONSTITUTIONAL</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon test-icon">&#128196;</span>
+                                                        <span class="item-name">*.test.ts + __tests__/*.edge.test.ts</span>
+                                                        <span class="phase-badge qg">QG-1</span>
+                                                        <span class="annotation">10 test files</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+
+                                        <!-- src/client/lib -->
+                                        <li>
+                                            <div class="tree-item" onclick="toggleNode(this)">
+                                                <span class="toggle">&#9654;</span>
+                                                <span class="icon folder-icon">&#128193;</span>
+                                                <span class="item-name folder">lib</span>
+                                                <span class="phase-badge phase-9">SENTRY</span>
+                                                <span class="annotation">Client libraries</span>
+                                                <span class="count-badge">2 files</span>
+                                            </div>
+                                            <ul class="hidden">
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">sentry.ts</span>
+                                                        <span class="phase-badge phase-9">Phase 9</span>
+                                                        <span class="annotation">Client Sentry initialization</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon test-icon">&#128196;</span>
+                                                        <span class="item-name">__tests__/sentry.test.ts</span>
+                                                        <span class="phase-badge qg">QG-1</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <!-- src/server -->
+                                <li>
+                                    <div class="tree-item" onclick="toggleNode(this)">
+                                        <span class="toggle">&#9654;</span>
+                                        <span class="icon folder-icon">&#128193;</span>
+                                        <span class="item-name folder">server</span>
+                                        <span class="phase-badge cross-phase">BACKEND</span>
+                                        <span class="annotation">Express API server</span>
+                                        <span class="count-badge">13 files</span>
+                                    </div>
+                                    <ul class="hidden">
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon ts-icon">&#128196;</span>
+                                                <span class="item-name">index.ts</span>
+                                                <span class="phase-badge cross-phase">Core</span>
+                                                <span class="annotation">Server entry point</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tree-item" onclick="toggleNode(this)">
+                                                <span class="toggle">&#9654;</span>
+                                                <span class="icon folder-icon">&#128193;</span>
+                                                <span class="item-name folder">routes</span>
+                                                <span class="phase-badge cross-phase">API</span>
+                                                <span class="count-badge">11 files</span>
+                                            </div>
+                                            <ul class="hidden">
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">index.ts</span>
+                                                        <span class="phase-badge cross-phase">Core</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">auth.ts</span>
+                                                        <span class="phase-badge cr">CR-004</span>
+                                                        <span class="annotation">Auth routes - Token validation</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">scan.ts</span>
+                                                        <span class="phase-badge phase-1">Phase 1</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">ignition.ts</span>
+                                                        <span class="phase-badge phase-2">Phase 2</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">telemetry.ts</span>
+                                                        <span class="phase-badge cr">CR-001</span>
+                                                        <span class="annotation">Telemetry API - Real-time</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">shutdown.ts</span>
+                                                        <span class="phase-badge cr">CR-002</span>
+                                                        <span class="annotation">Shutdown routes - 6-step</span>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon test-icon">&#128196;</span>
+                                                        <span class="item-name">__tests__/*.test.ts</span>
+                                                        <span class="phase-badge qg">QG-1</span>
+                                                        <span class="annotation">5 test files</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <div class="tree-item" onclick="toggleNode(this)">
+                                                <span class="toggle">&#9654;</span>
+                                                <span class="icon folder-icon">&#128193;</span>
+                                                <span class="item-name folder">lib</span>
+                                                <span class="phase-badge phase-9">SENTRY</span>
+                                            </div>
+                                            <ul class="hidden">
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">sentry.ts</span>
+                                                        <span class="phase-badge phase-9">Phase 9</span>
+                                                        <span class="annotation">Server Sentry init</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <div class="tree-item" onclick="toggleNode(this)">
+                                                <span class="toggle">&#9654;</span>
+                                                <span class="icon folder-icon">&#128193;</span>
+                                                <span class="item-name folder">services</span>
+                                                <span class="phase-badge cross-phase">Services</span>
+                                            </div>
+                                            <ul class="hidden">
+                                                <li>
+                                                    <div class="tree-item">
+                                                        <span class="toggle empty">&#9654;</span>
+                                                        <span class="icon ts-icon">&#128196;</span>
+                                                        <span class="item-name">kite.ts</span>
+                                                        <span class="phase-badge cross-phase">Core</span>
+                                                        <span class="annotation">Kite/Upstox API service</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <!-- src/shared -->
+                                <li>
+                                    <div class="tree-item" onclick="toggleNode(this)">
+                                        <span class="toggle">&#9654;</span>
+                                        <span class="icon folder-icon">&#128193;</span>
+                                        <span class="item-name folder">shared</span>
+                                        <span class="phase-badge cross-phase">SHARED</span>
+                                        <span class="annotation">Shared types and utilities</span>
+                                        <span class="count-badge">1 file</span>
+                                    </div>
+                                    <ul class="hidden">
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon ts-icon">&#128196;</span>
+                                                <span class="item-name">types.ts</span>
+                                                <span class="phase-badge cross-phase">Core</span>
+                                                <span class="annotation">Shared TypeScript types</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <!-- src/test -->
+                                <li>
+                                    <div class="tree-item" onclick="toggleNode(this)">
+                                        <span class="toggle">&#9654;</span>
+                                        <span class="icon folder-icon">&#128193;</span>
+                                        <span class="item-name folder">test</span>
+                                        <span class="phase-badge qg">QG-1 to QG-5</span>
+                                        <span class="annotation">Test infrastructure</span>
+                                        <span class="count-badge">5 files</span>
+                                    </div>
+                                    <ul class="hidden">
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon ts-icon">&#128196;</span>
+                                                <span class="item-name">setup.ts</span>
+                                                <span class="phase-badge qg">QG</span>
+                                                <span class="annotation">Test setup configuration</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon tsx-icon">&#128196;</span>
+                                                <span class="item-name">test-utils.tsx</span>
+                                                <span class="phase-badge qg">QG</span>
+                                                <span class="annotation">Test utilities</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon ts-icon">&#128196;</span>
+                                                <span class="item-name">globals.d.ts</span>
+                                                <span class="phase-badge infra">Config</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon ts-icon">&#128196;</span>
+                                                <span class="item-name">vitest.d.ts</span>
+                                                <span class="phase-badge infra">Config</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon ts-icon">&#128196;</span>
+                                                <span class="item-name">integration/full-flow.test.ts</span>
+                                                <span class="phase-badge qg">QG-2</span>
+                                                <span class="annotation">Full integration flow</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <!-- src/__tests__ -->
+                                <li>
+                                    <div class="tree-item" onclick="toggleNode(this)">
+                                        <span class="toggle">&#9654;</span>
+                                        <span class="icon folder-icon">&#128193;</span>
+                                        <span class="item-name folder">__tests__</span>
+                                        <span class="phase-badge qg">QG-4/5</span>
+                                        <span class="annotation">Advanced testing</span>
+                                        <span class="count-badge">4 files</span>
+                                    </div>
+                                    <ul class="hidden">
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon ts-icon">&#128196;</span>
+                                                <span class="item-name">chaos.test.ts</span>
+                                                <span class="phase-badge qg">QG-4</span>
+                                                <span class="annotation">Chaos engineering</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon ts-icon">&#128196;</span>
+                                                <span class="item-name">property.test.ts</span>
+                                                <span class="phase-badge qg">QG-5</span>
+                                                <span class="annotation">Property-based testing</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon ts-icon">&#128196;</span>
+                                                <span class="item-name">integration.flow.test.ts</span>
+                                                <span class="phase-badge qg">QG-2</span>
+                                                <span class="annotation">Integration flow</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tree-item">
+                                                <span class="toggle empty">&#9654;</span>
+                                                <span class="icon ts-icon">&#128196;</span>
+                                                <span class="item-name">external-integration.test.ts</span>
+                                                <span class="phase-badge qg">QG-2</span>
+                                                <span class="annotation">External API integration</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- e2e -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">e2e</span>
+                                <span class="phase-badge qg">QG-3</span>
+                                <span class="annotation">End-to-end tests</span>
+                                <span class="count-badge">1 file</span>
+                            </div>
+                            <ul class="hidden">
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon ts-icon">&#128196;</span>
+                                        <span class="item-name">mci.spec.ts</span>
+                                        <span class="phase-badge qg">QG-3</span>
+                                        <span class="annotation">Playwright E2E specs</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- docs -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">docs</span>
+                                <span class="phase-badge phase-9">SENTRY</span>
+                                <span class="annotation">Documentation & Sentry config</span>
+                                <span class="count-badge">5 files</span>
+                            </div>
+                            <ul class="hidden">
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">README.md</span>
+                                        <span class="phase-badge external">Docs</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">IRONCLAD_DOCUMENT_PARSING_PROTOCOL.md</span>
+                                        <span class="phase-badge cr">IRONCLAD</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">SECTION_N_SENTRY_OPERATIONS.md</span>
+                                        <span class="phase-badge phase-9">Phase 9</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon json-icon">&#128196;</span>
+                                        <span class="item-name">sentry-alert-rules.json</span>
+                                        <span class="phase-badge phase-9">Phase 9</span>
+                                        <span class="annotation">Alert configuration</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon json-icon">&#128196;</span>
+                                        <span class="item-name">sentry-dashboard.json</span>
+                                        <span class="phase-badge phase-9">Phase 9</span>
+                                        <span class="annotation">Dashboard configuration</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Configuration Files -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">[Configuration Files]</span>
+                                <span class="phase-badge infra">INFRA</span>
+                                <span class="annotation">Build and test configuration</span>
+                                <span class="count-badge">15 files</span>
+                            </div>
+                            <ul class="hidden">
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon json-icon">&#128196;</span>
+                                        <span class="item-name">package.json</span>
+                                        <span class="phase-badge infra">Infra</span>
+                                        <span class="annotation">Project dependencies</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon ts-icon">&#128196;</span>
+                                        <span class="item-name">vite.config.ts</span>
+                                        <span class="phase-badge infra">Infra</span>
+                                        <span class="annotation">Vite build configuration</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon ts-icon">&#128196;</span>
+                                        <span class="item-name">vitest.config.ts</span>
+                                        <span class="phase-badge qg">QG-1</span>
+                                        <span class="annotation">Unit test configuration</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon ts-icon">&#128196;</span>
+                                        <span class="item-name">playwright.config.ts</span>
+                                        <span class="phase-badge qg">QG-3</span>
+                                        <span class="annotation">E2E test configuration</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon file-icon">&#128196;</span>
+                                        <span class="item-name">stryker.conf.mjs</span>
+                                        <span class="phase-badge qg">QG-6</span>
+                                        <span class="annotation">Mutation testing</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon file-icon">&#128196;</span>
+                                        <span class="item-name">tailwind.config.js</span>
+                                        <span class="phase-badge phase-35">UXMI</span>
+                                        <span class="annotation">Tailwind CSS</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon file-icon">&#128196;</span>
+                                        <span class="item-name">postcss.config.js</span>
+                                        <span class="phase-badge infra">Infra</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon json-icon">&#128196;</span>
+                                        <span class="item-name">tsconfig.json</span>
+                                        <span class="phase-badge infra">Infra</span>
+                                        <span class="annotation">TypeScript configuration</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon file-icon">&#128196;</span>
+                                        <span class="item-name">.env / .env.example</span>
+                                        <span class="phase-badge infra">Infra</span>
+                                        <span class="annotation">Environment variables</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon file-icon">&#128196;</span>
+                                        <span class="item-name">.gitignore</span>
+                                        <span class="phase-badge infra">Infra</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Historical/Archives -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">[Session Archives & Historical]</span>
+                                <span class="phase-badge historical">ARCHIVE</span>
+                                <span class="annotation">Historical session records</span>
+                                <span class="count-badge">11 files</span>
+                            </div>
+                            <ul class="hidden">
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">MASTER_SESSION_ARCHIVE_2026-01-20.md</span>
+                                        <span class="phase-badge historical">Archive</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">SESSION_SUMMARY_2026-01-20.md</span>
+                                        <span class="phase-badge historical">Archive</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">SESSION_ARCHIVE_IRONCLAD_AUDIT_2026-01-23*.md</span>
+                                        <span class="phase-badge historical">Archive</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">SESSION_IRONCLAD.md</span>
+                                        <span class="phase-badge historical">Archive</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon html-icon">&#128196;</span>
+                                        <span class="item-name">MCI_JAN20_22_COMPLETE_TRANSCRIPT.html</span>
+                                        <span class="phase-badge historical">Transcript</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon html-icon">&#128196;</span>
+                                        <span class="item-name">MCI_JAN23_COMPLETE_TRANSCRIPT.html</span>
+                                        <span class="phase-badge historical">Transcript</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon md-icon">&#128196;</span>
+                                        <span class="item-name">CLAUDE_CODE_LAUNCH_COMMAND.md</span>
+                                        <span class="phase-badge deprecated">DEPRECATED</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- External Documents -->
+                        <li>
+                            <div class="tree-item" onclick="toggleNode(this)">
+                                <span class="toggle">&#9654;</span>
+                                <span class="icon folder-icon">&#128193;</span>
+                                <span class="item-name folder">[External & Reference Documents]</span>
+                                <span class="phase-badge external">EXTERNAL</span>
+                                <span class="annotation">IRONCLAD, assessments</span>
+                                <span class="count-badge">8 files</span>
+                            </div>
+                            <ul class="hidden">
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon file-icon">&#128196;</span>
+                                        <span class="item-name">IRONCLAD_DOCUMENT_PARSING_PROTOCOL.pdf</span>
+                                        <span class="phase-badge cr">IRONCLAD</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon file-icon">&#128196;</span>
+                                        <span class="item-name">IRONCLAD_TOOL-ARSENAL_DEPLOYMENT_GUIDE.docx</span>
+                                        <span class="phase-badge cr">IRONCLAD</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon file-icon">&#128196;</span>
+                                        <span class="item-name">MCI_COMPREHENSIVE_ANALYSIS_REPORT.docx</span>
+                                        <span class="phase-badge external">Analysis</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon file-icon">&#128196;</span>
+                                        <span class="item-name">MCI_PROJECT_READINESS_ASSESSMENT.docx</span>
+                                        <span class="phase-badge external">Assessment</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon file-icon">&#128196;</span>
+                                        <span class="item-name">MCI_COMPLETION_ROADMAP.docx</span>
+                                        <span class="phase-badge external">Roadmap</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tree-item">
+                                        <span class="toggle empty">&#9654;</span>
+                                        <span class="icon file-icon">&#128196;</span>
+                                        <span class="item-name">NASA_GRADE_TESTING_STRATEGY.docx</span>
+                                        <span class="phase-badge qg">QG Strategy</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Impact Analysis Section -->
+        <div class="impact-section">
+            <h3>Constitutional Requirements Impact Map</h3>
+            <table class="impact-table">
+                <thead>
+                    <tr>
+                        <th>CR</th>
+                        <th>Requirement</th>
+                        <th>Primary Files (Modifications Impact)</th>
+                        <th>Ramification Scope</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="phase-badge cr">CR-001</span></td>
+                        <td>Real-time Data</td>
+                        <td>telemetryStore.ts, MarketDataPanel.tsx, telemetry.ts</td>
+                        <td>Phase 3 components, WebSocket connections</td>
+                    </tr>
+                    <tr>
+                        <td><span class="phase-badge cr">CR-002</span></td>
+                        <td>Graceful Shutdown</td>
+                        <td>shutdownStore.ts, ShutdownPanel.tsx, shutdown.ts</td>
+                        <td>All stores, server routes, cleanup handlers</td>
+                    </tr>
+                    <tr>
+                        <td><span class="phase-badge cr">CR-003</span></td>
+                        <td>Error Logging</td>
+                        <td>ErrorDisplay.tsx, ActivityLogPanel.tsx, sentry.ts</td>
+                        <td>All error handling, WHAT/WHY/HOW format</td>
+                    </tr>
+                    <tr>
+                        <td><span class="phase-badge cr">CR-004</span></td>
+                        <td>Token Capture</td>
+                        <td>tokenStore.ts, TokenCaptureForm.tsx, auth.ts</td>
+                        <td>All API calls (token validation required)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="phase-badge cr">CR-005</span></td>
+                        <td>UXMI 7-State</td>
+                        <td>uxmi/*.tsx (7 components)</td>
+                        <td>All UI components using UXMI imports</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="impact-section">
+            <h3>Quality Gates Test Coverage</h3>
+            <table class="impact-table">
+                <thead>
+                    <tr>
+                        <th>Gate</th>
+                        <th>Type</th>
+                        <th>Configuration</th>
+                        <th>Test Files</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="phase-badge qg">QG-1</span></td>
+                        <td>Unit Tests</td>
+                        <td>vitest.config.ts</td>
+                        <td>47 *.test.ts/tsx files</td>
+                    </tr>
+                    <tr>
+                        <td><span class="phase-badge qg">QG-2</span></td>
+                        <td>Integration Tests</td>
+                        <td>vitest.config.ts</td>
+                        <td>integration.flow.test.ts, full-flow.test.ts</td>
+                    </tr>
+                    <tr>
+                        <td><span class="phase-badge qg">QG-3</span></td>
+                        <td>E2E Tests</td>
+                        <td>playwright.config.ts</td>
+                        <td>e2e/mci.spec.ts</td>
+                    </tr>
+                    <tr>
+                        <td><span class="phase-badge qg">QG-4</span></td>
+                        <td>Chaos Tests</td>
+                        <td>vitest.config.ts</td>
+                        <td>chaos.test.ts</td>
+                    </tr>
+                    <tr>
+                        <td><span class="phase-badge qg">QG-5</span></td>
+                        <td>Property Tests</td>
+                        <td>vitest.config.ts</td>
+                        <td>property.test.ts</td>
+                    </tr>
+                    <tr>
+                        <td><span class="phase-badge qg">QG-6</span></td>
+                        <td>Mutation Tests</td>
+                        <td>stryker.conf.mjs</td>
+                        <td>All unit test files</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Toggle expand/collapse
+        function toggleNode(element) {
+            const toggle = element.querySelector('.toggle');
+            const siblingUl = element.parentElement.querySelector('ul');
+
+            if (siblingUl && !toggle.classList.contains('empty')) {
+                siblingUl.classList.toggle('hidden');
+                toggle.classList.toggle('expanded');
+            }
+        }
+
+        // Expand all nodes
+        function expandAll() {
+            document.querySelectorAll('.tree ul').forEach(ul => {
+                ul.classList.remove('hidden');
+            });
+            document.querySelectorAll('.toggle').forEach(toggle => {
+                if (!toggle.classList.contains('empty')) {
+                    toggle.classList.add('expanded');
+                }
+            });
+        }
+
+        // Collapse all nodes
+        function collapseAll() {
+            document.querySelectorAll('.tree ul ul').forEach(ul => {
+                ul.classList.add('hidden');
+            });
+            document.querySelectorAll('.toggle').forEach(toggle => {
+                toggle.classList.remove('expanded');
+            });
+        }
+
+        // Expand specific phase
+        function expandPhase(phaseClass) {
+            collapseAll();
+
+            // First expand root
+            const rootUl = document.querySelector('.tree > li > ul');
+            if (rootUl) {
+                rootUl.classList.remove('hidden');
+                rootUl.previousElementSibling.querySelector('.toggle').classList.add('expanded');
+            }
+
+            // Find and expand all items with the phase badge
+            document.querySelectorAll('.' + phaseClass).forEach(badge => {
+                let current = badge.closest('li');
+                while (current) {
+                    const parentUl = current.parentElement;
+                    if (parentUl && parentUl.classList.contains('hidden')) {
+                        parentUl.classList.remove('hidden');
+                        const prevSibling = parentUl.previousElementSibling;
+                        if (prevSibling) {
+                            const toggle = prevSibling.querySelector('.toggle');
+                            if (toggle) toggle.classList.add('expanded');
+                        }
+                    }
+                    current = parentUl ? parentUl.closest('li') : null;
+                }
+            });
+        }
+
+        // Show critical items (CRs and QGs)
+        function showCritical() {
+            collapseAll();
+
+            const criticalClasses = ['cr', 'qg'];
+            criticalClasses.forEach(cls => {
+                document.querySelectorAll('.' + cls).forEach(badge => {
+                    badge.closest('.tree-item').classList.add('highlight');
+
+                    let current = badge.closest('li');
+                    while (current) {
+                        const parentUl = current.parentElement;
+                        if (parentUl && parentUl.classList.contains('hidden')) {
+                            parentUl.classList.remove('hidden');
+                            const prevSibling = parentUl.previousElementSibling;
+                            if (prevSibling) {
+                                const toggle = prevSibling.querySelector('.toggle');
+                                if (toggle) toggle.classList.add('expanded');
+                            }
+                        }
+                        current = parentUl ? parentUl.closest('li') : null;
+                    }
+                });
+            });
+        }
+
+        // Search tree
+        function searchTree() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+
+            // Clear previous highlights
+            document.querySelectorAll('.tree-item').forEach(item => {
+                item.classList.remove('highlight');
+            });
+
+            if (query.length < 2) {
+                return;
+            }
+
+            // Find matching items
+            document.querySelectorAll('.item-name').forEach(name => {
+                if (name.textContent.toLowerCase().includes(query)) {
+                    const treeItem = name.closest('.tree-item');
+                    treeItem.classList.add('highlight');
+
+                    // Expand parents
+                    let current = treeItem.closest('li');
+                    while (current) {
+                        const parentUl = current.parentElement;
+                        if (parentUl && parentUl.classList.contains('hidden')) {
+                            parentUl.classList.remove('hidden');
+                            const prevSibling = parentUl.previousElementSibling;
+                            if (prevSibling) {
+                                const toggle = prevSibling.querySelector('.toggle');
+                                if (toggle) toggle.classList.add('expanded');
+                            }
+                        }
+                        current = parentUl ? parentUl.closest('li') : null;
+                    }
+                }
+            });
+        }
+
+        // Initialize - expand first level
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstUl = document.querySelector('.tree > li > ul');
+            if (firstUl) {
+                firstUl.classList.remove('hidden');
+                const toggle = firstUl.previousElementSibling.querySelector('.toggle');
+                if (toggle) toggle.classList.add('expanded');
+            }
+        });
+    </script>
+</body>
+</html>
