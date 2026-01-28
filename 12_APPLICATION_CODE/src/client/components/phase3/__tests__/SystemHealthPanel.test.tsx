@@ -1,37 +1,71 @@
+/**
+ * SystemHealthPanel Tests
+ * Tests for Phase 3 system health monitoring display
+ * India-market-only compliant
+ */
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { SystemHealthPanel } from '../SystemHealthPanel';
-import { useTelemetryStore, SystemHealth } from '../../../stores/telemetryStore';
 
 // Mock the telemetry store
+const mockTelemetryStore = {
+  systemHealth: null as null | {
+    cpu: number;
+    memory: number;
+    latency: number;
+    uptime: number;
+    lastHeartbeat: number;
+    status: 'healthy' | 'degraded' | 'critical';
+  },
+  lastUpdate: null as number | null,
+};
+
 vi.mock('../../../stores/telemetryStore', () => ({
-  useTelemetryStore: vi.fn(),
+  useTelemetryStore: vi.fn(() => mockTelemetryStore),
+}));
+
+// Mock UXMI components
+vi.mock('../../uxmi', () => ({
+  Tooltip: ({ children, content }: { children: React.ReactNode; content: string }) => (
+    <div data-tooltip={content}>{children}</div>
+  ),
+  ProgressBar: ({ value, variant, size }: { value: number; variant: string; size: string }) => (
+    <div data-testid="progress-bar" data-value={value} data-variant={variant} data-size={size}>
+      Progress: {value}%
+    </div>
+  ),
+  Spinner: ({ label }: { label?: string }) => (
+    <div data-testid="spinner">{label}</div>
+  ),
 }));
 
 describe('SystemHealthPanel component', () => {
-  const mockSystemHealth: SystemHealth = {
+  const mockSystemHealth = {
     cpu: 45,
     memory: 60,
     latency: 25,
     uptime: 3600000, // 1 hour
     lastHeartbeat: Date.now(),
-    status: 'healthy',
+    status: 'healthy' as const,
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockTelemetryStore.systemHealth = null;
+    mockTelemetryStore.lastUpdate = null;
   });
 
   describe('loading state', () => {
     it('should show loading spinner when systemHealth is null', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({ systemHealth: null, lastUpdate: null });
+      mockTelemetryStore.systemHealth = null;
       render(<SystemHealthPanel />);
-      // Spinner renders label twice (visible and sr-only)
-      expect(screen.getAllByText('Loading system data...').length).toBeGreaterThan(0);
+      expect(screen.getByTestId('spinner')).toBeInTheDocument();
+      expect(screen.getByText('Loading system data...')).toBeInTheDocument();
     });
 
     it('should show System Health heading in loading state', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({ systemHealth: null, lastUpdate: null });
+      mockTelemetryStore.systemHealth = null;
       render(<SystemHealthPanel />);
       expect(screen.getByText('System Health')).toBeInTheDocument();
     });
@@ -39,10 +73,8 @@ describe('SystemHealthPanel component', () => {
 
   describe('full mode rendering', () => {
     beforeEach(() => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: mockSystemHealth,
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = mockSystemHealth;
+      mockTelemetryStore.lastUpdate = Date.now();
     });
 
     it('should render System Health heading', () => {
@@ -50,25 +82,25 @@ describe('SystemHealthPanel component', () => {
       expect(screen.getByText('System Health')).toBeInTheDocument();
     });
 
-    it('should display CPU usage', () => {
+    it('should display CPU label and value', () => {
       render(<SystemHealthPanel />);
       expect(screen.getByText('CPU')).toBeInTheDocument();
       expect(screen.getByText('45%')).toBeInTheDocument();
     });
 
-    it('should display memory usage', () => {
+    it('should display Memory label and value', () => {
       render(<SystemHealthPanel />);
       expect(screen.getByText('Memory')).toBeInTheDocument();
       expect(screen.getByText('60%')).toBeInTheDocument();
     });
 
-    it('should display latency', () => {
+    it('should display Latency label and value', () => {
       render(<SystemHealthPanel />);
       expect(screen.getByText('Latency')).toBeInTheDocument();
       expect(screen.getByText('25ms')).toBeInTheDocument();
     });
 
-    it('should display uptime', () => {
+    it('should display Uptime label and formatted value', () => {
       render(<SystemHealthPanel />);
       expect(screen.getByText('Uptime')).toBeInTheDocument();
       expect(screen.getByText('1h 0m')).toBeInTheDocument();
@@ -78,43 +110,41 @@ describe('SystemHealthPanel component', () => {
       render(<SystemHealthPanel />);
       expect(screen.getByText('Heartbeat OK')).toBeInTheDocument();
     });
+
+    it('should render progress bars for CPU and Memory', () => {
+      render(<SystemHealthPanel />);
+      const progressBars = screen.getAllByTestId('progress-bar');
+      expect(progressBars.length).toBe(2); // CPU and Memory
+    });
   });
 
   describe('status badges', () => {
-    it('should show Healthy status badge', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, status: 'healthy' },
-        lastUpdate: Date.now(),
-      });
+    it('should show Healthy status with checkmark', () => {
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, status: 'healthy' };
+      mockTelemetryStore.lastUpdate = Date.now();
       render(<SystemHealthPanel />);
-      expect(screen.getByText(/✓.*Healthy/)).toBeInTheDocument();
+      expect(screen.getByText('✓ Healthy')).toBeInTheDocument();
     });
 
-    it('should show Degraded status badge', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, status: 'degraded' },
-        lastUpdate: Date.now(),
-      });
+    it('should show Degraded status with warning icon', () => {
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, status: 'degraded' };
+      mockTelemetryStore.lastUpdate = Date.now();
       render(<SystemHealthPanel />);
-      expect(screen.getByText(/⚠.*Degraded/)).toBeInTheDocument();
+      expect(screen.getByText('⚠ Degraded')).toBeInTheDocument();
     });
 
-    it('should show Critical status badge', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, status: 'critical' },
-        lastUpdate: Date.now(),
-      });
+    it('should show Critical status with X icon', () => {
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, status: 'critical' };
+      mockTelemetryStore.lastUpdate = Date.now();
       render(<SystemHealthPanel />);
-      expect(screen.getByText(/✕.*Critical/)).toBeInTheDocument();
+      expect(screen.getByText('✕ Critical')).toBeInTheDocument();
     });
   });
 
   describe('compact mode rendering', () => {
     beforeEach(() => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: mockSystemHealth,
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = mockSystemHealth;
+      mockTelemetryStore.lastUpdate = Date.now();
     });
 
     it('should render System heading in compact mode', () => {
@@ -122,55 +152,59 @@ describe('SystemHealthPanel component', () => {
       expect(screen.getByText('System')).toBeInTheDocument();
     });
 
-    it('should display CPU in compact mode', () => {
+    it('should display CPU label in compact mode', () => {
       render(<SystemHealthPanel compact />);
       expect(screen.getByText('CPU')).toBeInTheDocument();
     });
 
-    it('should display MEM in compact mode', () => {
+    it('should display MEM label in compact mode', () => {
       render(<SystemHealthPanel compact />);
       expect(screen.getByText('MEM')).toBeInTheDocument();
     });
 
-    it('should display LAT in compact mode', () => {
+    it('should display LAT label in compact mode', () => {
       render(<SystemHealthPanel compact />);
       expect(screen.getByText('LAT')).toBeInTheDocument();
+    });
+
+    it('should display values in compact mode', () => {
+      render(<SystemHealthPanel compact />);
+      expect(screen.getByText('45%')).toBeInTheDocument();
+      expect(screen.getByText('60%')).toBeInTheDocument();
+      expect(screen.getByText('25ms')).toBeInTheDocument();
+    });
+
+    it('should display status badge in compact mode', () => {
+      render(<SystemHealthPanel compact />);
+      expect(screen.getByText('✓ Healthy')).toBeInTheDocument();
     });
   });
 
   describe('uptime formatting', () => {
     it('should format uptime in days and hours', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, uptime: 90000000 }, // ~1 day
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, uptime: 90000000 }; // ~1 day 1 hour
+      mockTelemetryStore.lastUpdate = Date.now();
       render(<SystemHealthPanel />);
       expect(screen.getByText('1d 1h')).toBeInTheDocument();
     });
 
     it('should format uptime in hours and minutes', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, uptime: 7200000 }, // 2 hours
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, uptime: 7200000 }; // 2 hours
+      mockTelemetryStore.lastUpdate = Date.now();
       render(<SystemHealthPanel />);
       expect(screen.getByText('2h 0m')).toBeInTheDocument();
     });
 
     it('should format uptime in minutes and seconds', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, uptime: 180000 }, // 3 minutes
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, uptime: 180000 }; // 3 minutes
+      mockTelemetryStore.lastUpdate = Date.now();
       render(<SystemHealthPanel />);
       expect(screen.getByText('3m 0s')).toBeInTheDocument();
     });
 
     it('should format uptime in seconds for short durations', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, uptime: 45000 }, // 45 seconds
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, uptime: 45000 }; // 45 seconds
+      mockTelemetryStore.lastUpdate = Date.now();
       render(<SystemHealthPanel />);
       expect(screen.getByText('45s')).toBeInTheDocument();
     });
@@ -178,108 +212,160 @@ describe('SystemHealthPanel component', () => {
 
   describe('latency formatting', () => {
     it('should show <1ms for very low latency', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, latency: 0.5 },
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, latency: 0.5 };
+      mockTelemetryStore.lastUpdate = Date.now();
       render(<SystemHealthPanel />);
       expect(screen.getByText('<1ms')).toBeInTheDocument();
     });
 
     it('should show rounded ms for normal latency', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, latency: 45.7 },
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, latency: 45.7 };
+      mockTelemetryStore.lastUpdate = Date.now();
       render(<SystemHealthPanel />);
       expect(screen.getByText('46ms')).toBeInTheDocument();
+    });
+
+    it('should show exact ms for integer latency', () => {
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, latency: 100 };
+      mockTelemetryStore.lastUpdate = Date.now();
+      render(<SystemHealthPanel />);
+      expect(screen.getByText('100ms')).toBeInTheDocument();
     });
   });
 
   describe('latency color coding', () => {
     it('should show green for low latency (<50ms)', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, latency: 25 },
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, latency: 25 };
+      mockTelemetryStore.lastUpdate = Date.now();
       const { container } = render(<SystemHealthPanel />);
       expect(container.querySelector('.text-green-600')).toBeInTheDocument();
     });
 
     it('should show yellow for medium latency (50-100ms)', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, latency: 75 },
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, latency: 75 };
+      mockTelemetryStore.lastUpdate = Date.now();
       const { container } = render(<SystemHealthPanel />);
       expect(container.querySelector('.text-yellow-600')).toBeInTheDocument();
     });
 
     it('should show red for high latency (>100ms)', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, latency: 150 },
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, latency: 150 };
+      mockTelemetryStore.lastUpdate = Date.now();
       const { container } = render(<SystemHealthPanel />);
       expect(container.querySelector('.text-red-600')).toBeInTheDocument();
     });
   });
 
   describe('heartbeat indicator', () => {
-    it('should show green heartbeat when recent', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, lastHeartbeat: Date.now() },
-        lastUpdate: Date.now(),
-      });
+    it('should show green pulsing indicator when heartbeat is recent', () => {
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, lastHeartbeat: Date.now() };
+      mockTelemetryStore.lastUpdate = Date.now();
       const { container } = render(<SystemHealthPanel />);
       expect(container.querySelector('.bg-green-500.animate-pulse')).toBeInTheDocument();
     });
 
-    it('should show red heartbeat when stale', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, lastHeartbeat: Date.now() - 10000 },
-        lastUpdate: Date.now(),
-      });
+    it('should show red indicator when heartbeat is stale', () => {
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, lastHeartbeat: Date.now() - 10000 };
+      mockTelemetryStore.lastUpdate = Date.now();
       const { container } = render(<SystemHealthPanel />);
       expect(container.querySelector('.bg-red-500')).toBeInTheDocument();
     });
 
-    it('should show stale heartbeat message when no heartbeat', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, lastHeartbeat: Date.now() - 10000 },
-        lastUpdate: Date.now(),
-      });
+    it('should show stale heartbeat message when no recent heartbeat', () => {
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, lastHeartbeat: Date.now() - 10000 };
+      mockTelemetryStore.lastUpdate = Date.now();
       render(<SystemHealthPanel />);
       expect(screen.getByText(/No heartbeat for \d+s/)).toBeInTheDocument();
+    });
+
+    it('should show green background for recent heartbeat', () => {
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, lastHeartbeat: Date.now() };
+      mockTelemetryStore.lastUpdate = Date.now();
+      const { container } = render(<SystemHealthPanel />);
+      expect(container.querySelector('.bg-green-50')).toBeInTheDocument();
+    });
+
+    it('should show red background for stale heartbeat', () => {
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, lastHeartbeat: Date.now() - 10000 };
+      mockTelemetryStore.lastUpdate = Date.now();
+      const { container } = render(<SystemHealthPanel />);
+      expect(container.querySelector('.bg-red-50')).toBeInTheDocument();
     });
   });
 
   describe('status styling', () => {
     it('should apply green styling for healthy status', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, status: 'healthy' },
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, status: 'healthy' };
+      mockTelemetryStore.lastUpdate = Date.now();
       const { container } = render(<SystemHealthPanel />);
-      expect(container.querySelector('.text-green-600')).toBeInTheDocument();
+      expect(container.querySelector('.text-green-600.bg-green-100')).toBeInTheDocument();
     });
 
     it('should apply yellow styling for degraded status', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, status: 'degraded' },
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, status: 'degraded' };
+      mockTelemetryStore.lastUpdate = Date.now();
       const { container } = render(<SystemHealthPanel />);
-      expect(container.querySelector('.text-yellow-600')).toBeInTheDocument();
+      expect(container.querySelector('.text-yellow-600.bg-yellow-100')).toBeInTheDocument();
     });
 
     it('should apply red styling for critical status', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        systemHealth: { ...mockSystemHealth, status: 'critical' },
-        lastUpdate: Date.now(),
-      });
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, status: 'critical' };
+      mockTelemetryStore.lastUpdate = Date.now();
       const { container } = render(<SystemHealthPanel />);
-      expect(container.querySelector('.text-red-600')).toBeInTheDocument();
+      expect(container.querySelector('.text-red-600.bg-red-100')).toBeInTheDocument();
+    });
+  });
+
+  describe('tooltips', () => {
+    beforeEach(() => {
+      mockTelemetryStore.systemHealth = mockSystemHealth;
+      mockTelemetryStore.lastUpdate = Date.now();
+    });
+
+    it('should have tooltip for CPU usage', () => {
+      const { container } = render(<SystemHealthPanel />);
+      expect(container.querySelector('[data-tooltip="CPU usage: 45%"]')).toBeInTheDocument();
+    });
+
+    it('should have tooltip for Memory usage', () => {
+      const { container } = render(<SystemHealthPanel />);
+      expect(container.querySelector('[data-tooltip="Memory usage: 60%"]')).toBeInTheDocument();
+    });
+
+    it('should have tooltip for Latency', () => {
+      const { container } = render(<SystemHealthPanel />);
+      expect(container.querySelector('[data-tooltip="Network latency to trading servers"]')).toBeInTheDocument();
+    });
+
+    it('should have tooltip for Uptime', () => {
+      const { container } = render(<SystemHealthPanel />);
+      expect(container.querySelector('[data-tooltip="System uptime since last restart"]')).toBeInTheDocument();
+    });
+  });
+
+  describe('progress bar variants', () => {
+    it('should use success variant for low CPU usage', () => {
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, cpu: 30 };
+      mockTelemetryStore.lastUpdate = Date.now();
+      render(<SystemHealthPanel />);
+      const progressBars = screen.getAllByTestId('progress-bar');
+      expect(progressBars[0]).toHaveAttribute('data-variant', 'success');
+    });
+
+    it('should use warning variant for medium CPU usage', () => {
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, cpu: 70 };
+      mockTelemetryStore.lastUpdate = Date.now();
+      render(<SystemHealthPanel />);
+      const progressBars = screen.getAllByTestId('progress-bar');
+      expect(progressBars[0]).toHaveAttribute('data-variant', 'warning');
+    });
+
+    it('should use error variant for high CPU usage', () => {
+      mockTelemetryStore.systemHealth = { ...mockSystemHealth, cpu: 90 };
+      mockTelemetryStore.lastUpdate = Date.now();
+      render(<SystemHealthPanel />);
+      const progressBars = screen.getAllByTestId('progress-bar');
+      expect(progressBars[0]).toHaveAttribute('data-variant', 'error');
     });
   });
 });

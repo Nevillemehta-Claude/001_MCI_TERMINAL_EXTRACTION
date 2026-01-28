@@ -6,6 +6,12 @@ import {
   logTradingBreadcrumb,
   captureTradeError,
 } from '../lib/sentry';
+import { 
+  sanitizeString,
+  sanitizeApiKey,
+  sanitizeAccessToken,
+  sanitizeUserId,
+} from '../../shared/validation';
 
 export interface TokenState {
   // Token data (Kite/Zerodha credentials)
@@ -258,34 +264,95 @@ export const useTokenStore = create<TokenState>()(
     }),
     {
       name: 'mci-token-storage',
-      storage: createJSONStorage(() => sessionStorage), // Use sessionStorage for security
+      // CHANGE: localStorage for daily credential continuity across browser/system restarts
+      // Credentials persist until tokenExpiresAt (6:00 AM IST) - CR-004 enforced on rehydration
+      storage: createJSONStorage(() => localStorage),
       partialize: (state: TokenState) => ({
-        // Only persist token metadata, not actual secrets
+        // Persist credentials AND metadata for daily continuity
+        // Security: bounded to daily window, cleared on expiry
+        kiteApiKey: state.kiteApiKey,
+        kiteAccessToken: state.kiteAccessToken,
+        kiteUserId: state.kiteUserId,
         tokenCapturedAt: state.tokenCapturedAt,
         tokenExpiresAt: state.tokenExpiresAt,
         isTokenValid: state.isTokenValid,
       }),
-      // FIX: When rehydrating, check if persisted tokenExpiresAt is already expired
-      // If so, reset to null to force fresh validation
+      // CR-004 ENFORCEMENT: On rehydration, if tokenExpiresAt is in the past,
+      // ALL credentials are immediately cleared. No stale credentials allowed.
       merge: (persistedState, currentState) => {
+        // GAP-08 FIX: Defensive null/undefined check for corrupted localStorage
+        // If persistedState is null, undefined, or not an object, return clean state
+        if (!persistedState || typeof persistedState !== 'object') {
+          console.warn('[TokenStore] GAP-08: persistedState is null/undefined/invalid, returning clean state');
+          localStorage.removeItem('mci-token-storage');
+          return currentState;
+        }
+
         const persisted = persistedState as Partial<TokenState>;
         const now = Date.now();
 
-        // If persisted tokenExpiresAt is in the past, clear it
-        // This prevents stale expired state from blocking new credentials
+        // CRITICAL: If token has expired, clear ALL credentials immediately
+        // This enforces CR-004 (6:00 AM IST expiry) on every app load
         if (persisted.tokenExpiresAt && now >= persisted.tokenExpiresAt) {
-          console.log('[TokenStore] Clearing expired persisted tokenExpiresAt');
+          console.log('[TokenStore] CR-004: Clearing expired credentials on rehydration', {
+            expiredAt: new Date(persisted.tokenExpiresAt).toISOString(),
+            now: new Date(now).toISOString(),
+          });
+          // Also clear from localStorage to prevent stale data
+          localStorage.removeItem('mci-token-storage');
           return {
             ...currentState,
+            kiteApiKey: '',
+            kiteAccessToken: '',
+            kiteUserId: '',
             tokenCapturedAt: null,
             tokenExpiresAt: null,
             isTokenValid: false,
           };
         }
 
+        // GAP-09 FIX: Use FULL sanitizers with try-catch, not just sanitizeString()
+        // This enforces INV-006 properly - control characters are rejected, not just trimmed
+        let sanitizedApiKey = '';
+        let sanitizedAccessToken = '';
+        let sanitizedUserId = '';
+        
+        try {
+          // Use the strict sanitizers that reject control characters
+          sanitizedApiKey = persisted.kiteApiKey ? sanitizeApiKey(persisted.kiteApiKey) : '';
+          sanitizedAccessToken = persisted.kiteAccessToken ? sanitizeAccessToken(persisted.kiteAccessToken) : '';
+          sanitizedUserId = persisted.kiteUserId ? sanitizeUserId(persisted.kiteUserId) : '';
+        } catch (sanitizationError) {
+          // GAP-09 FIX: If sanitization fails (control chars, invalid format), clear all credentials
+          console.error('[TokenStore] GAP-09: Sanitization failed on rehydration, clearing credentials', {
+            error: sanitizationError instanceof Error ? sanitizationError.message : 'Unknown error',
+          });
+          localStorage.removeItem('mci-token-storage');
+          return {
+            ...currentState,
+            kiteApiKey: '',
+            kiteAccessToken: '',
+            kiteUserId: '',
+            tokenCapturedAt: null,
+            tokenExpiresAt: null,
+            isTokenValid: false,
+          };
+        }
+
+        if (sanitizedApiKey && sanitizedAccessToken) {
+          console.log('[TokenStore] Restoring valid credentials from localStorage', {
+            expiresAt: persisted.tokenExpiresAt ? new Date(persisted.tokenExpiresAt).toISOString() : null,
+            msUntilExpiry: persisted.tokenExpiresAt ? persisted.tokenExpiresAt - now : null,
+          });
+        }
+
         return {
           ...currentState,
           ...persisted,
+          // INV-006: Always use sanitized values, never raw persisted values
+          kiteApiKey: sanitizedApiKey,
+          kiteAccessToken: sanitizedAccessToken,
+          kiteUserId: sanitizedUserId,
         };
       },
     }

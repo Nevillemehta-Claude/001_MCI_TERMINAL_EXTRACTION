@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCI Supplementary Delta | Unique Content Not in v2.0</title>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --bg-card: #1a1f2e;
+            --accent-gold: #ffd700;
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --accent-purple: #a371f7;
+            --accent-cyan: #39d4d4;
+            --accent-orange: #f0883e;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --border: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a12;
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 40px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 2px solid var(--accent-gold);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            color: var(--accent-gold);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .header p { color: var(--text-secondary); }
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        .section-title {
+            color: var(--accent-gold);
+            font-size: 1.3rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .source-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .source-usecase { background: var(--accent-purple); color: #000; }
+        .source-forensic { background: var(--accent-cyan); color: #000; }
+        .source-exhaustive { background: var(--accent-orange); color: #000; }
+        .source-lifecycle { background: var(--accent-green); color: #000; }
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .card-title { color: var(--text-primary); font-weight: 600; margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 15px 0; }
+        th { background: var(--bg-tertiary); padding: 12px; text-align: left; color: var(--accent-gold); }
+        td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+        .code-block {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre;
+            color: var(--accent-cyan);
+        }
+        .chain-flow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin: 15px 0;
+        }
+        .chain-node {
+            background: var(--bg-tertiary);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+        }
+        .chain-arrow { color: var(--accent-cyan); font-size: 1.2rem; }
+        .warning {
+            background: rgba(248, 81, 73, 0.1);
+            border: 1px solid var(--accent-red);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .warning-title { color: var(--accent-red); font-weight: bold; margin-bottom: 8px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>MCI SUPPLEMENTARY DELTA</h1>
+    <p>Unique Content Extracted from Legacy Files NOT Present in MCI_COMPLETE_DEVELOPMENT_BRIEFING_v2.html</p>
+    <p style="margin-top: 10px; font-size: 0.85rem;">Generated: January 27, 2026 | Files Analyzed: 7 | Post-Synthesis Extraction</p>
+</div>
+
+<!-- SECTION 1: ALTERNATE CR DEFINITIONS -->
+<div class="section">
+    <h2 class="section-title">
+        <span>⚠️</span> CRITICAL: Alternate CR Definitions
+        <span class="source-badge source-usecase">MCI_MASTER_USE_CASE_SPECIFICATION+</span>
+    </h2>
+
+    <div class="warning">
+        <div class="warning-title">DISCREPANCY DETECTED</div>
+        <p>The Use Case Specification file contains a DIFFERENT set of Constitutional Requirements focused on philosophical principles rather than technical implementation. Review and reconcile as needed.</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>CR ID</th>
+                <th>Use Case Spec Definition (Philosophical)</th>
+                <th>v2.0 Definition (Technical)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="color: var(--accent-red);">CR-001</td>
+                <td>Decision-Support NOT Decision-Making - MCI guides, never decides</td>
+                <td>Token Validity Check before ANY operation</td>
+            </tr>
+            <tr>
+                <td style="color: var(--accent-red);">CR-002</td>
+                <td>Expose Contradictions - surface conflicts, never hide them</td>
+                <td>Graceful Shutdown (6-step sequence)</td>
+            </tr>
+            <tr>
+                <td style="color: var(--accent-red);">CR-003</td>
+                <td>Descriptive AI - explain clearly, never prescribe</td>
+                <td>WHAT/WHY/HOW Error Format</td>
+            </tr>
+            <tr>
+                <td style="color: var(--accent-orange);">CR-004</td>
+                <td>Token Lifecycle Accuracy - never misrepresent token state</td>
+                <td>6 AM IST Token Expiry</td>
+            </tr>
+            <tr>
+                <td style="color: var(--accent-green);">CR-005</td>
+                <td>UXMI Compliance - all 49 state combinations</td>
+                <td>UXMI 7×7 Matrix (ALIGNED)</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- SECTION 2: 13 USE CASES WITH FMEA -->
+<div class="section">
+    <h2 class="section-title">
+        <span>📋</span> 13 Use Cases with FMEA Analysis
+        <span class="source-badge source-usecase">MCI_MASTER_USE_CASE_SPECIFICATION+</span>
+    </h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>UC ID</th>
+                <th>Name</th>
+                <th>Actor</th>
+                <th>Priority</th>
+                <th>Failure Mode (FMEA)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>UC-001</td><td>Token Capture & Validation</td><td>Operator</td><td>P1</td><td>Invalid Token Format</td></tr>
+            <tr><td>UC-002</td><td>Pre-Ignition Scan</td><td>Operator</td><td>P1</td><td>Scan Timeout / False Positive</td></tr>
+            <tr><td>UC-003</td><td>Backend Selection</td><td>Operator</td><td>P2</td><td>Unavailable Broker</td></tr>
+            <tr><td>UC-004</td><td>Engine Ignition</td><td>Operator</td><td>P0</td><td>Ignition Failure / Partial Start</td></tr>
+            <tr><td>UC-005</td><td>Telemetry Monitoring</td><td>Operator</td><td>P1</td><td>WebSocket Disconnect</td></tr>
+            <tr><td>UC-006</td><td>Emergency Shutdown</td><td>Operator</td><td>P0</td><td>Shutdown Blocked</td></tr>
+            <tr><td>UC-007</td><td>Token Expiry Handling</td><td>Clock</td><td>P0</td><td>Silent Expiry (no warning)</td></tr>
+            <tr><td>UC-008</td><td>Strategy Status Display</td><td>Engine</td><td>P2</td><td>Stale Data Display</td></tr>
+            <tr><td>UC-009</td><td>Position Summary</td><td>Engine</td><td>P1</td><td>P&L Calculation Error</td></tr>
+            <tr><td>UC-010</td><td>Order Activity Log</td><td>Engine</td><td>P2</td><td>Missing Orders</td></tr>
+            <tr><td>UC-011</td><td>Risk Metrics Display</td><td>Engine</td><td>P1</td><td>Incorrect Risk Calculation</td></tr>
+            <tr><td>UC-012</td><td>Error Notification</td><td>Engine</td><td>P1</td><td>Silent Failure</td></tr>
+            <tr><td>UC-013</td><td>Session Persistence</td><td>Operator</td><td>P2</td><td>State Loss on Refresh</td></tr>
+        </tbody>
+    </table>
+
+    <div class="card">
+        <div class="card-title">FMEA Risk Priority Numbers (RPN)</div>
+        <p style="color: var(--text-secondary); margin-bottom: 10px;">Severity × Occurrence × Detection = RPN (Higher = More Critical)</p>
+        <table>
+            <thead>
+                <tr><th>Failure Mode</th><th>Severity</th><th>Occurrence</th><th>Detection</th><th>RPN</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Shutdown Blocked (UC-006)</td><td>10</td><td>3</td><td>2</td><td style="color: var(--accent-red);">60</td></tr>
+                <tr><td>Silent Token Expiry (UC-007)</td><td>9</td><td>5</td><td>3</td><td style="color: var(--accent-red);">135</td></tr>
+                <tr><td>WebSocket Disconnect (UC-005)</td><td>7</td><td>6</td><td>4</td><td style="color: var(--accent-orange);">168</td></tr>
+                <tr><td>P&L Calculation Error (UC-009)</td><td>8</td><td>2</td><td>5</td><td style="color: var(--accent-orange);">80</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- SECTION 3: DEEP REPERCUSSION CHAINS -->
+<div class="section">
+    <h2 class="section-title">
+        <span>🔗</span> Deep Repercussion Chains
+        <span class="source-badge source-exhaustive">MCI_EXHAUSTIVE_DEVELOPMENT_cursor</span>
+    </h2>
+
+    <div class="card">
+        <div class="card-title">🔑 CR-001 Token Validity Chain (6 Systems Affected)</div>
+        <div class="chain-flow">
+            <span class="chain-node" style="border-color: var(--accent-red);">tokenStore</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">TokenStatus Component</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">scannerStore (blocked)</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">ignitionStore (blocked)</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">All API Routes</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">WebSocket Auth</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">🛑 CR-002 Shutdown Sequence Chain (SACRED ORDER)</div>
+        <div class="chain-flow">
+            <span class="chain-node">1. Stop New Ops</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">2. Complete Pending</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">3. Close WebSocket</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">4. Clear Memory</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">5. Log Final State</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">6. Exit Clean</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">⚠️ CR-003 Error Propagation Chain</div>
+        <div class="chain-flow">
+            <span class="chain-node">Backend Error</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">API Response</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">ErrorDisplay Component</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">Toast Notification</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">Sentry Logging</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">User Recovery Action</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">🎨 CR-005 UXMI State Cascade (49 Combinations)</div>
+        <div class="chain-flow">
+            <span class="chain-node">State Definition</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">7 Components</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">CSS/Tailwind</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">Accessibility</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">E2E Tests</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-node">Storybook Docs</span>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 4: TOOL-TO-PHASE MATRIX -->
+<div class="section">
+    <h2 class="section-title">
+        <span>🛠️</span> Tool Arsenal & Phase Mapping Matrix
+        <span class="source-badge source-lifecycle">_MCI_MASTER_LIFECYCLE_CONTROL_MAP</span>
+    </h2>
+
+    <div class="card">
+        <div class="card-title">4-Tier Tool Classification</div>
+        <div class="grid-2">
+            <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 8px;">
+                <strong style="color: var(--accent-gold);">TIER 1: Primary AI Tools (60%)</strong>
+                <ul style="margin-top: 10px; color: var(--text-secondary);">
+                    <li>Claude Code - Agentic coding (40%)</li>
+                    <li>Claude (Web) - Ideation & research</li>
+                    <li>Cursor - Visual editing (20%)</li>
+                </ul>
+            </div>
+            <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 8px;">
+                <strong style="color: var(--accent-green);">TIER 2: Dev Infrastructure</strong>
+                <ul style="margin-top: 10px; color: var(--text-secondary);">
+                    <li>Replit - Rapid prototyping</li>
+                    <li>Docker - Containerization</li>
+                    <li>GitHub - Version control</li>
+                </ul>
+            </div>
+            <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 8px;">
+                <strong style="color: var(--accent-purple);">TIER 3: Deployment & Validation</strong>
+                <ul style="margin-top: 10px; color: var(--text-secondary);">
+                    <li>Vercel - Frontend deployment</li>
+                    <li>Sentry - Error monitoring (CR-003)</li>
+                </ul>
+            </div>
+            <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 8px;">
+                <strong style="color: var(--accent-orange);">TIER 4: Session Orchestration</strong>
+                <ul style="margin-top: 10px; color: var(--text-secondary);">
+                    <li>Cowork - 3× parallel sessions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tool</th>
+                <th>P1-P2<br>Ideation</th>
+                <th>P3-P3.5<br>UI/UX</th>
+                <th>P4-P5<br>Arch/Spec</th>
+                <th>P6-P7<br>Dev/Int</th>
+                <th>P8-P9<br>Test/Deploy</th>
+                <th>P10-P11<br>Maint/Ops</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Claude Code</td><td style="color: var(--accent-gold);">●●</td><td style="color: var(--accent-gold);">●●</td><td style="color: var(--accent-gold);">●●</td><td style="color: var(--accent-gold);">●●</td><td style="color: var(--accent-gold);">●●</td><td style="color: var(--accent-gold);">●●</td></tr>
+            <tr><td>Claude (Web)</td><td style="color: var(--accent-gold);">●●</td><td>○</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Cursor</td><td></td><td></td><td></td><td style="color: var(--accent-gold);">●</td><td>○</td><td>○</td></tr>
+            <tr><td>GitHub</td><td></td><td></td><td>●</td><td style="color: var(--accent-gold);">●●</td><td>○</td><td>○</td></tr>
+            <tr><td>Docker</td><td></td><td></td><td></td><td>○</td><td style="color: var(--accent-gold);">●●</td><td style="color: var(--accent-gold);">●●</td></tr>
+            <tr><td>Vercel</td><td></td><td></td><td></td><td></td><td style="color: var(--accent-gold);">●</td><td>○</td></tr>
+            <tr><td>Sentry</td><td></td><td></td><td></td><td></td><td style="color: var(--accent-gold);">●●</td><td style="color: var(--accent-gold);">●●</td></tr>
+        </tbody>
+    </table>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 10px;">● = Primary Use | ○ = Secondary Use | ●● = Heavy Use</p>
+</div>
+
+<!-- SECTION 5: FILE REGISTRY WITH LINE COUNTS -->
+<div class="section">
+    <h2 class="section-title">
+        <span>📁</span> Complete File Registry with Line Counts
+        <span class="source-badge source-lifecycle">_MCI_MASTER_LIFECYCLE_CONTROL_MAP</span>
+    </h2>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">UXMI Components (7 files)</div>
+            <table>
+                <tr><td>Button.tsx</td><td style="color: var(--accent-cyan);">117 lines</td></tr>
+                <tr><td>Tooltip.tsx</td><td style="color: var(--accent-cyan);">128 lines</td></tr>
+                <tr><td>Input.tsx</td><td style="color: var(--accent-cyan);">185 lines</td></tr>
+                <tr><td>Spinner.tsx</td><td style="color: var(--accent-cyan);">67 lines</td></tr>
+                <tr><td>ProgressBar.tsx</td><td style="color: var(--accent-cyan);">147 lines</td></tr>
+                <tr><td>Toast.tsx</td><td style="color: var(--accent-cyan);">200 lines</td></tr>
+                <tr><td>ErrorDisplay.tsx</td><td style="color: var(--accent-cyan);">261 lines</td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Zustand Stores (5 files)</div>
+            <table>
+                <tr><td>tokenStore.ts</td><td style="color: var(--accent-cyan);">296 lines</td></tr>
+                <tr><td>ignitionStore.ts</td><td style="color: var(--accent-cyan);">320 lines</td></tr>
+                <tr><td>scannerStore.ts</td><td style="color: var(--accent-cyan);">312 lines</td></tr>
+                <tr><td>shutdownStore.ts</td><td style="color: var(--accent-cyan);">288 lines</td></tr>
+                <tr><td>telemetryStore.ts</td><td style="color: var(--accent-cyan);">226 lines</td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Server Routes (4 files)</div>
+            <table>
+                <tr><td>auth.ts</td><td style="color: var(--accent-cyan);">147 lines</td></tr>
+                <tr><td>ignition.ts</td><td style="color: var(--accent-cyan);">196 lines</td></tr>
+                <tr><td>shutdown.ts</td><td style="color: var(--accent-cyan);">144 lines</td></tr>
+                <tr><td>telemetry.ts</td><td style="color: var(--accent-orange);">189 lines ⚠️</td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Phase Components</div>
+            <table>
+                <tr><td>TokenCaptureForm.tsx</td><td style="color: var(--accent-cyan);">293 lines</td></tr>
+                <tr><td>PreIgnitionScanner.tsx</td><td style="color: var(--accent-cyan);">203 lines</td></tr>
+                <tr><td>BackendSelector.tsx</td><td style="color: var(--accent-cyan);">122 lines</td></tr>
+                <tr><td>IgnitionButton.tsx</td><td style="color: var(--accent-cyan);">255 lines</td></tr>
+                <tr><td>TelemetryDashboard.tsx</td><td style="color: var(--accent-orange);">152 lines ⚠️</td></tr>
+                <tr><td>App.tsx</td><td style="color: var(--accent-orange);">305 lines ⚠️</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 6: CODE SNIPPETS -->
+<div class="section">
+    <h2 class="section-title">
+        <span>💻</span> Reference Code Snippets
+        <span class="source-badge source-lifecycle">_MCI_MASTER_LIFECYCLE_CONTROL_MAP</span>
+    </h2>
+
+    <div class="card">
+        <div class="card-title">CR-005 TIMING CONSTANTS (Button.tsx)</div>
+        <div class="code-block">const TIMING = {
+  hover: 150,    // ms - transition to hover state
+  active: 100,   // ms - button press feedback
+  tooltip: 300,  // ms - delay before tooltip shows
+  toast: 5000    // ms - auto-dismiss duration
+};</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">CR-004 Implementation (tokenStore.ts:44-60)</div>
+        <div class="code-block">const calculateNext6AMIST = (): number => {
+  // 6:00 AM IST = 00:30 UTC (IST is UTC+5:30)
+  const now = new Date();
+  const expiry = new Date(now);
+  expiry.setUTCHours(0, 30, 0, 0); // 6 AM IST
+  if (expiry <= now) {
+    expiry.setDate(expiry.getDate() + 1);
+  }
+  return expiry.getTime();
+};</div>
+    </div>
+</div>
+
+<!-- SECTION 7: QUALITY GATES DETAILED -->
+<div class="section">
+    <h2 class="section-title">
+        <span>🚧</span> Quality Gates (6 Gates - Detailed Criteria)
+        <span class="source-badge source-lifecycle">_MCI_MASTER_LIFECYCLE_CONTROL_MAP</span>
+    </h2>
+
+    <table>
+        <thead>
+            <tr><th>Gate</th><th>Name</th><th>Criteria</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>0.5</td><td>UI/UX Review</td><td>Color palette, typography, component specs approved</td><td style="color: var(--accent-green);">PASSED</td></tr>
+            <tr><td>1</td><td>Planning Complete</td><td>Requirements documented, use cases defined, feasibility confirmed</td><td style="color: var(--accent-green);">PASSED</td></tr>
+            <tr><td>2</td><td>Architecture Approved</td><td>System design validated, component structure defined, API contracts agreed</td><td style="color: var(--accent-green);">PASSED</td></tr>
+            <tr><td>3</td><td>Implementation Review</td><td>Code audit complete, 97% quality score, 3 minor fixes</td><td style="color: var(--accent-green);">PASSED</td></tr>
+            <tr><td>4</td><td>Testing Complete</td><td>Unit tests, integration tests, CR compliance tests passing</td><td style="color: var(--accent-green);">PASSED</td></tr>
+            <tr><td>5</td><td>Deployment Ready</td><td>Production checklist complete, environment configured, monitoring active</td><td style="color: var(--accent-green);">PASSED</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- SECTION 8: 8 TO 5 TAB STREAMLINING -->
+<div class="section">
+    <h2 class="section-title">
+        <span>📊</span> Tab Streamlining Proposal (8 → 5 Tabs)
+        <span class="source-badge source-forensic">MCI_FORENSIC_VISUAL_SUMMARY+</span>
+    </h2>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">Original 8 Tabs</div>
+            <ol style="color: var(--text-secondary); padding-left: 20px;">
+                <li>Executive Summary</li>
+                <li>Constitutional Requirements</li>
+                <li>Technical Architecture</li>
+                <li>Use Case Matrix</li>
+                <li>UXMI Specification</li>
+                <li>Implementation Status</li>
+                <li>Validation Framework</li>
+                <li>Reference Materials</li>
+            </ol>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color: var(--accent-green);">Proposed 5 Tabs</div>
+            <ol style="color: var(--text-secondary); padding-left: 20px;">
+                <li><strong>Overview</strong> (merged: Exec Summary + CRs)</li>
+                <li><strong>Architecture</strong> (merged: Tech Arch + Use Cases)</li>
+                <li><strong>Implementation</strong> (merged: Status + UXMI)</li>
+                <li><strong>Validation</strong> (unchanged)</li>
+                <li><strong>Reference</strong> (unchanged)</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Action Category Counts (from Forensic Analysis)</div>
+        <table>
+            <tr><td>KEEP (no changes needed)</td><td style="color: var(--accent-green);">14 items</td></tr>
+            <tr><td>REVISE (minor updates)</td><td style="color: var(--accent-orange);">6 items</td></tr>
+            <tr><td>DELETE (redundant)</td><td style="color: var(--accent-red);">4 items</td></tr>
+            <tr><td>REDO (significant rewrite)</td><td style="color: var(--accent-purple);">4 items</td></tr>
+        </table>
+    </div>
+</div>
+
+<!-- SECTION 9: USER JOURNEY MAP (MERMAID) -->
+<div class="section">
+    <h2 class="section-title">
+        <span>🗺️</span> User Journey Map (Mermaid Diagram Spec)
+        <span class="source-badge source-usecase">MCI_MASTER_USE_CASE_SPECIFICATION+</span>
+    </h2>
+
+    <div class="code-block">graph LR
+    A[Start Session] --> B{Token Valid?}
+    B -->|No| C[Token Capture Form]
+    C --> D[Validate with Kite]
+    D -->|Success| E[Pre-Ignition Scanner]
+    D -->|Fail| C
+    B -->|Yes| E
+    E --> F{12 Checks Pass?}
+    F -->|No| G[Show Failures]
+    G --> E
+    F -->|Yes| H[Backend Selection]
+    H --> I[Ignition Button]
+    I --> J{Confirm Ignition?}
+    J -->|No| H
+    J -->|Yes| K[Start Engine]
+    K --> L[Telemetry Dashboard]
+    L --> M{Shutdown?}
+    M -->|No| L
+    M -->|Yes| N[6-Step Shutdown]
+    N --> O[Session End]</div>
+</div>
+
+<div class="footer">
+    <strong style="color: var(--accent-gold);">MCI SUPPLEMENTARY DELTA</strong><br>
+    This document contains ONLY unique content not present in MCI_COMPLETE_DEVELOPMENT_BRIEFING_v2.html<br>
+    Source Files: MCI_MASTER_USE_CASE_SPECIFICATION+, MCI_FORENSIC_VISUAL_SUMMARY+, MCI_EXHAUSTIVE_DEVELOPMENT_cursor, _MCI_MASTER_LIFECYCLE_CONTROL_MAP
+</div>
+
+</body>
+</html>

@@ -2,6 +2,10 @@
   "name": "mci",
   "version": "1.0.0",
   "scripts": {
+    "start": "./scripts/start.sh",
+    "stop": "./scripts/stop.sh",
+    "status": "./scripts/status.sh",
+    "restart": "./scripts/stop.sh && ./scripts/start.sh",
     "dev": "bunx --bun vite",
     "build": "bunx --bun vite build",
     "server": "bun run src/server/index.ts",
@@ -38,6 +42,7 @@
     "autoprefixer": "^10.4.0",
     "fast-check": "^4.5.3",
     "happy-dom": "^13.3.0",
+    "jsdom": "^27.4.0",
     "playwright": "^1.57.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.4.0",

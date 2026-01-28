@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Input, Button, ErrorDisplay, Tooltip } from '../uxmi';
 import { useTokenStore } from '../../stores/tokenStore';
+import { sanitizeKiteCredentials } from '../../../shared/validation';
 
 interface TokenCaptureFormProps {
   onSuccess?: () => void;
@@ -14,6 +15,7 @@ interface TokenCaptureFormProps {
  * - Secure input handling (password fields)
  * - CR-004 compliant: Tokens expire at 6:00 AM IST
  * - CR-005 compliant UI interactions
+ * - INV-006 compliant: Input sanitization at entry point
  */
 export const TokenCaptureForm: React.FC<TokenCaptureFormProps> = ({
   onSuccess,
@@ -117,8 +119,28 @@ export const TokenCaptureForm: React.FC<TokenCaptureFormProps> = ({
       return;
     }
 
-    // Store Kite credentials (CR-004: expiry will be set to 6:00 AM IST)
-    setKiteCredentials(formData.kiteApiKey, formData.kiteAccessToken, formData.kiteUserId);
+    // INV-006: Sanitize credentials using centralized module at entry point
+    try {
+      const sanitized = sanitizeKiteCredentials({
+        apiKey: formData.kiteApiKey,
+        accessToken: formData.kiteAccessToken,
+        userId: formData.kiteUserId,
+      });
+
+      // Store Kite credentials (CR-004: expiry will be set to 6:00 AM IST)
+      setKiteCredentials(
+        sanitized.apiKey,
+        sanitized.accessToken,
+        sanitized.userId
+      );
+    } catch (sanitizeError) {
+      setCaptureError(
+        sanitizeError instanceof Error
+          ? sanitizeError.message
+          : 'Invalid credential format'
+      );
+      return;
+    }
 
     // Validate with backend
     const isValid = await validateTokens();

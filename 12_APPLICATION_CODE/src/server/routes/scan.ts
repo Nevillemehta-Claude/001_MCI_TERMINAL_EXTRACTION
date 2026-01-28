@@ -7,16 +7,16 @@ import {
 
 /**
  * Scanner Routes
- * Handles pre-ignition system checks for Indian markets
- * P3 REMEDIATION: Updated from Alpaca/Polygon to Kite Connect/NSE/BSE
+ * Handles pre-ignition system checks for Indian markets (NSE/BSE)
+ * Uses Kite Connect API for broker connectivity
  */
 
 export const scanRoutes = new Hono();
 
-// P3 REMEDIATION: Updated check IDs for Indian market infrastructure
+// 12-point pre-ignition checks for Indian market infrastructure
 const ALL_CHECKS = [
-  'kite-connection',      // Was: alpaca-connection
-  'nse-bse-data',         // Was: polygon-connection
+  'kite-connection',
+  'nse-bse-data',
   'websocket-health',
   'token-validity',
   'account-access',

@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useIgnitionStore } from '../../stores/ignitionStore';
-import { Button, ErrorDisplay, Spinner } from '../uxmi';
+import { Button, ErrorDisplay, Spinner, Tooltip } from '../uxmi';
+import { useBackendHealth } from '../../hooks';
 
 interface IgnitionButtonProps {
   onIgnition?: () => void;
@@ -10,9 +11,13 @@ interface IgnitionButtonProps {
 /**
  * Phase 2: Ignition Button
  * - Two-stage safety: ARM then IGNITE
- * - Live trading requires explicit confirmation
+ * - Real trading requires explicit confirmation
  * - Clear visual states for each phase
  * - Emergency abort capability
+ * 
+ * COCKPIT INTEGRITY (GAP-03):
+ * - Backend health is verified before arming
+ * - Ignition blocked if backend is unreachable
  */
 export const IgnitionButton: React.FC<IgnitionButtonProps> = ({
   onIgnition,
@@ -38,6 +43,9 @@ export const IgnitionButton: React.FC<IgnitionButtonProps> = ({
   const selectedConfig = backendConfigs.find((c) => c.type === selectedBackend);
   const requiresConfirmation = selectedConfig?.requiresConfirmation ?? false;
   const CONFIRM_PHRASE = 'CONFIRM TRADE';
+
+  // COCKPIT INTEGRITY (GAP-03): Real backend health check before ignition
+  const backendHealth = useBackendHealth({ pollInterval: 3000, enabled: true });
 
   const handleArm = useCallback(() => {
     if (requiresConfirmation && !liveConfirmed) {
@@ -172,7 +180,7 @@ export const IgnitionButton: React.FC<IgnitionButtonProps> = ({
         </div>
         <h3 className="text-2xl font-bold text-green-800">System Running</h3>
         <p className="text-green-700 mt-2">
-          {requiresConfirmation ? '🔴 LIVE TRADING ACTIVE' : '📋 Paper Trading Active'}
+          {requiresConfirmation ? '🔴 LIVE TRADING ACTIVE' : '📋 Simulation Mode Active'}
         </p>
         <Button variant="danger" onClick={handleAbort} className="mt-6">
           Shutdown System
@@ -205,7 +213,7 @@ export const IgnitionButton: React.FC<IgnitionButtonProps> = ({
           <p className="text-gray-600 mb-6">
             {requiresConfirmation
               ? 'Ready to initiate LIVE trading. This will use real funds.'
-              : 'Ready to initiate paper trading simulation.'}
+              : 'Ready to initiate trading simulation.'}
           </p>
 
           <div className="flex gap-3 justify-center">
@@ -233,19 +241,84 @@ export const IgnitionButton: React.FC<IgnitionButtonProps> = ({
   }
 
   // Default - arm button
+  // COCKPIT INTEGRITY (GAP-03): Show backend health and block if unreachable
   return (
     <div className="space-y-4">
-      <div className="p-6 bg-gray-50 rounded-xl text-center border-2 border-gray-200">
+      {/* Backend Health Indicator - MUST be visible before ignition */}
+      <div className={`p-4 rounded-lg border-2 ${
+        backendHealth.isReachable 
+          ? 'bg-green-50 border-green-200' 
+          : 'bg-red-50 border-red-200'
+      }`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`w-3 h-3 rounded-full ${
+              backendHealth.isReachable 
+                ? 'bg-green-500 animate-pulse' 
+                : 'bg-red-500 animate-pulse'
+            }`} />
+            <div>
+              <span className={`font-medium ${
+                backendHealth.isReachable ? 'text-green-800' : 'text-red-800'
+              }`}>
+                Backend API: {backendHealth.isReachable ? 'Connected' : 'NOT CONNECTED'}
+              </span>
+              {backendHealth.isReachable && backendHealth.latency !== null && (
+                <span className="text-green-600 text-sm ml-2">({backendHealth.latency}ms)</span>
+              )}
+            </div>
+          </div>
+          {!backendHealth.isReachable && (
+            <Tooltip content="Click to retry connection check">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={backendHealth.checkNow}
+                loading={backendHealth.isChecking}
+              >
+                Retry
+              </Button>
+            </Tooltip>
+          )}
+        </div>
+        {!backendHealth.isReachable && (
+          <p className="text-red-600 text-sm mt-2">
+            {backendHealth.lastError || 'Cannot reach http://localhost:3000/api/health'}
+          </p>
+        )}
+      </div>
+
+      <div className={`p-6 rounded-xl text-center border-2 ${
+        backendHealth.isReachable 
+          ? 'bg-gray-50 border-gray-200' 
+          : 'bg-gray-100 border-gray-300'
+      }`}>
         <p className="text-gray-600 mb-4">
-          Backend selected: <strong>{requiresConfirmation ? 'Real Trading' : 'Paper Trading'}</strong>
+          Backend selected: <strong>{requiresConfirmation ? 'Real Trading' : 'Simulation Mode'}</strong>
         </p>
-        <Button
-          variant={requiresConfirmation ? 'danger' : 'primary'}
-          size="lg"
-          onClick={handleArm}
-        >
-          {requiresConfirmation ? '⚠️ ARM SYSTEM (Live)' : '🔒 ARM SYSTEM'}
-        </Button>
+        
+        {/* COCKPIT INTEGRITY: Block ARM if backend unreachable */}
+        {!backendHealth.isReachable ? (
+          <Tooltip content="Cannot arm system while backend is unreachable">
+            <div className="inline-block">
+              <Button
+                variant="secondary"
+                size="lg"
+                disabled
+              >
+                ⛔ Backend Required to ARM
+              </Button>
+            </div>
+          </Tooltip>
+        ) : (
+          <Button
+            variant={requiresConfirmation ? 'danger' : 'primary'}
+            size="lg"
+            onClick={handleArm}
+          >
+            {requiresConfirmation ? '⚠️ ARM SYSTEM (Real Trading)' : '🔒 ARM SYSTEM'}
+          </Button>
+        )}
       </div>
     </div>
   );

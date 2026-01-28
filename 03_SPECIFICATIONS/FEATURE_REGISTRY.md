@@ -16,7 +16,7 @@
 |-----------|--------|-------------|
 | TokenCaptureForm | Complete | Kite credential capture |
 | TokenTimer | Complete | Countdown to 6:00 AM IST expiry |
-| tokenStore | Complete | Zustand state with session persistence |
+| tokenStore | Complete | Zustand state with daily persistence (INV-001) |
 
 **CR Compliance:** CR-001, CR-004
 

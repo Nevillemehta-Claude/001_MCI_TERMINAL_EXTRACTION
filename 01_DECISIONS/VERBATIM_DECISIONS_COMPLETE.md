@@ -60,7 +60,7 @@
 ## CLEAN SLATE - ALL REFERENCES
 
 - | **A: PURGE & REBUILD** | Delete existing structure, create fresh | Clean slate, no confusion | Loses the 3 governance docs (need re-extraction) |
-- - **CLEAN SLATE PROTOCOL:** Eradicate all previous implementations including Alpaca code
+- - **CLEAN SLATE PROTOCOL:** Eradicate all previous implementations including [Out-of-Scope-Broker] code
 - ║   The Clean Slate Protocol was declared BEFORE the code was audited.          ║
 - ║   • The DESIGN intent of Clean Slate is satisfied                             ║
 - ║   CLEAN SLATE = SUPERSESSION OF DESIGN, NOT DESTRUCTION OF CODE               ║

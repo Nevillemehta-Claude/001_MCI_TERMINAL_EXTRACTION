@@ -34,7 +34,9 @@ export const ShutdownPanel: React.FC<ShutdownPanelProps> = ({ onComplete }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmType, setConfirmType] = useState<'normal' | 'emergency'>('normal');
 
-  const isRunning = ignitionPhase === 'running';
+  // Allow shutdown if ignition phase is 'running' OR if we're on the shutdown screen
+  // (user navigated here from Phase 3, so system is implicitly running)
+  const isRunning = ignitionPhase === 'running' || phase === 'idle';
   const isShuttingDown = phase !== 'idle' && phase !== 'complete' && phase !== 'error';
 
   const handleShutdown = (emergency: boolean) => {

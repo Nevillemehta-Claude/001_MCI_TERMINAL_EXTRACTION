@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Input } from '../Input';
 
 describe('Input component', () => {
@@ -177,11 +178,12 @@ describe('Input component', () => {
       expect(input).toHaveAttribute('aria-describedby', 'test-input-hint');
     });
 
-    it('should be focusable', () => {
+    it('should be focusable', async () => {
+      const user = userEvent.setup();
       render(<Input />);
       const input = screen.getByRole('textbox');
-      input.focus();
-      expect(document.activeElement).toBe(input);
+      await user.click(input);
+      expect(input).toHaveFocus();
     });
   });
 

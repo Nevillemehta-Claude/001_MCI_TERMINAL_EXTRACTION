@@ -4,12 +4,17 @@ import {
   logBackendBreadcrumb,
   Sentry,
 } from '../lib/sentry';
+import {
+  sanitizeCredentialsFromRequest,
+  buildKiteAuthHeader,
+} from '../../shared/validation';
 
 /**
  * Authentication Routes
  * Handles token validation with Kite Connect API
  *
  * CR-004 COMPLIANCE: Kite tokens expire at 6:00 AM IST daily
+ * INV-006 COMPLIANCE: All inputs sanitized at boundary via centralized module
  */
 
 export const authRoutes = new Hono();
@@ -19,14 +24,25 @@ authRoutes.post('/validate', async (c) => {
   logBackendBreadcrumb('Kite auth validation request received', 'auth');
 
   const body = await c.req.json();
-  const { kiteApiKey, kiteAccessToken, kiteUserId } = body;
 
-  if (!kiteApiKey || !kiteAccessToken) {
-    logBackendBreadcrumb('Auth validation failed - missing Kite credentials', 'auth', {}, 'warning');
+  // INV-006: Sanitize all credentials at API boundary using centralized module
+  let kiteApiKey: string;
+  let kiteAccessToken: string;
+  let kiteUserId: string;
+
+  try {
+    const sanitized = sanitizeCredentialsFromRequest(body);
+    kiteApiKey = sanitized.kiteApiKey;
+    kiteAccessToken = sanitized.kiteAccessToken;
+    kiteUserId = sanitized.kiteUserId;
+  } catch (sanitizeError) {
+    logBackendBreadcrumb('Auth validation failed - credential sanitization error', 'auth', {
+      error: sanitizeError instanceof Error ? sanitizeError.message : 'Unknown',
+    }, 'warning');
     return c.json(
       {
         valid: false,
-        message: 'Missing required Kite credentials',
+        message: sanitizeError instanceof Error ? sanitizeError.message : 'Invalid credentials format',
       },
       400
     );
@@ -38,10 +54,11 @@ authRoutes.post('/validate', async (c) => {
       { name: 'kite.api.profile', op: 'http.client' },
       async () => {
         // Kite Connect API endpoint for user profile
+        // INV-006: Use centralized header builder for safe protocol construction
         const response = await fetch('https://api.kite.trade/user/profile', {
           headers: {
             'X-Kite-Version': '3',
-            'Authorization': `token ${kiteApiKey}:${kiteAccessToken}`,
+            'Authorization': buildKiteAuthHeader(kiteApiKey, kiteAccessToken),
           },
         });
 

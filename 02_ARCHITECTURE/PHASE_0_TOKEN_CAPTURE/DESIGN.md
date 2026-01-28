@@ -35,11 +35,21 @@ Phase 0 is the entry point for MCI operations. It handles the acquisition and va
 ## TOKEN STORE
 
 - **File:** `src/client/stores/tokenStore.ts`
-- **Purpose:** Manage token state with session persistence
+- **Purpose:** Manage token state with daily credential continuity
+- **Persistence:** localStorage (credentials persist across browser/system restarts)
 - **Key Fields:**
-  - `kiteAccessToken` - The actual token
-  - `expiresAt` - Timestamp of expiry (6:00 AM IST)
-  - `isValid` - Current validity status
+  - `kiteApiKey` - Kite Connect API key
+  - `kiteAccessToken` - The actual access token
+  - `kiteUserId` - Zerodha user ID
+  - `tokenExpiresAt` - Timestamp of expiry (6:00 AM IST)
+  - `isTokenValid` - Current validity status
+
+### Daily Credential Continuity (INV-001)
+
+Credentials persist in localStorage within the daily validity window:
+- **Survives:** Browser close, tab close, system reboot
+- **Cleared:** At 6:00 AM IST (CR-004 enforcement on rehydration)
+- **No Backend Storage:** Credentials remain client-side only
 
 ---
 

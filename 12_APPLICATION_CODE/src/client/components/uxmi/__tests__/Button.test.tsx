@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Button } from '../Button';
 
 describe('Button component', () => {
@@ -150,12 +151,50 @@ describe('Button component', () => {
     });
   });
 
+  describe('tooltip', () => {
+    it('should show tooltip when tooltip prop is provided', async () => {
+      const user = userEvent.setup();
+      render(<Button tooltip="Click to submit">Submit</Button>);
+      const button = screen.getByRole('button');
+      
+      await user.hover(button);
+      
+      await waitFor(() => {
+        expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      });
+      expect(screen.getByRole('tooltip')).toHaveTextContent('Click to submit');
+    });
+
+    it('should not show tooltip when button is disabled', async () => {
+      const user = userEvent.setup();
+      render(<Button tooltip="Click to submit" disabled>Submit</Button>);
+      const button = screen.getByRole('button');
+      
+      await user.hover(button);
+      
+      // Tooltip should not appear for disabled buttons
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('should not show tooltip when button is loading', async () => {
+      const user = userEvent.setup();
+      render(<Button tooltip="Click to submit" loading>Submit</Button>);
+      const button = screen.getByRole('button');
+      
+      await user.hover(button);
+      
+      // Tooltip should not appear for loading buttons
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+  });
+
   describe('accessibility', () => {
-    it('should be focusable', () => {
+    it('should be focusable', async () => {
+      const user = userEvent.setup();
       render(<Button>Focusable</Button>);
       const button = screen.getByRole('button');
-      button.focus();
-      expect(document.activeElement).toBe(button);
+      await user.click(button);
+      expect(button).toHaveFocus();
     });
 
     it('should have focus ring class', () => {

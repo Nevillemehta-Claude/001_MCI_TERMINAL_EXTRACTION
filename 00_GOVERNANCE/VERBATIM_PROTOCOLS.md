@@ -172,7 +172,7 @@ I-CHKPT-2026-01-24-SYNTHESIS
 
 **CLEAN SLATE PROTOCOL:**
 - ALL PREVIOUS CODE TO BE ERADICATED
-- Alpaca-based implementation (VOID)
+- [Out-of-Scope-Broker]-based implementation (VOID)
 - Current 04_IMPLEMENTATION/mci/ (VOID)
 - Reason: Built WITHOUT proper use case understanding
 - New implementation MUST be built from scratch
@@ -189,7 +189,7 @@ RST**
 
 **CLEAN SLATE PROTOCOL:**
 - ALL PREVIOUS CODE TO BE ERADICATED
-- Alpaca-based implementation (VOID)
+- [Out-of-Scope-Broker]-based implementation (VOID)
 - Current 04_IMPLEMENTATION/mci/ (VOID)
 - Reason: Built WITHOUT proper use case understanding
 - New implementation MUST be built from scratch
@@ -424,7 +424,7 @@ Continuing to check for any remaining content.
 ### PROTOCOL 26
 
 modes identified with mitigations
-- **CLEAN SLATE PROTOCOL:** Eradicate all previous implementations including Alpaca code
+- **CLEAN SLATE PROTOCOL:** Eradicate all previous implementations including [Out-of-Scope-Broker] code
 - **MANDATORY BUILD ORDER:** UXMI FIRST → Token → Scanner → Ignition → Telemetry → Shutdown
 - **5 Constitutional Requirements:** CR-001 to CR-005 (NON-NEGOTIABLE)
 - **6 Quality Gates:** QG-1 to QG-6, must PASS each before proceeding
@@ -961,7 +961,7 @@ gest additional documents** using the 75-100 line batch protocol.
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  SCREEN FOR:                                                            │
-│  ⛔ Alpaca API references (CONTAMINATION)
+│  ⛔ [Out-of-Scope-Broker] API references (CONTAMINATION)
 
 ---
 

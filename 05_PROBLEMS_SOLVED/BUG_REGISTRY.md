@@ -131,3 +131,28 @@ WHAT: Token validation failed
 WHY:  Token expired at 06:00 AM IST (daily expiry per CR-004)
 HOW:  Redirecting user to token capture flow (Phase 0)
 ```
+
+---
+
+## BUG-007: TelemetryDashboard Race Condition After Ignition
+
+**Status:** RESOLVED
+**Date:** 2026-01-28
+**Severity:** HIGH (User-facing malfunction)
+
+**WHAT:** After successful ignition, TelemetryDashboard displayed "Start the system to view telemetry data" placeholder instead of the 6-panel telemetry grid, despite Phase 3 being correctly rendered.
+
+**WHY:** Race condition between `App.tsx` and `TelemetryDashboard.tsx`:
+1. `App.tsx` transitions `currentPhase` to `'running'` when it detects `ignitionPhase === 'running'`
+2. `TelemetryDashboard` had an internal guard: `if (phase !== 'running') return placeholder`
+3. The `ignitionStore.phase` update from the async `ignite()` function might not have propagated when the dashboard first rendered
+4. Result: `App.tsx` renders `TelemetryDashboard`, but dashboard's guard sees stale `phase` and shows placeholder
+
+**HOW:** Removed redundant phase guard from `TelemetryDashboard.tsx`. The component now trusts that `App.tsx` only renders it when `currentPhase === 'running'`, eliminating the race condition.
+
+**Files Modified:**
+- `src/client/components/phase3/TelemetryDashboard.tsx` (lines 45, 86-93)
+
+**Architectural Lesson:** Child components should not duplicate phase guards that are already enforced by the parent orchestrator (`App.tsx`). This creates race conditions when state updates propagate asynchronously through Zustand stores.
+
+**INV-004 Compliance:** State transitions remain controlled by `App.tsx` as the single authoritative phase controller. Child components render based on parent's decision, not independent state checks.

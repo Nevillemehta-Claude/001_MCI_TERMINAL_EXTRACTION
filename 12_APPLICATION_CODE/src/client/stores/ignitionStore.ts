@@ -15,8 +15,8 @@ export type IgnitionPhase =
   | 'error';
 
 /**
- * P2 REMEDIATION: Indian Broker Backends
- * Changed from Alpaca paper/live to 4 Indian brokers
+ * Indian Broker Backend Types
+ * Supports 4 Indian brokers: ICICI, HDFC, Kotak, Zerodha
  */
 export type BackendType = 'icici' | 'hdfc' | 'kotak' | 'zerodha';
 

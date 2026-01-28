@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MCI Expected Verification Outputs",
+  "description": "Expected test counts, exit codes, and required artifact generation for verification",
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-28",
+  "testExecution": {
+    "framework": "vitest",
+    "version": "1.6.1",
+    "command": "npx vitest run",
+    "expectedCounts": {
+      "totalTestFiles": 24,
+      "totalTests": 658,
+      "passed": 658,
+      "failed": 0,
+      "skipped": 0
+    },
+    "expectedExitCode": 0,
+    "timeoutSeconds": 120,
+    "passThreshold": {
+      "minPassRate": 1.0,
+      "description": "100% pass rate required"
+    }
+  },
+  "testFileBreakdown": {
+    "unitTests": {
+      "components": [
+        { "file": "src/client/components/phase0/__tests__/TokenCaptureForm.test.tsx", "minTests": 10 },
+        { "file": "src/client/components/phase0/__tests__/TokenTimer.test.tsx", "minTests": 5 },
+        { "file": "src/client/components/phase1/__tests__/PreIgnitionScanner.test.tsx", "minTests": 5 },
+        { "file": "src/client/components/phase1/__tests__/ScanCheckItem.test.tsx", "minTests": 5 },
+        { "file": "src/client/components/phase2/__tests__/BackendSelector.test.tsx", "minTests": 5 },
+        { "file": "src/client/components/phase2/__tests__/IgnitionButton.test.tsx", "minTests": 10 },
+        { "file": "src/client/components/phase3/__tests__/TelemetryDashboard.test.tsx", "minTests": 5 },
+        { "file": "src/client/components/phase3/__tests__/AccountPanel.test.tsx", "minTests": 3 },
+        { "file": "src/client/components/phase3/__tests__/SystemHealthPanel.test.tsx", "minTests": 3 },
+        { "file": "src/client/components/phase4/__tests__/ShutdownPanel.test.tsx", "minTests": 10 },
+        { "file": "src/client/components/uxmi/__tests__/Button.test.tsx", "minTests": 10 },
+        { "file": "src/client/components/uxmi/__tests__/Input.test.tsx", "minTests": 5 },
+        { "file": "src/client/components/uxmi/__tests__/ProgressBar.test.tsx", "minTests": 5 },
+        { "file": "src/client/components/uxmi/__tests__/Tooltip.test.tsx", "minTests": 3 }
+      ],
+      "stores": [
+        { "file": "src/client/stores/tokenStore.test.ts", "minTests": 10 },
+        { "file": "src/client/stores/scannerStore.test.ts", "minTests": 5 },
+        { "file": "src/client/stores/shutdownStore.test.ts", "minTests": 10 },
+        { "file": "src/client/stores/__tests__/shutdownStore.edge.test.ts", "minTests": 5 }
+      ],
+      "validation": [
+        { "file": "src/shared/validation/sanitize.test.ts", "minTests": 40, "critical": true, "invariant": "INV-006" }
+      ]
+    },
+    "apiTests": [
+      { "file": "src/server/routes/__tests__/auth.test.ts", "minTests": 10 },
+      { "file": "src/server/routes/__tests__/scan.test.ts", "minTests": 15 },
+      { "file": "src/server/routes/__tests__/ignition.test.ts", "minTests": 10 },
+      { "file": "src/server/routes/__tests__/shutdown.test.ts", "minTests": 15 }
+    ],
+    "integrationTests": [
+      { "file": "src/test/integration/full-flow.test.ts", "minTests": 10, "critical": true, "coversPhases": ["token", "scan", "ignition", "running", "shutdown"] }
+    ]
+  },
+  "buildVerification": {
+    "frontendBuild": {
+      "command": "npm run build",
+      "expectedExitCode": 0,
+      "expectedArtifacts": [
+        "dist/index.html",
+        "dist/assets/*.js",
+        "dist/assets/*.css"
+      ],
+      "maxBuildTimeSeconds": 60
+    },
+    "typeCheck": {
+      "command": "npx tsc --noEmit",
+      "expectedExitCode": 0,
+      "maxTimeSeconds": 30
+    },
+    "lintCheck": {
+      "command": "npm run lint",
+      "expectedExitCode": 0,
+      "maxTimeSeconds": 30
+    }
+  },
+  "lifecycleScriptVerification": {
+    "startScript": {
+      "path": "scripts/start.sh",
+      "mustExist": true,
+      "mustBeExecutable": true,
+      "expectedBehavior": "Launches both frontend and backend processes"
+    },
+    "stopScript": {
+      "path": "scripts/stop.sh",
+      "mustExist": true,
+      "mustBeExecutable": true,
+      "expectedBehavior": "Terminates both processes cleanly"
+    },
+    "statusScript": {
+      "path": "scripts/status.sh",
+      "mustExist": true,
+      "mustBeExecutable": true,
+      "expectedBehavior": "Reports process state accurately"
+    }
+  },
+  "requiredArtifacts": {
+    "documentation": [
+      "00_GOVERNANCE/CONSTITUTIONAL_CONSTRAINTS.md",
+      "00_GOVERNANCE/VERBATIM_PROTOCOLS.md",
+      "02_ARCHITECTURE/SYSTEM_OVERVIEW.md",
+      "05_PROBLEMS_SOLVED/BUG_REGISTRY.md"
+    ],
+    "attestations": [
+      "00_GOVERNANCE/ATTESTATIONS/GATE_5_TESTING_ATTESTATION_2026-01-28.md"
+    ],
+    "coreCode": [
+      "12_APPLICATION_CODE/src/client/App.tsx",
+      "12_APPLICATION_CODE/src/client/stores/tokenStore.ts",
+      "12_APPLICATION_CODE/src/client/stores/ignitionStore.ts",
+      "12_APPLICATION_CODE/src/client/stores/shutdownStore.ts",
+      "12_APPLICATION_CODE/src/shared/validation/sanitize.ts",
+      "12_APPLICATION_CODE/src/server/routes/auth.ts",
+      "12_APPLICATION_CODE/src/server/routes/shutdown.ts"
+    ]
+  },
+  "convergenceCriteria": {
+    "description": "Results from all environments MUST converge",
+    "requirements": [
+      "Same test count across all environments",
+      "Same pass/fail results across all environments",
+      "Same exit codes across all environments",
+      "No environment-specific failures"
+    ],
+    "divergenceHandling": {
+      "onDivergence": "FAIL the verification",
+      "reportingRequired": true,
+      "rootCauseRequired": true
+    }
+  },
+  "environmentCompatibility": {
+    "nodeVersion": ">=18.0.0",
+    "packageManager": "npm or bun",
+    "os": ["linux", "macos", "windows"],
+    "ciEnvironments": ["GitHub Actions", "Vercel", "Replit"]
+  },
+  "verificationPassCriteria": {
+    "allTestsPass": true,
+    "buildSucceeds": true,
+    "typeCheckPasses": true,
+    "lintPasses": true,
+    "scriptsExecutable": true,
+    "artifactsExist": true,
+    "convergenceAchieved": true
+  }
+}

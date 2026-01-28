@@ -34,7 +34,7 @@ expiry.setUTCHours(0, 30, 0, 0); // 6 AM IST = 00:30 UTC
 ### Block 3
 
 ```typescript
-// CURRENT: ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'SPY', 'QQQ']
+// CURRENT: ['RELIANCE', 'TCS', 'INFY', 'TSLA', 'SPY', 'QQQ']
 // REQUIRED: ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'ICICIBANK', 'SBIN']
 ```
 
@@ -42,7 +42,7 @@ expiry.setUTCHours(0, 30, 0, 0); // 6 AM IST = 00:30 UTC
 ### Block 4
 
 ```typescript
-// CURRENT: ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'SPY']
+// CURRENT: ['RELIANCE', 'TCS', 'INFY', 'TSLA', 'SPY']
 // REQUIRED: ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'ICICIBANK']
 ```
 
@@ -95,7 +95,7 @@ import { tokenStore } from '@/stores/tokenStore';
 ### Block 10
 
 ```typescript
-await expect(inputs).toHaveCount(3); // alpaca key, secret, polygon key
+await expect(inputs).toHaveCount(3); // [out-of-scope-broker] key, secret, [out-of-scope-data-provider] key
 ```
 
 ---

@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCI Complete Development Briefing v2.0 | Full SDLC with UI/UX Validation</title>
+    <style>
+        :root {
+            --bg-deep: #0a0a12;
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --bg-card: #1a1f2e;
+            --accent-gold: #ffd700;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --accent-purple: #a371f7;
+            --accent-cyan: #39d4d4;
+            --accent-orange: #f0883e;
+            --accent-pink: #ff6b9d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --border: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .master-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border-bottom: 3px solid var(--accent-gold);
+            padding: 20px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .header-grid {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 20px;
+        }
+        .header-brand h1 {
+            font-size: 1.6rem;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-brand .subtitle { color: var(--text-secondary); font-size: 0.8rem; margin-top: 4px; }
+        .header-metrics { display: flex; gap: 15px; }
+        .metric-box {
+            text-align: center;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .metric-value { font-size: 1.5rem; font-weight: bold; color: var(--accent-green); }
+        .metric-value.warning { color: var(--accent-orange); }
+        .metric-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
+        .header-status { text-align: right; }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+            color: #000;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .nav-container {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            position: sticky;
+            top: 80px;
+            z-index: 999;
+            overflow-x: auto;
+        }
+        .nav-tabs {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 3px;
+            padding: 8px 0;
+        }
+        .nav-tab {
+            padding: 10px 14px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .nav-tab:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .nav-tab.active { background: var(--bg-primary); color: var(--accent-gold); border: 1px solid var(--border); }
+        .nav-tab .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            background: var(--accent-green);
+            color: #000;
+            border-radius: 8px;
+            font-size: 0.65rem;
+            margin-left: 5px;
+        }
+        .nav-tab .badge.warn { background: var(--accent-orange); }
+        .nav-tab .badge.new { background: var(--accent-pink); }
+        .main-content { max-width: 1800px; margin: 0 auto; padding: 25px 40px; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .section-title {
+            color: var(--accent-gold);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card.highlight-gold { border-left: 4px solid var(--accent-gold); }
+        .card.highlight-green { border-left: 4px solid var(--accent-green); }
+        .card.highlight-orange { border-left: 4px solid var(--accent-orange); }
+        .card.highlight-red { border-left: 4px solid var(--accent-red); }
+        .card.highlight-pink { border-left: 4px solid var(--accent-pink); }
+        .card.highlight-cyan { border-left: 4px solid var(--accent-cyan); }
+        .card-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; color: var(--text-primary); }
+        .card-subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-icon { font-size: 2rem; margin-bottom: 10px; }
+        .stat-value { font-size: 1.8rem; font-weight: bold; color: var(--accent-gold); }
+        .stat-label { font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th { background: var(--bg-tertiary); padding: 12px; text-align: left; color: var(--accent-gold); }
+        td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+        tr:hover { background: rgba(88,166,255,0.05); }
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin: 2px;
+        }
+        .tag-green { background: rgba(63,185,80,0.2); color: var(--accent-green); }
+        .tag-orange { background: rgba(240,136,62,0.2); color: var(--accent-orange); }
+        .tag-red { background: rgba(248,81,73,0.2); color: var(--accent-red); }
+        .tag-blue { background: rgba(88,166,255,0.2); color: var(--accent-blue); }
+        .tag-gold { background: var(--accent-gold); color: #000; }
+        .tag-pink { background: rgba(255,107,157,0.2); color: var(--accent-pink); }
+        .workflow-svg { width: 100%; max-width: 1200px; margin: 20px auto; display: block; }
+        .flow-node {
+            fill: var(--bg-tertiary);
+            stroke: var(--border);
+            stroke-width: 2;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .flow-node:hover { fill: var(--bg-secondary); stroke: var(--accent-gold); }
+        .flow-node.complete { stroke: var(--accent-green); stroke-width: 3; }
+        .flow-node.current { stroke: var(--accent-gold); stroke-width: 3; animation: pulse-border 2s infinite; }
+        .flow-node.pending { stroke: var(--text-muted); stroke-dasharray: 5,5; }
+        .flow-node.new { stroke: var(--accent-pink); stroke-width: 3; }
+        @keyframes pulse-border { 0%,100% { stroke-opacity: 1; } 50% { stroke-opacity: 0.5; } }
+        .flow-text { fill: var(--text-primary); font-size: 11px; font-weight: 500; pointer-events: none; }
+        .flow-arrow { stroke: var(--accent-cyan); stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+        .checklist { list-style: none; }
+        .checklist li {
+            padding: 10px 15px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checklist .check { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0; }
+        .checklist .check.done { background: var(--accent-green); color: #000; }
+        .checklist .check.pending { background: var(--bg-tertiary); border: 2px dashed var(--border); }
+        .approval-box {
+            background: linear-gradient(135deg, rgba(255,107,157,0.1), rgba(163,113,247,0.1));
+            border: 2px solid var(--accent-pink);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .approval-box h4 { color: var(--accent-pink); margin-bottom: 15px; }
+        .phase-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .phase-header {
+            padding: 15px 20px;
+            background: var(--bg-tertiary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .phase-header:hover { background: var(--bg-secondary); }
+        .phase-body { padding: 20px; display: none; }
+        .phase-card.expanded .phase-body { display: block; }
+        .phase-card.expanded .expand-icon { transform: rotate(180deg); }
+        .expand-icon { transition: transform 0.3s; color: var(--text-muted); }
+        .progress-bar { height: 8px; background: var(--bg-primary); border-radius: 4px; overflow: hidden; margin: 10px 0; }
+        .progress-fill { height: 100%; border-radius: 4px; }
+        .progress-fill.green { background: linear-gradient(90deg, var(--accent-green), #2ea043); }
+        .progress-fill.orange { background: linear-gradient(90deg, var(--accent-orange), #d18616); }
+        .progress-fill.pink { background: linear-gradient(90deg, var(--accent-pink), #ff4081); }
+        .chain-flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 15px 0; }
+        .chain-node { padding: 6px 12px; background: var(--bg-tertiary); border-radius: 6px; font-size: 0.8rem; border: 1px solid var(--border); }
+        .chain-arrow { color: var(--accent-cyan); }
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 25px 40px;
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        @media (max-width: 768px) {
+            .header-grid { grid-template-columns: 1fr; text-align: center; }
+            .header-metrics { justify-content: center; flex-wrap: wrap; }
+            .main-content { padding: 15px; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="master-header">
+        <div class="header-grid">
+            <div class="header-brand">
+                <h1>MCI COMPLETE DEVELOPMENT BRIEFING v2.0</h1>
+                <div class="subtitle">Mission Control Interface | Full SDLC with UI/UX Validation | User Approval Integrated</div>
+            </div>
+            <div class="header-metrics">
+                <div class="metric-box"><div class="metric-value">96%</div><div class="metric-label">LTT Complete</div></div>
+                <div class="metric-box"><div class="metric-value warning">13</div><div class="metric-label">Gaps</div></div>
+                <div class="metric-box"><div class="metric-value">8</div><div class="metric-label">SDLC Phases</div></div>
+                <div class="metric-box"><div class="metric-value">5</div><div class="metric-label">Sacred CRs</div></div>
+            </div>
+            <div class="header-status">
+                <div class="status-badge">IRONCLAD CERTIFIED</div>
+                <div style="margin-top:5px;font-size:0.75rem;color:var(--text-secondary);">January 27, 2026</div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('overview')">📊 Overview</button>
+            <button class="nav-tab" onclick="showTab('workflow')">🔄 Master Workflow <span class="badge new">SVG</span></button>
+            <button class="nav-tab" onclick="showTab('sdlc')">📋 SDLC Phases <span class="badge">8</span></button>
+            <button class="nav-tab" onclick="showTab('uiux')">🎨 UI/UX Validation <span class="badge new">NEW</span></button>
+            <button class="nav-tab" onclick="showTab('retrofit')">🔧 Retrofit Process <span class="badge new">NEW</span></button>
+            <button class="nav-tab" onclick="showTab('integration')">🔗 Code Integration <span class="badge new">NEW</span></button>
+            <button class="nav-tab" onclick="showTab('approval')">✅ User Approval <span class="badge new">NEW</span></button>
+            <button class="nav-tab" onclick="showTab('tools')">🛠️ Tool Arsenal</button>
+            <button class="nav-tab" onclick="showTab('gaps')">⚠️ Actions <span class="badge warn">13</span></button>
+            <button class="nav-tab" onclick="showTab('constitutional')">🔐 CRs</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+
+        <!-- ==================== TAB: OVERVIEW ==================== -->
+        <div id="overview" class="tab-panel active">
+            <h2 class="section-title">📊 Executive Overview</h2>
+            
+            <div class="grid-4">
+                <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-value">96%</div><div class="stat-label">LTT Complete</div></div>
+                <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-value">49</div><div class="stat-label">Total Nodes</div></div>
+                <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value">34</div><div class="stat-label">Complete</div></div>
+                <div class="stat-card"><div class="stat-icon">⚠️</div><div class="stat-value" style="color:var(--accent-orange)">13</div><div class="stat-label">Pending</div></div>
+                <div class="stat-card"><div class="stat-icon">🔐</div><div class="stat-value">5</div><div class="stat-label">Sacred CRs</div></div>
+                <div class="stat-card"><div class="stat-icon">🎨</div><div class="stat-value" style="color:var(--accent-pink)">NEW</div><div class="stat-label">UI/UX Phase</div></div>
+                <div class="stat-card"><div class="stat-icon">🛠️</div><div class="stat-value">3</div><div class="stat-label">Cosmetic Fixes</div></div>
+                <div class="stat-card"><div class="stat-icon">👤</div><div class="stat-value" style="color:var(--accent-cyan)">NEVILLE</div><div class="stat-label">Final Approver</div></div>
+            </div>
+
+            <div class="card highlight-gold" style="margin-top:25px;">
+                <div class="card-title">📋 Executive Summary</div>
+                <div class="card-subtitle">What You Need to Know</div>
+                <p><strong style="color:var(--accent-gold)">MCI (Mission Control Interface)</strong> is the command cockpit for the <strong style="color:var(--accent-green)">CIA-SIE-PURE</strong> automated trading engine.</p>
+                <br>
+                <p><strong>Current State:</strong> The project is in a <strong style="color:var(--accent-orange)">RETROFIT</strong> situation — code was written BEFORE formal specifications. This document now includes the critical <strong style="color:var(--accent-pink)">Phase 2.5: UI/UX Validation</strong> where YOU (Neville) approve the interface BEFORE full implementation.</p>
+                <br>
+                <p><strong>Technology Stack:</strong> Bun + Hono + React + Vite + Zustand + Tailwind CSS + Zerodha Kite Connect + Sentry</p>
+                <br>
+                <p><strong>Key Principle:</strong> MCI is the COCKPIT, CIA-SIE-PURE is the ENGINE. MCI controls; the engine executes.</p>
+            </div>
+
+            <div class="card highlight-pink">
+                <div class="card-title">🆕 What's New in v2.0</div>
+                <ul style="color:var(--text-secondary);padding-left:20px;">
+                    <li><strong style="color:var(--accent-pink)">Phase 2.5: UI/UX Validation</strong> — Complete prototyping and user approval stage</li>
+                    <li><strong style="color:var(--accent-pink)">Master Workflow Diagram</strong> — Interactive SVG showing all 8 phases</li>
+                    <li><strong style="color:var(--accent-pink)">Retrofit Process</strong> — How to extract specs from existing code</li>
+                    <li><strong style="color:var(--accent-pink)">Prototype-to-Code Integration</strong> — Seamless path from design to implementation</li>
+                    <li><strong style="color:var(--accent-pink)">User Approval Checkpoints</strong> — Your sign-off gates at every critical stage</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: MASTER WORKFLOW ==================== -->
+        <div id="workflow" class="tab-panel">
+            <h2 class="section-title">🔄 Master SDLC Workflow Diagram</h2>
+            
+            <div class="card">
+                <div class="card-title">Complete Development Lifecycle — 8 Phases</div>
+                <div class="card-subtitle">Click any phase to navigate • Green = Complete • Gold = Current • Pink = New • Gray = Pending</div>
+                
+                <svg class="workflow-svg" viewBox="0 0 1100 500" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#39d4d4"/>
+                        </marker>
+                    </defs>
+                    
+                    <!-- Phase 1: Requirements -->
+                    <rect class="flow-node complete" x="20" y="50" width="120" height="60" rx="8" onclick="showTab('sdlc')"/>
+                    <text class="flow-text" x="80" y="75" text-anchor="middle">📋 Phase 1</text>
+                    <text class="flow-text" x="80" y="92" text-anchor="middle" style="font-size:9px">Requirements</text>
+                    <text x="80" y="120" text-anchor="middle" fill="#3fb950" style="font-size:10px;font-weight:bold">100% ✓</text>
+                    
+                    <!-- Arrow 1→2 -->
+                    <path class="flow-arrow" d="M140 80 L170 80"/>
+                    
+                    <!-- Phase 2: Architecture -->
+                    <rect class="flow-node complete" x="180" y="50" width="120" height="60" rx="8" onclick="showTab('sdlc')"/>
+                    <text class="flow-text" x="240" y="75" text-anchor="middle">📐 Phase 2</text>
+                    <text class="flow-text" x="240" y="92" text-anchor="middle" style="font-size:9px">Architecture</text>
+                    <text x="240" y="120" text-anchor="middle" fill="#3fb950" style="font-size:10px;font-weight:bold">100% ✓</text>
+                    
+                    <!-- Arrow 2→2.5 -->
+                    <path class="flow-arrow" d="M300 80 L330 80"/>
+                    
+                    <!-- Phase 2.5: UI/UX Validation (NEW) -->
+                    <rect class="flow-node new" x="340" y="50" width="140" height="60" rx="8" onclick="showTab('uiux')" style="fill:rgba(255,107,157,0.1)"/>
+                    <text class="flow-text" x="410" y="75" text-anchor="middle" style="fill:#ff6b9d">🎨 Phase 2.5</text>
+                    <text class="flow-text" x="410" y="92" text-anchor="middle" style="font-size:9px;fill:#ff6b9d">UI/UX Validation</text>
+                    <text x="410" y="120" text-anchor="middle" fill="#ff6b9d" style="font-size:10px;font-weight:bold">NEW! 0%</text>
+                    
+                    <!-- Arrow 2.5→3 -->
+                    <path class="flow-arrow" d="M480 80 L510 80"/>
+                    
+                    <!-- Phase 3: UI Design -->
+                    <rect class="flow-node complete" x="520" y="50" width="120" height="60" rx="8" onclick="showTab('sdlc')"/>
+                    <text class="flow-text" x="580" y="75" text-anchor="middle">🎨 Phase 3</text>
+                    <text class="flow-text" x="580" y="92" text-anchor="middle" style="font-size:9px">UI Design</text>
+                    <text x="580" y="120" text-anchor="middle" fill="#3fb950" style="font-size:10px;font-weight:bold">100% ✓</text>
+                    
+                    <!-- Arrow 3→4 -->
+                    <path class="flow-arrow" d="M640 80 L670 80"/>
+                    
+                    <!-- Phase 4: Specifications -->
+                    <rect class="flow-node current" x="680" y="50" width="120" height="60" rx="8" onclick="showTab('gaps')"/>
+                    <text class="flow-text" x="740" y="75" text-anchor="middle">📝 Phase 4</text>
+                    <text class="flow-text" x="740" y="92" text-anchor="middle" style="font-size:9px">Specifications</text>
+                    <text x="740" y="120" text-anchor="middle" fill="#ffd700" style="font-size:10px;font-weight:bold">RETROFIT 0%</text>
+                    
+                    <!-- Arrow 4→5 -->
+                    <path class="flow-arrow" d="M800 80 L830 80"/>
+                    
+                    <!-- Phase 5: Implementation -->
+                    <rect class="flow-node complete" x="840" y="50" width="120" height="60" rx="8" onclick="showTab('sdlc')"/>
+                    <text class="flow-text" x="900" y="75" text-anchor="middle">💻 Phase 5</text>
+                    <text class="flow-text" x="900" y="92" text-anchor="middle" style="font-size:9px">Implementation</text>
+                    <text x="900" y="120" text-anchor="middle" fill="#3fb950" style="font-size:10px;font-weight:bold">97% ✓</text>
+                    
+                    <!-- Second Row -->
+                    <!-- Arrow down from Phase 5 -->
+                    <path class="flow-arrow" d="M900 110 L900 170 L80 170 L80 220"/>
+                    
+                    <!-- Phase 6: Testing -->
+                    <rect class="flow-node" x="20" y="230" width="120" height="60" rx="8" onclick="showTab('sdlc')" style="stroke:var(--accent-orange)"/>
+                    <text class="flow-text" x="80" y="255" text-anchor="middle">🧪 Phase 6</text>
+                    <text class="flow-text" x="80" y="272" text-anchor="middle" style="font-size:9px">Testing</text>
+                    <text x="80" y="300" text-anchor="middle" fill="#f0883e" style="font-size:10px;font-weight:bold">75%</text>
+                    
+                    <!-- Arrow 6→7 -->
+                    <path class="flow-arrow" d="M140 260 L170 260"/>
+                    
+                    <!-- Phase 7: Deployment -->
+                    <rect class="flow-node" x="180" y="230" width="120" height="60" rx="8" onclick="showTab('sdlc')" style="stroke:var(--accent-orange)"/>
+                    <text class="flow-text" x="240" y="255" text-anchor="middle">🚀 Phase 7</text>
+                    <text class="flow-text" x="240" y="272" text-anchor="middle" style="font-size:9px">Deployment</text>
+                    <text x="240" y="300" text-anchor="middle" fill="#f0883e" style="font-size:10px;font-weight:bold">80%</text>
+                    
+                    <!-- Arrow 7→8 -->
+                    <path class="flow-arrow" d="M300 260 L330 260"/>
+                    
+                    <!-- Phase 8: Operations -->
+                    <rect class="flow-node pending" x="340" y="230" width="120" height="60" rx="8"/>
+                    <text class="flow-text" x="400" y="255" text-anchor="middle">⚙️ Phase 8</text>
+                    <text class="flow-text" x="400" y="272" text-anchor="middle" style="font-size:9px">Operations</text>
+                    <text x="400" y="300" text-anchor="middle" fill="#6e7681" style="font-size:10px">PENDING</text>
+                    
+                    <!-- USER APPROVAL GATES -->
+                    <rect x="520" y="200" width="440" height="120" rx="12" fill="rgba(255,107,157,0.05)" stroke="#ff6b9d" stroke-width="2" stroke-dasharray="5,5"/>
+                    <text x="740" y="225" text-anchor="middle" fill="#ff6b9d" style="font-size:14px;font-weight:bold">👤 USER APPROVAL GATES (Neville)</text>
+                    
+                    <rect x="540" y="240" width="100" height="50" rx="6" fill="var(--bg-tertiary)" stroke="#ff6b9d"/>
+                    <text x="590" y="260" text-anchor="middle" fill="#ff6b9d" style="font-size:9px">Gate 1</text>
+                    <text x="590" y="278" text-anchor="middle" fill="var(--text-secondary)" style="font-size:8px">UI Prototype</text>
+                    
+                    <rect x="660" y="240" width="100" height="50" rx="6" fill="var(--bg-tertiary)" stroke="#ff6b9d"/>
+                    <text x="710" y="260" text-anchor="middle" fill="#ff6b9d" style="font-size:9px">Gate 2</text>
+                    <text x="710" y="278" text-anchor="middle" fill="var(--text-secondary)" style="font-size:8px">Specs Review</text>
+                    
+                    <rect x="780" y="240" width="100" height="50" rx="6" fill="var(--bg-tertiary)" stroke="#ff6b9d"/>
+                    <text x="830" y="260" text-anchor="middle" fill="#ff6b9d" style="font-size:9px">Gate 3</text>
+                    <text x="830" y="278" text-anchor="middle" fill="var(--text-secondary)" style="font-size:8px">Final Sign-off</text>
+                    
+                    <!-- RETROFIT LOOP -->
+                    <path d="M740 140 L740 160 Q740 170 730 170 L590 170 Q580 170 580 160 L580 140" stroke="#f0883e" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+                    <text x="660" y="165" text-anchor="middle" fill="#f0883e" style="font-size:9px">RETROFIT LOOP</text>
+                    
+                    <!-- Legend -->
+                    <rect x="20" y="350" width="200" height="120" rx="8" fill="var(--bg-secondary)" stroke="var(--border)"/>
+                    <text x="30" y="375" fill="var(--text-primary)" style="font-size:11px;font-weight:bold">Legend:</text>
+                    <circle cx="40" cy="395" r="6" fill="none" stroke="#3fb950" stroke-width="2"/><text x="55" y="399" fill="var(--text-secondary)" style="font-size:10px">Complete</text>
+                    <circle cx="40" cy="415" r="6" fill="none" stroke="#ffd700" stroke-width="2"/><text x="55" y="419" fill="var(--text-secondary)" style="font-size:10px">Current/Retrofit</text>
+                    <circle cx="40" cy="435" r="6" fill="none" stroke="#ff6b9d" stroke-width="2"/><text x="55" y="439" fill="var(--text-secondary)" style="font-size:10px">New Phase</text>
+                    <circle cx="40" cy="455" r="6" fill="none" stroke="#6e7681" stroke-width="2" stroke-dasharray="2,2"/><text x="55" y="459" fill="var(--text-secondary)" style="font-size:10px">Pending</text>
+                </svg>
+            </div>
+
+            <div class="grid-2">
+                <div class="card highlight-cyan">
+                    <div class="card-title">🔄 Workflow Flow Summary</div>
+                    <div class="chain-flow">
+                        <span class="chain-node" style="border-color:var(--accent-green)">Requirements</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node" style="border-color:var(--accent-green)">Architecture</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node" style="border-color:var(--accent-pink)">UI/UX Validation</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node" style="border-color:var(--accent-green)">UI Design</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node" style="border-color:var(--accent-gold)">Specifications</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node" style="border-color:var(--accent-green)">Implementation</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node" style="border-color:var(--accent-orange)">Testing</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node" style="border-color:var(--accent-orange)">Deployment</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node" style="border-color:var(--text-muted)">Operations</span>
+                    </div>
+                </div>
+                <div class="card highlight-pink">
+                    <div class="card-title">👤 Your Role (Neville)</div>
+                    <p style="color:var(--text-secondary);font-size:0.9rem;">As the <strong style="color:var(--accent-pink)">Ultimate User and Approver</strong>, you have sign-off authority at 3 critical gates:</p>
+                    <ul style="color:var(--text-secondary);padding-left:20px;margin-top:10px;font-size:0.85rem;">
+                        <li><strong>Gate 1:</strong> UI Prototype Approval (Phase 2.5)</li>
+                        <li><strong>Gate 2:</strong> Specifications Review (Phase 4)</li>
+                        <li><strong>Gate 3:</strong> Final Production Sign-off (Phase 7)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: UI/UX VALIDATION (NEW) ==================== -->
+        <div id="uiux" class="tab-panel">
+            <h2 class="section-title">🎨 Phase 2.5: UI/UX Validation & User Approval <span class="tag tag-pink">NEW PHASE</span></h2>
+            
+            <div class="card highlight-pink">
+                <div class="card-title">Why This Phase Exists</div>
+                <div class="card-subtitle">The Missing Link in Your Development Process</div>
+                <p style="color:var(--text-secondary)">This phase allows YOU (Neville) to <strong style="color:var(--accent-pink)">see, interact with, and approve</strong> the user interface BEFORE it's fully coded. Changes at this stage are <strong style="color:var(--accent-green)">cheap</strong> — no code needs to be rewritten.</p>
+                <br>
+                <p style="color:var(--text-secondary)">Since MCI was built in rapid prototyping mode, this phase is being <strong style="color:var(--accent-orange)">retrofitted</strong> to ensure you approve the final UI before deployment.</p>
+            </div>
+
+            <h3 style="color:var(--accent-gold);margin:25px 0 15px;">📊 4 Levels of UI Prototyping</h3>
+            
+            <div class="grid-2">
+                <div class="card highlight-gold">
+                    <div class="card-title">Level 1: Wireframes (No Code)</div>
+                    <div class="card-subtitle">Simple sketches showing layout and structure</div>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:10px;">Black-and-white boxes showing where elements go. No colors, no real content.</p>
+                    <p><strong>Tools:</strong> <span class="tag tag-gold">Eraser.io</span> <span class="tag tag-blue">Excalidraw</span> <span class="tag tag-blue">Balsamiq</span></p>
+                    <p style="margin-top:10px"><strong>Your Role:</strong> <span style="color:var(--accent-pink)">"Is this layout logical? Should anything move?"</span></p>
+                </div>
+                
+                <div class="card highlight-gold">
+                    <div class="card-title">Level 2: Mockups (No Code)</div>
+                    <div class="card-subtitle">Full-color, pixel-perfect static images</div>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:10px;">Exactly how the final UI will look — but it doesn't work. Like a photograph.</p>
+                    <p><strong>Tools:</strong> <span class="tag tag-gold">Figma</span> <span class="tag tag-blue">Adobe XD</span> <span class="tag tag-blue">v0/Vercel</span></p>
+                    <p style="margin-top:10px"><strong>Your Role:</strong> <span style="color:var(--accent-pink)">"Do the colors, fonts, and styling look right?"</span></p>
+                </div>
+                
+                <div class="card highlight-gold">
+                    <div class="card-title">Level 3: Interactive Prototypes (No Code)</div>
+                    <div class="card-subtitle">Clickable mockups simulating user journeys</div>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:10px;">You can CLICK through screens. Nothing is real, but you experience the flow.</p>
+                    <p><strong>Tools:</strong> <span class="tag tag-gold">Figma Prototyping</span> <span class="tag tag-blue">Framer</span> <span class="tag tag-blue">ProtoPie</span></p>
+                    <p style="margin-top:10px"><strong>Your Role:</strong> <span style="color:var(--accent-pink)">"Does this flow feel natural? Any steps confusing?"</span></p>
+                </div>
+                
+                <div class="card highlight-gold">
+                    <div class="card-title">Level 4: Functional Prototypes (Low Code)</div>
+                    <div class="card-subtitle">Semi-functional with simulated data</div>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:10px;">Real buttons respond, simulated data looks real. No actual backend connection.</p>
+                    <p><strong>Tools:</strong> <span class="tag tag-gold">v0/Vercel</span> <span class="tag tag-blue">Retool</span> <span class="tag tag-blue">Streamlit</span></p>
+                    <p style="margin-top:10px"><strong>Your Role:</strong> <span style="color:var(--accent-pink)">"Does this work as I expect in real usage?"</span></p>
+                </div>
+            </div>
+
+            <div class="approval-box">
+                <h4>👤 USER APPROVAL CHECKPOINT: UI Prototype Sign-off</h4>
+                <p style="color:var(--text-secondary);margin-bottom:15px;">Before any major UI changes go to code, you must approve the prototype.</p>
+                <ul class="checklist">
+                    <li><div class="check pending">○</div><span>Phase 0 (Token Capture) — Wireframe/Mockup Approved</span></li>
+                    <li><div class="check pending">○</div><span>Phase 1 (Scanner) — Wireframe/Mockup Approved</span></li>
+                    <li><div class="check pending">○</div><span>Phase 2 (Ignition) — Wireframe/Mockup Approved</span></li>
+                    <li><div class="check pending">○</div><span>Phase 3 (Telemetry Dashboard) — Wireframe/Mockup Approved</span></li>
+                    <li><div class="check pending">○</div><span>Phase 4 (Shutdown) — Wireframe/Mockup Approved</span></li>
+                    <li><div class="check pending">○</div><span>Complete User Journey — Interactive Prototype Approved</span></li>
+                </ul>
+            </div>
+
+            <h3 style="color:var(--accent-gold);margin:25px 0 15px;">🔄 Retrofit UI Validation Process for MCI</h3>
+            
+            <div class="card highlight-cyan">
+                <div class="card-title">Since MCI Already Has Code — Retrofit Approach</div>
+                <table>
+                    <thead>
+                        <tr><th>Step</th><th>Action</th><th>Tool</th><th>Your Input</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Screenshot/Record Current UI</td><td>Screen capture</td><td>None needed</td></tr>
+                        <tr><td>2</td><td>Recreate as Interactive Prototype</td><td>Figma / v0</td><td>None needed</td></tr>
+                        <tr><td>3</td><td>Review Current vs. Ideal</td><td>Side-by-side comparison</td><td><strong style="color:var(--accent-pink)">Your annotations</strong></td></tr>
+                        <tr><td>4</td><td>Create Ideal State Prototype</td><td>v0/Vercel</td><td><strong style="color:var(--accent-pink)">Describe your vision</strong></td></tr>
+                        <tr><td>5</td><td>Approve Final Prototype</td><td>Figma link</td><td><strong style="color:var(--accent-pink)">Sign-off required</strong></td></tr>
+                        <tr><td>6</td><td>Gap Analysis Document</td><td>Comparison table</td><td>Review & confirm</td></tr>
+                        <tr><td>7</td><td>Developer Updates Code</td><td>Code changes</td><td>None needed</td></tr>
+                        <tr><td>8</td><td>Final Validation</td><td>Live app review</td><td><strong style="color:var(--accent-pink)">Final sign-off</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: RETROFIT PROCESS ==================== -->
+        <div id="retrofit" class="tab-panel">
+            <h2 class="section-title">🔧 Retrofit Process <span class="tag tag-pink">NEW SECTION</span></h2>
+            
+            <div class="card highlight-orange">
+                <div class="card-title">⚠️ Understanding the Retrofit Situation</div>
+                <div class="card-subtitle">Why MCI Needs Retrofit</div>
+                <p style="color:var(--text-secondary)">MCI was built in <strong style="color:var(--accent-orange)">rapid prototyping mode</strong> — code was written BEFORE formal specifications were documented. This is common in startups but requires corrective action.</p>
+            </div>
+
+            <div class="grid-2" style="margin-top:20px;">
+                <div class="card highlight-red">
+                    <div class="card-title">❌ What Happened (Actual Path)</div>
+                    <div class="chain-flow">
+                        <span class="chain-node">Requirements</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node" style="border-color:var(--accent-red)">SKIP</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node">Implementation</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node" style="border-color:var(--accent-orange)">NOW: Extract Specs</span>
+                    </div>
+                </div>
+                <div class="card highlight-green">
+                    <div class="card-title">✅ What Should Happen (Ideal Path)</div>
+                    <div class="chain-flow">
+                        <span class="chain-node">Requirements</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node">Architecture</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node" style="border-color:var(--accent-pink)">UI Validation</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node">Specifications</span>
+                        <span class="chain-arrow">→</span>
+                        <span class="chain-node">Implementation</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="color:var(--accent-gold);margin:25px 0 15px;">📋 Retrofit Extraction Methodology</h3>
+            
+            <div class="card highlight-cyan">
+                <div class="card-title">How to Extract Specifications from Existing Code</div>
+                <table>
+                    <thead>
+                        <tr><th>Step</th><th>What to Extract</th><th>From Where</th><th>Document Created</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>API Endpoints & Schemas</td><td>Backend route files</td><td>API Specification</td></tr>
+                        <tr><td>2</td><td>Component Props & States</td><td>React component files</td><td>Component Specification</td></tr>
+                        <tr><td>3</td><td>Store Structure & Actions</td><td>Zustand store files</td><td>State Specification</td></tr>
+                        <tr><td>4</td><td>Data Flow & Transformations</td><td>Service layer files</td><td>Data Flow Diagram</td></tr>
+                        <tr><td>5</td><td>Error Handling Patterns</td><td>Error boundary files</td><td>Error Propagation Flowchart</td></tr>
+                        <tr><td>6</td><td>WebSocket Event Contracts</td><td>Socket handler files</td><td>Event Specification</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card highlight-gold" style="margin-top:20px;">
+                <div class="card-title">📊 Current vs. Ideal Gap Analysis</div>
+                <table>
+                    <thead>
+                        <tr><th>Aspect</th><th>Ideal State</th><th>MCI Current State</th><th>Gap</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Architecture Decisions</td><td>Documented before coding</td><td>✅ Made but not documented</td><td>13 flowcharts needed</td></tr>
+                        <tr><td>UI Design</td><td>Prototype approved first</td><td>✅ Implemented in code</td><td>Retrofit validation needed</td></tr>
+                        <tr><td>API Specifications</td><td>OpenAPI/Swagger docs</td><td>⚠️ Partial in comments</td><td>Full extraction needed</td></tr>
+                        <tr><td>Component Specs</td><td>Storybook documentation</td><td>⚠️ Working in code only</td><td>Documentation needed</td></tr>
+                        <tr><td>Test Coverage</td><td>Written from specs</td><td>⚠️ 75% coverage</td><td>More tests from extracted specs</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: CODE INTEGRATION ==================== -->
+        <div id="integration" class="tab-panel">
+            <h2 class="section-title">🔗 Prototype-to-Code Integration Path <span class="tag tag-pink">NEW SECTION</span></h2>
+            
+            <div class="card highlight-pink">
+                <div class="card-title">How Approved Prototypes Become Code (Seamlessly)</div>
+                <div class="card-subtitle">The Bridge Between Design and Implementation</div>
+                <p style="color:var(--text-secondary)">Once you approve a prototype, it must be translated into working code. This section documents exactly how that happens <strong style="color:var(--accent-green)">seamlessly</strong> — without losing your approved design.</p>
+            </div>
+
+            <h3 style="color:var(--accent-gold);margin:25px 0 15px;">🔄 Integration Workflow</h3>
+            
+            <svg class="workflow-svg" viewBox="0 0 900 280" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#39d4d4"/>
+                    </marker>
+                </defs>
+                
+                <!-- Your Approved Prototype -->
+                <rect x="20" y="30" width="150" height="70" rx="10" fill="rgba(255,107,157,0.1)" stroke="#ff6b9d" stroke-width="2"/>
+                <text x="95" y="55" text-anchor="middle" fill="#ff6b9d" style="font-size:11px;font-weight:bold">YOUR APPROVED</text>
+                <text x="95" y="75" text-anchor="middle" fill="#ff6b9d" style="font-size:11px;font-weight:bold">PROTOTYPE</text>
+                <text x="95" y="90" text-anchor="middle" fill="var(--text-muted)" style="font-size:9px">(Figma/v0)</text>
+                
+                <path d="M170 65 L210 65" stroke="#39d4d4" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                
+                <!-- Translation Layer -->
+                <rect x="220" y="20" width="200" height="90" rx="10" fill="var(--bg-tertiary)" stroke="var(--accent-cyan)" stroke-width="2"/>
+                <text x="320" y="45" text-anchor="middle" fill="var(--accent-cyan)" style="font-size:11px;font-weight:bold">TRANSLATION LAYER</text>
+                <text x="320" y="65" text-anchor="middle" fill="var(--text-secondary)" style="font-size:9px">Option 1: v0 Direct Export</text>
+                <text x="320" y="80" text-anchor="middle" fill="var(--text-secondary)" style="font-size:9px">Option 2: Figma Dev Mode</text>
+                <text x="320" y="95" text-anchor="middle" fill="var(--text-secondary)" style="font-size:9px">Option 3: Design Tokens</text>
+                
+                <path d="M420 65 L460 65" stroke="#39d4d4" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                
+                <!-- Developer Implementation -->
+                <rect x="470" y="30" width="150" height="70" rx="10" fill="var(--bg-tertiary)" stroke="var(--accent-blue)" stroke-width="2"/>
+                <text x="545" y="55" text-anchor="middle" fill="var(--accent-blue)" style="font-size:11px;font-weight:bold">DEVELOPER</text>
+                <text x="545" y="75" text-anchor="middle" fill="var(--accent-blue)" style="font-size:11px;font-weight:bold">IMPLEMENTATION</text>
+                <text x="545" y="90" text-anchor="middle" fill="var(--text-muted)" style="font-size:9px">(Code Updates)</text>
+                
+                <path d="M620 65 L660 65" stroke="#39d4d4" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                
+                <!-- Updated MCI Code -->
+                <rect x="670" y="30" width="150" height="70" rx="10" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="2"/>
+                <text x="745" y="55" text-anchor="middle" fill="#3fb950" style="font-size:11px;font-weight:bold">UPDATED</text>
+                <text x="745" y="75" text-anchor="middle" fill="#3fb950" style="font-size:11px;font-weight:bold">MCI CODE</text>
+                <text x="745" y="90" text-anchor="middle" fill="var(--text-muted)" style="font-size:9px">(Production Ready)</text>
+                
+                <!-- Your Validation -->
+                <path d="M745 100 L745 140 L95 140 L95 180" stroke="#ff6b9d" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead2)"/>
+                
+                <rect x="20" y="190" width="150" height="60" rx="10" fill="rgba(255,107,157,0.1)" stroke="#ff6b9d" stroke-width="2"/>
+                <text x="95" y="215" text-anchor="middle" fill="#ff6b9d" style="font-size:11px;font-weight:bold">YOUR VALIDATION</text>
+                <text x="95" y="235" text-anchor="middle" fill="var(--text-muted)" style="font-size:9px">Matches Prototype? ✓/✗</text>
+                
+                <text x="400" y="155" text-anchor="middle" fill="#ff6b9d" style="font-size:10px">Validation Loop</text>
+            </svg>
+
+            <div class="grid-3" style="margin-top:20px;">
+                <div class="card highlight-gold">
+                    <div class="card-title">Option 1: v0/Vercel Direct Export</div>
+                    <ul style="color:var(--text-secondary);font-size:0.85rem;padding-left:20px;">
+                        <li>v0 generates React/Tailwind code</li>
+                        <li>Developer integrates into MCI</li>
+                        <li>Minimal translation needed</li>
+                        <li><strong style="color:var(--accent-green)">Fastest option</strong></li>
+                    </ul>
+                </div>
+                <div class="card highlight-blue">
+                    <div class="card-title">Option 2: Figma Dev Mode</div>
+                    <ul style="color:var(--text-secondary);font-size:0.85rem;padding-left:20px;">
+                        <li>Figma extracts CSS/spacing</li>
+                        <li>Developer manually implements</li>
+                        <li>More control over code</li>
+                        <li><strong style="color:var(--accent-orange)">More effort</strong></li>
+                    </ul>
+                </div>
+                <div class="card highlight-cyan">
+                    <div class="card-title">Option 3: Design Tokens</div>
+                    <ul style="color:var(--text-secondary);font-size:0.85rem;padding-left:20px;">
+                        <li>Extract colors, fonts, spacing</li>
+                        <li>Apply tokens to components</li>
+                        <li>Systematic visual update</li>
+                        <li><strong style="color:var(--accent-blue)">Most maintainable</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card highlight-green" style="margin-top:20px;">
+                <div class="card-title">✅ What Makes Integration "Seamless"</div>
+                <p style="color:var(--text-secondary);margin-bottom:15px;">For integration to be truly seamless, these must align between prototype and code:</p>
+                <table>
+                    <thead>
+                        <tr><th>Aspect</th><th>Prototype</th><th>Code</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Component Names</td><td>Button, Input, Toast</td><td>Button, Input, Toast</td><td><span class="tag tag-green">Must Match</span></td></tr>
+                        <tr><td>State Names</td><td>idle, hover, loading</td><td>idle, hover, loading</td><td><span class="tag tag-green">Must Match</span></td></tr>
+                        <tr><td>Colors</td><td>#FFD700 (gold)</td><td>#FFD700 (gold)</td><td><span class="tag tag-green">Must Match</span></td></tr>
+                        <tr><td>Spacing</td><td>16px, 24px, 32px</td><td>16px, 24px, 32px</td><td><span class="tag tag-green">Must Match</span></td></tr>
+                        <tr><td>Typography</td><td>Inter, 14px/16px/20px</td><td>Inter, 14px/16px/20px</td><td><span class="tag tag-green">Must Match</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: USER APPROVAL ==================== -->
+        <div id="approval" class="tab-panel">
+            <h2 class="section-title">✅ User Approval Checkpoints <span class="tag tag-pink">NEW SECTION</span></h2>
+            
+            <div class="card highlight-pink">
+                <div class="card-title">👤 Neville's Role as Ultimate Approver</div>
+                <div class="card-subtitle">You Have Final Sign-off Authority</div>
+                <p style="color:var(--text-secondary)">As the <strong style="color:var(--accent-pink)">ultimate user and stakeholder</strong>, every critical decision in MCI's development passes through your approval. This ensures the final product matches your vision.</p>
+            </div>
+
+            <h3 style="color:var(--accent-gold);margin:25px 0 15px;">🚪 3 Critical Approval Gates</h3>
+            
+            <div class="grid-3">
+                <div class="approval-box">
+                    <h4>🚪 Gate 1: UI Prototype Approval</h4>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:10px;"><strong>When:</strong> After Phase 2.5 (UI/UX Validation)</p>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:10px;"><strong>What You Review:</strong> Wireframes, Mockups, Interactive Prototypes</p>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;"><strong>Decision:</strong> "This UI matches my expectations" or "Change X, Y, Z"</p>
+                    <div style="margin-top:15px;padding:10px;background:var(--bg-tertiary);border-radius:6px;">
+                        <span class="tag tag-orange">STATUS: NOT STARTED</span>
+                    </div>
+                </div>
+                
+                <div class="approval-box">
+                    <h4>🚪 Gate 2: Specifications Review</h4>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:10px;"><strong>When:</strong> After Phase 4 (Specifications)</p>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:10px;"><strong>What You Review:</strong> 13 Architecture Flowcharts, API Specs</p>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;"><strong>Decision:</strong> "Specs are complete and accurate" or "Missing X"</p>
+                    <div style="margin-top:15px;padding:10px;background:var(--bg-tertiary);border-radius:6px;">
+                        <span class="tag tag-orange">STATUS: PENDING RETROFIT</span>
+                    </div>
+                </div>
+                
+                <div class="approval-box">
+                    <h4>🚪 Gate 3: Final Production Sign-off</h4>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:10px;"><strong>When:</strong> After Phase 7 (Deployment)</p>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:10px;"><strong>What You Review:</strong> Live staging environment, full E2E test</p>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;"><strong>Decision:</strong> "Approved for production" or "Not ready, fix X"</p>
+                    <div style="margin-top:15px;padding:10px;background:var(--bg-tertiary);border-radius:6px;">
+                        <span class="tag tag-red">STATUS: NOT REACHED</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="color:var(--accent-gold);margin:25px 0 15px;">📋 Complete Approval Checklist</h3>
+            
+            <div class="card highlight-cyan">
+                <div class="card-title">Your Sign-off Tracker</div>
+                <ul class="checklist">
+                    <li><div class="check done">✓</div><span><strong>Requirements:</strong> 5 Constitutional Requirements (CR-001 to CR-005) — <span style="color:var(--accent-green)">APPROVED</span></span></li>
+                    <li><div class="check done">✓</div><span><strong>Architecture:</strong> MCI/CIA-SIE-PURE separation concept — <span style="color:var(--accent-green)">APPROVED</span></span></li>
+                    <li><div class="check pending">○</div><span><strong>UI Prototypes:</strong> All 5 runtime phase interfaces — <span style="color:var(--accent-orange)">PENDING</span></span></li>
+                    <li><div class="check pending">○</div><span><strong>Specifications:</strong> 13 Architecture Flowcharts — <span style="color:var(--accent-orange)">PENDING RETROFIT</span></span></li>
+                    <li><div class="check done">✓</div><span><strong>Implementation:</strong> Core code complete — <span style="color:var(--accent-green)">97% COMPLETE</span></span></li>
+                    <li><div class="check pending">○</div><span><strong>Testing:</strong> Full test suite passing — <span style="color:var(--accent-orange)">75% COMPLETE</span></span></li>
+                    <li><div class="check pending">○</div><span><strong>Staging Review:</strong> Full walkthrough on staging — <span style="color:var(--accent-red)">NOT STARTED</span></span></li>
+                    <li><div class="check pending">○</div><span><strong>Production Sign-off:</strong> Final approval for go-live — <span style="color:var(--accent-red)">NOT REACHED</span></span></li>
+                </ul>
+            </div>
+
+            <div class="card highlight-gold" style="margin-top:20px;">
+                <div class="card-title">📝 How to Provide Your Approval</div>
+                <table>
+                    <thead>
+                        <tr><th>Method</th><th>When to Use</th><th>How It Works</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Verbal Confirmation</strong></td><td>Quick decisions during session</td><td>"Yes, this looks good" or "Change the color to X"</td></tr>
+                        <tr><td><strong>Annotated Screenshot</strong></td><td>UI feedback with specifics</td><td>Mark up the prototype with your comments</td></tr>
+                        <tr><td><strong>Written Sign-off</strong></td><td>Formal gate approvals</td><td>"I approve Gate 1: UI Prototype as of [date]"</td></tr>
+                        <tr><td><strong>Rejection with Feedback</strong></td><td>When changes needed</td><td>"Not approved. Required changes: 1) X, 2) Y, 3) Z"</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: SDLC PHASES ==================== -->
+        <div id="sdlc" class="tab-panel">
+            <h2 class="section-title">📋 Complete SDLC Phases (8 Phases)</h2>
+            
+            <div class="phase-card expanded" style="border-left:4px solid var(--accent-green)">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div><span style="font-size:1.2rem">📋</span> <strong>Phase 1: Requirements Gathering</strong> <span class="tag tag-green">100% COMPLETE</span></div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <ul class="checklist">
+                        <li><div class="check done">✓</div>5 Constitutional Requirements (CR-001 to CR-005) defined</li>
+                        <li><div class="check done">✓</div>UXMI 7×7 Matrix specified (7 components × 7 states)</li>
+                        <li><div class="check done">✓</div>5 Runtime Phases defined (DORMANT→IGNITION→RUNNING→SHUTDOWN→ERROR)</li>
+                        <li><div class="check done">✓</div>12-Point Scanner Checks specified</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="phase-card" style="border-left:4px solid var(--accent-green)">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div><span style="font-size:1.2rem">📐</span> <strong>Phase 2: Architecture & Design</strong> <span class="tag tag-green">100% COMPLETE</span></div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <ul class="checklist">
+                        <li><div class="check done">✓</div>System Architecture: MCI (Cockpit) ↔ CIA-SIE-PURE (Engine)</li>
+                        <li><div class="check done">✓</div>5 Zustand Stores designed</li>
+                        <li><div class="check done">✓</div>API Contract defined (REST + WebSocket)</li>
+                        <li><div class="check done">✓</div>Error Propagation Architecture (WHAT/WHY/HOW)</li>
+                    </ul>
+                    <p style="color:var(--accent-orange);margin-top:15px;font-size:0.85rem;"><strong>Note:</strong> Conceptually complete but formal flowcharts pending (13 documents in Layer 2)</p>
+                </div>
+            </div>
+
+            <div class="phase-card" style="border-left:4px solid var(--accent-pink)">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div><span style="font-size:1.2rem">🎨</span> <strong>Phase 2.5: UI/UX Validation</strong> <span class="tag tag-pink">NEW — 0%</span></div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <ul class="checklist">
+                        <li><div class="check pending">○</div>Wireframes for all 5 runtime phases</li>
+                        <li><div class="check pending">○</div>High-fidelity mockups in Figma</li>
+                        <li><div class="check pending">○</div>Interactive clickable prototype</li>
+                        <li><div class="check pending">○</div>Neville's UI approval sign-off</li>
+                    </ul>
+                    <p style="color:var(--accent-pink);margin-top:15px;font-size:0.85rem;"><strong>This is where YOU approve the UI before code changes!</strong></p>
+                </div>
+            </div>
+
+            <div class="phase-card" style="border-left:4px solid var(--accent-green)">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div><span style="font-size:1.2rem">🎨</span> <strong>Phase 3: UI Design (Implementation)</strong> <span class="tag tag-green">100% COMPLETE</span></div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <ul class="checklist">
+                        <li><div class="check done">✓</div>7 UXMI Components designed and built</li>
+                        <li><div class="check done">✓</div>6 Telemetry Panels designed</li>
+                        <li><div class="check done">✓</div>Timing Constants established (hover=150ms, etc.)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="phase-card" style="border-left:4px solid var(--accent-gold)">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div><span style="font-size:1.2rem">📝</span> <strong>Phase 4: Specifications</strong> <span class="tag tag-orange">RETROFIT — 0%</span></div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <p style="color:var(--accent-orange);margin-bottom:15px;font-size:0.9rem;"><strong>⚠️ CRITICAL GAP:</strong> 13 architecture flowcharts must be created (Layer 2)</p>
+                    <ul class="checklist">
+                        <li><div class="check pending">○</div>Backend Flowcharts (5): Token, Scanner, Ignition, Telemetry, Shutdown</li>
+                        <li><div class="check pending">○</div>Frontend Flowcharts (4): Components, State, Routing, UXMI</li>
+                        <li><div class="check pending">○</div>Integration Flowcharts (4): API, WebSocket, Errors, Data Flow</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="phase-card" style="border-left:4px solid var(--accent-green)">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div><span style="font-size:1.2rem">💻</span> <strong>Phase 5: Implementation</strong> <span class="tag tag-green">97% COMPLETE</span></div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <ul class="checklist">
+                        <li><div class="check done">✓</div>All 5 Zustand Stores implemented</li>
+                        <li><div class="check done">✓</div>All 7 UXMI Components implemented</li>
+                        <li><div class="check done">✓</div>Backend API Routes implemented</li>
+                        <li><div class="check pending">○</div>3 Cosmetic fixes pending (symbol names, branding)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="phase-card" style="border-left:4px solid var(--accent-orange)">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div><span style="font-size:1.2rem">🧪</span> <strong>Phase 6: Testing & Validation</strong> <span class="tag tag-orange">75% COMPLETE</span></div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <ul class="checklist">
+                        <li><div class="check pending">○</div>Unit tests for Zustand stores (Vitest)</li>
+                        <li><div class="check pending">○</div>Integration tests (MSW mocking)</li>
+                        <li><div class="check pending">○</div>E2E tests (Playwright)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="phase-card" style="border-left:4px solid var(--accent-orange)">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div><span style="font-size:1.2rem">🚀</span> <strong>Phase 7: Deployment</strong> <span class="tag tag-orange">80% COMPLETE</span></div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <ul class="checklist">
+                        <li><div class="check pending">○</div>Connect real Kite Connect API</li>
+                        <li><div class="check pending">○</div>Configure Sentry monitoring</li>
+                        <li><div class="check pending">○</div>Setup Grafana dashboard</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="phase-card" style="border-left:4px solid var(--text-muted)">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div><span style="font-size:1.2rem">⚙️</span> <strong>Phase 8: Operations</strong> <span class="tag" style="background:var(--bg-tertiary);color:var(--text-muted)">PENDING</span></div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="phase-body">
+                    <ul class="checklist">
+                        <li><div class="check pending">○</div>Production monitoring active</li>
+                        <li><div class="check pending">○</div>Maintenance procedures documented</li>
+                        <li><div class="check pending">○</div>Incident response plan in place</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: TOOL ARSENAL ==================== -->
+        <div id="tools" class="tab-panel">
+            <h2 class="section-title">🛠️ Tool Arsenal & Phase Mapping</h2>
+            
+            <div class="card highlight-gold">
+                <div class="card-title">Strategic Tool Deployment</div>
+                <div class="card-subtitle">Each tool serves a specific purpose at specific phases</div>
+                <table>
+                    <thead>
+                        <tr><th>Tool</th><th>Purpose</th><th>SDLC Phases</th><th>MCI Usage</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color:var(--accent-gold)">Eraser.io</strong></td>
+                            <td>Architecture diagrams, flowcharts</td>
+                            <td><span class="tag tag-gold">Architecture</span> <span class="tag tag-blue">Specs</span></td>
+                            <td>Create 13 architecture flowcharts</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:var(--accent-pink)">Figma</strong></td>
+                            <td>UI mockups, interactive prototypes</td>
+                            <td><span class="tag tag-pink">UI/UX Validation</span></td>
+                            <td>Create clickable prototype for approval</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:var(--accent-blue)">v0/Vercel</strong></td>
+                            <td>AI-generated React components</td>
+                            <td><span class="tag tag-pink">UI/UX</span> <span class="tag tag-blue">Implementation</span></td>
+                            <td>Generate UXMI component code</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:var(--accent-cyan)">Mermaid</strong></td>
+                            <td>Inline diagrams in Markdown</td>
+                            <td><span class="tag tag-blue">Specs</span> <span class="tag tag-blue">Docs</span></td>
+                            <td>State transition diagrams in docs</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:var(--accent-green)">Vitest</strong></td>
+                            <td>Unit testing</td>
+                            <td><span class="tag tag-green">Testing</span></td>
+                            <td>Test Zustand stores, components</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:var(--accent-purple)">Playwright</strong></td>
+                            <td>E2E testing</td>
+                            <td><span class="tag tag-green">Testing</span></td>
+                            <td>Test Phase 0→4 user journeys</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:var(--accent-red)">Sentry</strong></td>
+                            <td>Error tracking</td>
+                            <td><span class="tag tag-orange">Deployment</span> <span class="tag tag-blue">Ops</span></td>
+                            <td>Track CR-003 errors in production</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Grafana</strong></td>
+                            <td>Metrics visualization</td>
+                            <td><span class="tag tag-blue">Ops</span></td>
+                            <td>Token expiry alerts, health dashboard</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: ACTIONS/GAPS ==================== -->
+        <div id="gaps" class="tab-panel">
+            <h2 class="section-title">⚠️ Actions Required (13 Architecture Gaps)</h2>
+            
+            <div class="card highlight-red">
+                <div class="card-title">🚨 Critical Gap: Layer 2 Architecture Documentation (0%)</div>
+                <p style="color:var(--text-secondary)">These 13 flowchart documents must be created to close the gap from 69% to 100%.</p>
+            </div>
+            
+            <table style="margin-top:20px;">
+                <thead>
+                    <tr><th>Node</th><th>Document</th><th>Category</th><th>CR Impact</th><th>Tool</th><th>Priority</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2.1</td><td>Token Flow</td><td>Backend</td><td>CR-001, CR-004</td><td><span class="tag tag-gold">Eraser.io</span></td><td style="color:var(--accent-red)">P1</td></tr>
+                    <tr><td>2.2</td><td>Scanner Logic</td><td>Backend</td><td>Phase 1</td><td><span class="tag tag-gold">Eraser.io</span></td><td style="color:var(--accent-orange)">P1</td></tr>
+                    <tr><td>2.3</td><td>Ignition Sequence</td><td>Backend</td><td>Phase 2</td><td><span class="tag tag-gold">Eraser.io</span></td><td style="color:var(--accent-orange)">P1</td></tr>
+                    <tr><td>2.4</td><td>Telemetry Pipeline</td><td>Backend</td><td>Phase 3</td><td><span class="tag tag-gold">Eraser.io</span></td><td style="color:var(--accent-orange)">P1</td></tr>
+                    <tr><td>2.5</td><td>Shutdown Sequence</td><td>Backend</td><td>CR-002 SACRED</td><td><span class="tag tag-gold">Eraser.io</span></td><td style="color:var(--accent-red)">P0</td></tr>
+                    <tr><td>2.6</td><td>Component Tree</td><td>Frontend</td><td>CR-005</td><td><span class="tag tag-blue">Mermaid</span></td><td style="color:var(--accent-orange)">P2</td></tr>
+                    <tr><td>2.7</td><td>State Management</td><td>Frontend</td><td>Zustand</td><td><span class="tag tag-blue">Mermaid</span></td><td style="color:var(--accent-orange)">P2</td></tr>
+                    <tr><td>2.8</td><td>Routing Flow</td><td>Frontend</td><td>Navigation</td><td><span class="tag tag-blue">Mermaid</span></td><td style="color:var(--accent-orange)">P2</td></tr>
+                    <tr><td>2.9</td><td>UXMI States</td><td>Frontend</td><td>CR-005 SACRED</td><td><span class="tag tag-pink">v0/Vercel</span></td><td style="color:var(--accent-red)">P0</td></tr>
+                    <tr><td>2.10</td><td>API Contract</td><td>Integration</td><td>Backend↔Frontend</td><td><span class="tag tag-gold">Eraser.io</span></td><td style="color:var(--accent-orange)">P2</td></tr>
+                    <tr><td>2.11</td><td>WebSocket Events</td><td>Integration</td><td>Real-time</td><td><span class="tag tag-blue">Mermaid</span></td><td style="color:var(--accent-orange)">P2</td></tr>
+                    <tr><td>2.12</td><td>Error Propagation</td><td>Integration</td><td>CR-003 SACRED</td><td><span class="tag tag-gold">Eraser.io</span></td><td style="color:var(--accent-red)">P0</td></tr>
+                    <tr><td>2.13</td><td>Data Flow Lifecycle</td><td>Integration</td><td>End-to-End</td><td><span class="tag tag-gold">Eraser.io</span></td><td style="color:var(--accent-orange)">P2</td></tr>
+                </tbody>
+            </table>
+
+            <div class="card highlight-orange" style="margin-top:20px;">
+                <div class="card-title">🔧 3 Cosmetic Fixes</div>
+                <ul style="color:var(--text-secondary);padding-left:20px;font-size:0.9rem;">
+                    <li><strong>Fix #1:</strong> telemetry.ts lines 31-32 — Change AAPL, GOOGL → RELIANCE, TCS</li>
+                    <li><strong>Fix #2:</strong> TelemetryDashboard.tsx line 25 — Change AAPL, GOOGL → RELIANCE, TCS</li>
+                    <li><strong>Fix #3:</strong> App.tsx line 294 — Change CIA-SIE-START-STOP → MCI - Mission Control Interface</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: CONSTITUTIONAL REQUIREMENTS ==================== -->
+        <div id="constitutional" class="tab-panel">
+            <h2 class="section-title">🔐 Constitutional Requirements (SACRED)</h2>
+            
+            <div class="card highlight-red">
+                <div class="card-title">⚠️ These Rules Cannot Be Violated</div>
+                <p style="color:var(--text-secondary)">The 5 CRs are <strong style="color:var(--accent-red)">SACRED</strong> and <strong style="color:var(--accent-red)">INVIOLABLE</strong>. Every piece of code must comply.</p>
+            </div>
+
+            <div class="grid-2" style="margin-top:20px;">
+                <div class="card" style="border:2px solid var(--accent-red)">
+                    <div class="card-title" style="color:var(--accent-red)">CR-001: Token Validity Check</div>
+                    <p style="color:var(--text-secondary);font-size:0.9rem;">System must verify token validity before ANY operation. No exceptions.</p>
+                    <p style="margin-top:10px;font-size:0.85rem;"><strong>Impact:</strong> ALL API routes, ALL store actions, ALL renders</p>
+                </div>
+                <div class="card" style="border:2px solid var(--accent-red)">
+                    <div class="card-title" style="color:var(--accent-red)">CR-002: Graceful Shutdown</div>
+                    <p style="color:var(--text-secondary);font-size:0.9rem;">Always allow graceful shutdown. 6-step sequence mandatory.</p>
+                    <p style="margin-top:10px;font-size:0.85rem;"><strong>6 Steps:</strong> Stop ops → Complete pending → Close WS → Clear memory → Log → Exit</p>
+                </div>
+                <div class="card" style="border:2px solid var(--accent-red)">
+                    <div class="card-title" style="color:var(--accent-red)">CR-003: WHAT/WHY/HOW Errors</div>
+                    <p style="color:var(--text-secondary);font-size:0.9rem;">All errors must include WHAT happened, WHY, HOW to fix.</p>
+                    <p style="margin-top:10px;font-size:0.85rem;"><strong>Format:</strong> No vague errors. 3-part structure always.</p>
+                </div>
+                <div class="card" style="border:2px solid var(--accent-red)">
+                    <div class="card-title" style="color:var(--accent-red)">CR-004: 6 AM IST Token Expiry</div>
+                    <p style="color:var(--text-secondary);font-size:0.9rem;">Token expires daily at 6:00 AM IST (Zerodha policy).</p>
+                    <p style="margin-top:10px;font-size:0.85rem;"><strong>Impact:</strong> TokenTimer, 30-min warnings, auto-terminate</p>
+                </div>
+                <div class="card" style="border:2px solid var(--accent-red)">
+                    <div class="card-title" style="color:var(--accent-red)">CR-005: UXMI 7-States</div>
+                    <p style="color:var(--text-secondary);font-size:0.9rem;">Every component handles all 7 states: idle, hover, active, loading, success, error, disabled.</p>
+                    <p style="margin-top:10px;font-size:0.85rem;"><strong>Matrix:</strong> 7 components × 7 states = 49 combinations</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <strong style="color:var(--accent-gold)">MCI Complete Development Briefing v2.0</strong> | Generated January 27, 2026
+        <br>IRONCLAD Protocol | 8-Phase SDLC | UI/UX Validation Integrated | User Approval Gates Active
+        <br><br>
+        <span style="color:var(--accent-pink)">Mission Control Interface for CIA-SIE-PURE Automated Trading Engine</span>
+        <br><span style="color:var(--text-muted)">Approver: Neville | Contact: nevilmehta@hotmail.com</span>
+    </footer>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        function togglePhase(header) {
+            header.closest('.phase-card').classList.toggle('expanded');
+        }
+    </script>
+</body>
+</html>

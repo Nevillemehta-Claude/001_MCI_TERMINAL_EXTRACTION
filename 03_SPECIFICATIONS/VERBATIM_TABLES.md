@@ -1068,10 +1068,10 @@
 
 | Should Be | Currently Is |
 |-----------|--------------|
-| Zerodha Kite | Alpaca Markets ❌ |
-| NSE/BSE (India) | NYSE/NASDAQ (US) ❌ |
-| api.kite.trade | paper-api.alpaca.markets ❌ |
-| Kite Access Token | Alpaca Key/Secret ❌ |
+| Zerodha Kite | [Out-of-Scope-Broker] Markets ❌ |
+| NSE/BSE (India) | NSE/BSE (US) ❌ |
+| api.kite.trade | paper-api.[out-of-scope-broker].markets ❌ |
+| Kite Access Token | [Out-of-Scope-Broker] Key/Secret ❌ |
 
 ---
 

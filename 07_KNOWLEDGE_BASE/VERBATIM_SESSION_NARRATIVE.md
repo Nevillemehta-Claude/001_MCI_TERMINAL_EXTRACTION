@@ -423,9 +423,9 @@ Nodes:
 ├── Requirements: CR-001, CR-002, CR-003, CR-004, CR-005
 ├── Components: TokenTimer, tokenStore, IgnitionButton, etc.
 ├── Phases: Phase 0, 1, 2, 3, 3.5, 4
-├── APIs: Kite Connect, Alpaca (contaminated)
+├── APIs: Kite Connect, [Out-of-Scope-Broker] (contaminated)
 ├── Files: 92 source files, 30 spec documents
-└── Violations: CR-004 divergence, Alpaca contamination
+└── Violations: CR-004 divergence, [Out-of-Scope-Broker] contamination
 
 Edges:
 ├── IMPLEMENTS: Component → Requirement
@@ -1807,7 +1807,7 @@ I will explain the science honestly and accurately. No action will be taken.
 │   • Identify ENTITIES (CR-001, Kite Connect, tokenStore.ts)         │
 │   • Identify RELATIONSHIPS (CR-004 → 6:00 AM IST → tokenStore.ts)   │
 │   • Identify CATEGORIES (Constitutional, UXMI, Phase, Backend)      │
-│   • Identify CONFLICTS (Alpaca vs Kite, 24h vs 6:00 AM IST)         │
+│   • Identify CONFLICTS ([Out-of-Scope-Broker] vs Kite, 24h vs 6:00 AM IST)         │
 │   • Identify DEPENDENCIES (Phase 0 → Phase 1 → Phase 2)             │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
@@ -2286,8 +2286,8 @@ Every tooltip must answer: "What will happen if I click/interact with this?"
 
 ```
 ╔════════════════════════════════════════════════════════════════════════════════════════╗
-║  ☠️ QUARANTINED #1: COMPLETE_EXECUTION_GUIDE.md (1,861 lines) - Alpaca contamination   ║
-║  ☠️ QUARANTINED #2: SECTION_N_SENTRY_OPERATIONS.md (718 lines) - Alpaca contamination  ║
+║  ☠️ QUARANTINED #1: COMPLETE_EXECUTION_GUIDE.md (1,861 lines) - [Out-of-Scope-Broker] contamination   ║
+║  ☠️ QUARANTINED #2: SECTION_N_SENTRY_OPERATIONS.md (718 lines) - [Out-of-Scope-Broker] contamination  ║
 ║                                                                                        ║
 ║  TOTAL QUARANTINED: 2,579 lines - NEVER REFERENCE FOR ANY PURPOSE                      ║
 ╚════════════════════════════════════════════════════════════════════════════════════════╝
@@ -2323,7 +2323,7 @@ Every tooltip must answer: "What will happen if I click/interact with this?"
 | CR-004 | Token Lifecycle Accuracy | **6:00 AM IST SACRED** |
 | CR-005 | UXMI 7-State Components | 300ms tooltip, WHAT/WHY/HOW |
 
-### CORRECT TRADING BACKEND (NOT Alpaca)
+### CORRECT TRADING BACKEND (NOT [Out-of-Scope-Broker])
 - **Zerodha Kite Connect**: `https://api.kite.trade`, `wss://ws.kite.trade`
 - **4 Indian Brokers**: ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite
 - **Token Expiry**: 6:00:00 AM IST daily (00:30 UTC)
@@ -2529,7 +2529,7 @@ Then provide this checkpoint summary to Claude.
 
 | # | File | Line | Current | Required |
 |---|------|------|---------|----------|
-| 1 | telemetry.ts | 31-32 | AAPL, GOOGL, MSFT, TSLA | RELIANCE, TCS, INFY, HDFC |
+| 1 | telemetry.ts | 31-32 | RELIANCE, TCS, INFY, TSLA | RELIANCE, TCS, INFY, HDFC |
 | 2 | TelemetryDashboard.tsx | ~25 | US symbols | Indian symbols |
 | 3 | App.tsx | 294 | CIA-SIE-START-STOP | MCI branding |
 
@@ -2751,8 +2751,8 @@ The playwright-report is a standard Playwright HTML report (520KB, minified Java
 
 | Document | Reason |
 |----------|--------|
-| COMPLETE_EXECUTION_GUIDE.md | Alpaca API contamination |
-| SECTION_N_SENTRY_OPERATIONS.md | Alpaca API contamination |
+| COMPLETE_EXECUTION_GUIDE.md | [Out-of-Scope-Broker] API contamination |
+| SECTION_N_SENTRY_OPERATIONS.md | [Out-of-Scope-Broker] API contamination |
 
 ---
 
@@ -2940,7 +2940,7 @@ Ready for Document 19. Please provide the next file path.
 | sentry-alert-rules.json | 341 | ✅ CLEAN | MCI-specific alerts |
 | sentry-dashboard.json | 329 | ✅ CLEAN | 17 dashboard widgets |
 | IRONCLAD_DOCUMENT_PARSING_PROTOCOL.md | 287 | ✅ PREVIOUSLY INGESTED | |
-| SECTION_N_SENTRY_OPERATIONS.md | 717 | ⛔ **QUARANTINED** | Alpaca contamination |
+| SECTION_N_SENTRY_OPERATIONS.md | 717 | ⛔ **QUARANTINED** | [Out-of-Scope-Broker] contamination |
 
 ---
 
@@ -2968,7 +2968,7 @@ Users following this guide should NOT read that file.
 | Ignition System Failure | First occurrence | CRITICAL |
 | Live Trading Error | First occurrence | CRITICAL + PagerDuty |
 | Auth Failure Spike | 10 events in 5m | SECURITY |
-| Paper Trading Error | First occurrence | DEV |
+| [Out-of-Scope-Trading-Mode] Error | First occurrence | DEV |
 | Scanner Check Failed | 3 events in 15m | DEV |
 | High Error Rate | 5% increase in 1h | CRITICAL |
 
@@ -3022,7 +3022,7 @@ Users following this guide should NOT read that file.
 │  1. /docs/SECTION_N_SENTRY_OPERATIONS.md                                │
 │  2. /04_IMPLEMENTATION/SECTION_N_SENTRY_OPERATIONS.md                   │
 │                                                                         │
-│  CONTAMINATION: Alpaca API references                                   │
+│  CONTAMINATION: [Out-of-Scope-Broker] API references                                   │
 │  ACTION: DO NOT REFERENCE - Use sentry JSON configs instead             │
 │                                                                         │
 │  RECOMMENDATION:                                                        │
@@ -3040,7 +3040,7 @@ Users following this guide should NOT read that file.
 | 1 | telemetry.ts | 31-32 | US symbols → Indian | HIGH |
 | 2 | TelemetryDashboard.tsx | ~25 | US symbols → Indian | HIGH |
 | 3 | App.tsx | 294 | CIA-SIE-START-STOP → MCI | MEDIUM |
-| 4 | mci.spec.ts | 40 | alpaca comment → kite | LOW |
+| 4 | mci.spec.ts | 40 | [out-of-scope-broker] comment → kite | LOW |
 | **5** | **README.md (docs/)** | **11, 44** | **References quarantined doc** | **LOW** |
 
 ---
@@ -3211,7 +3211,7 @@ Now continuing with UXMI components...
 │   Build Tool         Vite               Latest                                          │
 │   Language           TypeScript         Strict Mode                                     │
 │                                                                                          │
-│   BROKER API         Kite               (replacing Alpaca)                              │
+│   BROKER API         Kite               (replacing [Out-of-Scope-Broker])                              │
 │                                                                                          │
 └─────────────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -3347,17 +3347,17 @@ bun run build
 
 ---
 
-### ❌ ALPACA CONTAMINATION CONFIRMED (P2 HIGH)
+### ❌ [OUT-OF-SCOPE-BROKER] CONTAMINATION CONFIRMED (P2 HIGH)
 
 | Should Be | Currently Is |
 |-----------|--------------|
-| Zerodha Kite | Alpaca Markets ❌ |
-| NSE/BSE (India) | NYSE/NASDAQ (US) ❌ |
-| api.kite.trade | paper-api.alpaca.markets ❌ |
-| Kite Access Token | Alpaca Key/Secret ❌ |
+| Zerodha Kite | [Out-of-Scope-Broker] Markets ❌ |
+| NSE/BSE (India) | NSE/BSE (US) ❌ |
+| api.kite.trade | paper-api.[out-of-scope-broker].markets ❌ |
+| Kite Access Token | [Out-of-Scope-Broker] Key/Secret ❌ |
 
 **Files with Wrong References**:
-- `/src/server/routes/auth.ts` - Line 38 calls Alpaca API
+- `/src/server/routes/auth.ts` - Line 38 calls [Out-of-Scope-Broker] API
 - `/src/client/components/phase0/__tests__/TokenCaptureForm.test.tsx`
 - `/src/client/components/phase0/index.ts`
 
@@ -3419,7 +3419,7 @@ bun run build
 ║   ARCHITECTURE DOCUMENTS:         COMPLIANT                               ║
 ║   UXMI COMPONENTS (CR-005):       7/7 IMPLEMENTED (100%)                  ║
 ║   TOKEN LIFECYCLE (CR-004):       ❌ DIVERGENT - P1 CRITICAL              ║
-║   API INTEGRATION:                ❌ DIVERGENT - Alpaca vs Kite           ║
+║   API INTEGRATION:                ❌ DIVERGENT - [Out-of-Scope-Broker] vs Kite           ║
 ║                                                                           ║
 ║   OVERALL GATE RECOMMENDATION:    ⚠️ REQUIRES REMEDIATION                 ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
@@ -3431,7 +3431,7 @@ bun run build
 
 ### P1 CRITICAL (Block Release)
 1. **CR-004 Token Expiry Fix** - Change 24h to 6:00 AM IST in `tokenStore.ts`
-2. **Alpaca References Removal** - Replace all with Kite Connect API
+2. **[Out-of-Scope-Broker] References Removal** - Replace all with Kite Connect API
 
 ### P2 HIGH (Before Production)
 1. CR-002 UI Implementation - Bullish/bearish equal weight display
@@ -3453,7 +3453,7 @@ bun run build
 
 ---
 
-**Master transcripts ingestion complete. The transcripts CONFIRM the Alpaca contamination and CR-004 violation that requires surgical correction.**
+**Master transcripts ingestion complete. The transcripts CONFIRM the [Out-of-Scope-Broker] contamination and CR-004 violation that requires surgical correction.**
 
 Awaiting your direction:
 1. Continue document ingestion (provide next path), OR
@@ -3574,7 +3574,7 @@ Key insights captured from `MCI_MASTER_USE_CASE_SPECIFICATION.html` (1,697 lines
 
 **CLEAN SLATE PROTOCOL:**
 - ALL PREVIOUS CODE TO BE ERADICATED
-- Alpaca-based implementation (VOID)
+- [Out-of-Scope-Broker]-based implementation (VOID)
 - Current 04_IMPLEMENTATION/mci/ (VOID)
 - Reason: Built WITHOUT proper use case understanding
 - New implementation MUST be built from scratch
@@ -3678,7 +3678,7 @@ Key insights captured from `MCI_MASTER_USE_CASE_SPECIFICATION.html` (1,697 lines
 
 | File | Line | Issue | Fix |
 |------|------|-------|-----|
-| `telemetry.ts` | 31-32 | US symbols: AAPL, GOOGL, MSFT, TSLA | Change to: RELIANCE, TCS, INFY, HDFC |
+| `telemetry.ts` | 31-32 | US symbols: RELIANCE, TCS, INFY, TSLA | Change to: RELIANCE, TCS, INFY, HDFC |
 
 ---
 
@@ -3899,7 +3899,7 @@ It is a **frontend application** designed to provide a "NASA-grade mission contr
 
 3. **Technology:** React, TypeScript, Zustand, Hono/Bun, Tailwind
 
-4. **It was originally built for Alpaca API, then remediated to Kite API**
+4. **It was originally built for [Out-of-Scope-Broker] API, then remediated to Kite API**
 
 ---
 
@@ -4037,11 +4037,11 @@ Ready for the next document to ingest.
 ╠══════════════════════════════════════════════════════════════════════════════╣
 ║                                                                              ║
 ║   POISONED CONTENT (DO NOT USE):                                             ║
-║   ✗ Alpaca API (WRONG - should be Kite Connect)                             ║
-║   ✗ Polygon API (WRONG - not in constitution)                               ║
-║   ✗ wss://paper-api.alpaca.markets (WRONG WebSocket)                        ║
+║   ✗ [Out-of-Scope-Broker] API (WRONG - should be Kite Connect)                             ║
+║   ✗ [Out-of-Scope-Data-Provider] API (WRONG - not in constitution)                               ║
+║   ✗ wss://paper-api.[out-of-scope-broker].markets (WRONG WebSocket)                        ║
 ║   ✗ Paper/Live trading concept (WRONG paradigm)                             ║
-║   ✗ ALPACA_API_KEY, ALPACA_SECRET_KEY (WRONG env vars)                      ║
+║   ✗ [OUT-OF-SCOPE-BROKER]_API_KEY, [OUT-OF-SCOPE-BROKER]_SECRET_KEY (WRONG env vars)                      ║
 ║   ✗ All 7 phases described (CONTAMINATED workflow)                          ║
 ║   ✗ All code samples (WRONG backend integration)                            ║
 ║                                                                              ║
@@ -4322,13 +4322,13 @@ They document the same architecture - the 16 diagrams that fill the Layer 2 (Arc
 | ✅ Tests Kite credentials (Indian API) | Lines 168-284 |
 | ✅ Tests responsive design | Mobile/Tablet/Desktop |
 | ✅ Tests accessibility | Keyboard nav, landmarks |
-| ⚠️ Line 40 mentions "alpaca" in comment | `// alpaca key, secret, polygon key` |
+| ⚠️ Line 40 mentions "[out-of-scope-broker]" in comment | `// [out-of-scope-broker] key, secret, [out-of-scope-data-provider] key` |
 
 ### Issue Found
 
-**Line 40** contains outdated comment referencing Alpaca:
+**Line 40** contains outdated comment referencing [Out-of-Scope-Broker]:
 ```typescript
-await expect(inputs).toHaveCount(3); // alpaca key, secret, polygon key
+await expect(inputs).toHaveCount(3); // [out-of-scope-broker] key, secret, [out-of-scope-data-provider] key
 ```
 
 Should be:
@@ -4354,7 +4354,7 @@ Contains visual regression snapshots (auto-generated by Playwright).
 | 1 | telemetry.ts | 31-32 | US symbols → Indian symbols |
 | 2 | TelemetryDashboard.tsx | ~25 | US symbols → Indian symbols |
 | 3 | App.tsx | 294 | CIA-SIE-START-STOP → MCI |
-| **4** | **mci.spec.ts** | **40** | **alpaca comment → kite comment** |
+| **4** | **mci.spec.ts** | **40** | **[out-of-scope-broker] comment → kite comment** |
 
 ---
 

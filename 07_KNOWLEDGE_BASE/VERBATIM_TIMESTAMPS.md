@@ -985,7 +985,7 @@ X" only |
 | CR-004 | Token Lifecycle Accuracy | **6:00 AM IST SACRED** |
 | CR-005 | UXMI 7-State Components | 300ms tooltip, WHAT/WHY/HOW |
 
-### CORRECT TRADING BACKEND (NOT Alpaca)
+### CORRECT TRADING BACKEND (NOT [Out-of-Scope-Broker])
 - **Zerodha Kite Connect**: `
 
 ---
@@ -1039,7 +1039,7 @@ X" only |
 
 e)
 1. **CR-004 Token Expiry Fix** - Change 24h to 6:00 AM IST in `tokenStore.ts`
-2. **Alpaca References Removal** - Replace all with Kite Connect API
+2. **[Out-of-Scope-Broker] References Removal** - Replace all with Kite Connect API
 
 ### P2 HIGH (Before Production)
 1. CR-002 UI Implementation
@@ -1060,13 +1060,13 @@ e)
 │
 │   • Identify RELATIONSHIPS (CR-004 → 6:00 AM IST → tokenStore.ts)   │
 │   • Identify CATEGORIES (Constitutional, UXMI, Phase, Backend)      │
-│   • Identify CONFLICTS (Alpaca vs Kite, 24h vs 6:00 AM
+│   • Identify CONFLICTS ([Out-of-Scope-Broker] vs Kite, 24h vs 6:00 AM
 
 ---
 
 ### TIMESTAMP 98
 
-│   • Identify CONFLICTS (Alpaca vs Kite, 24h vs 6:00 AM IST)         │
+│   • Identify CONFLICTS ([Out-of-Scope-Broker] vs Kite, 24h vs 6:00 AM IST)         │
 │   • Identify DEPENDENCIES (Phase 0 → Phase 1 → Phase 2)             │
 │
 

@@ -1,0 +1,283 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MCI Phase Contracts",
+  "description": "Legal phase transitions, required UI signals, and backend health conditions per phase",
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-28",
+  "phases": {
+    "token": {
+      "id": "token",
+      "name": "Token Capture",
+      "description": "Credential entry and validation phase",
+      "order": 0,
+      "entryConditions": [
+        "Application started",
+        "OR: System restart after shutdown",
+        "OR: Token expired (CR-004)"
+      ],
+      "exitConditions": [
+        "Credentials validated successfully",
+        "Credentials stored in tokenStore"
+      ],
+      "legalTransitions": ["scan"],
+      "illegalTransitions": ["ignition", "running", "shutdown"],
+      "requiredUISignals": {
+        "visible": [
+          "TokenCaptureForm",
+          "Credential input fields (API Key, Access Token, User ID)",
+          "Submit button",
+          "Expiry notice (CR-004)"
+        ],
+        "hidden": [
+          "Scanner panel",
+          "Ignition controls",
+          "Telemetry dashboard",
+          "Shutdown panel"
+        ],
+        "indicators": []
+      },
+      "backendHealthConditions": {
+        "required": false,
+        "reason": "Backend not yet needed, validation uses direct Kite API call"
+      }
+    },
+    "scan": {
+      "id": "scan",
+      "name": "Pre-Ignition Scan",
+      "description": "12-point system health check phase",
+      "order": 1,
+      "entryConditions": [
+        "Credentials validated (from token phase)",
+        "tokenStore has valid credentials"
+      ],
+      "exitConditions": [
+        "All 12 scan checks pass",
+        "scannerStore.allChecksPassed === true"
+      ],
+      "legalTransitions": ["ignition"],
+      "illegalTransitions": ["token", "running", "shutdown"],
+      "requiredUISignals": {
+        "visible": [
+          "PreIgnitionScanner",
+          "12 ScanCheckItem components",
+          "Scan progress indicator",
+          "Proceed button (disabled until all pass)"
+        ],
+        "hidden": [
+          "TokenCaptureForm",
+          "Ignition button",
+          "Telemetry dashboard",
+          "Shutdown panel"
+        ],
+        "indicators": [
+          "Individual check status (pass/fail/pending)",
+          "Overall scan progress"
+        ]
+      },
+      "backendHealthConditions": {
+        "required": true,
+        "checks": [
+          "Backend reachable (kite-connection)",
+          "API responding (api-response)"
+        ]
+      },
+      "scanChecks": [
+        { "id": "kite-connection", "name": "Kite Connection", "critical": true },
+        { "id": "api-response", "name": "API Response", "critical": true },
+        { "id": "nse-bse-data", "name": "NSE/BSE Data Feed", "critical": true },
+        { "id": "order-types", "name": "Order Types Available", "critical": true },
+        { "id": "margin-available", "name": "Margin Available", "critical": false },
+        { "id": "holdings-sync", "name": "Holdings Synced", "critical": false },
+        { "id": "positions-sync", "name": "Positions Synced", "critical": false },
+        { "id": "order-history", "name": "Order History Access", "critical": false },
+        { "id": "websocket-ready", "name": "WebSocket Ready", "critical": true },
+        { "id": "rate-limits", "name": "Rate Limits OK", "critical": true },
+        { "id": "system-time", "name": "System Time Sync", "critical": true },
+        { "id": "emergency-stop", "name": "Emergency Stop Ready", "critical": true }
+      ]
+    },
+    "ignition": {
+      "id": "ignition",
+      "name": "Ignition",
+      "description": "Backend connection sequence with two-stage safety",
+      "order": 2,
+      "entryConditions": [
+        "All scan checks passed",
+        "Backend selected"
+      ],
+      "exitConditions": [
+        "Connection established",
+        "ignitionStore.phase === 'running'"
+      ],
+      "legalTransitions": ["running"],
+      "illegalTransitions": ["token", "scan", "shutdown"],
+      "requiredUISignals": {
+        "visible": [
+          "BackendSelector",
+          "IgnitionButton (ARM -> IGNITE sequence)",
+          "Live trading confirmation (for Indian brokers)",
+          "Backend health indicator"
+        ],
+        "hidden": [
+          "TokenCaptureForm",
+          "PreIgnitionScanner",
+          "Telemetry panels",
+          "Shutdown panel"
+        ],
+        "indicators": [
+          "Backend health status",
+          "ARM/IGNITE state",
+          "Connection progress"
+        ]
+      },
+      "backendHealthConditions": {
+        "required": true,
+        "preIgnitionCheck": true,
+        "blockIfUnreachable": true
+      },
+      "safetySequence": {
+        "stages": ["selecting", "armed", "igniting", "running"],
+        "confirmationRequired": true,
+        "confirmationMessage": "Real Trading Confirmation"
+      }
+    },
+    "running": {
+      "id": "running",
+      "name": "Running",
+      "description": "Active operation with telemetry display",
+      "order": 3,
+      "entryConditions": [
+        "Ignition successful",
+        "ignitionStore.phase === 'running'"
+      ],
+      "exitConditions": [
+        "User initiates shutdown",
+        "OR: Critical error occurs",
+        "OR: Token expires (CR-004)"
+      ],
+      "legalTransitions": ["shutdown"],
+      "illegalTransitions": ["token", "scan", "ignition"],
+      "requiredUISignals": {
+        "visible": [
+          "TelemetryDashboard",
+          "MarketDataPanel",
+          "PositionsPanel",
+          "OrdersPanel",
+          "AccountPanel",
+          "SystemHealthPanel",
+          "ActivityLogPanel",
+          "Shutdown buttons (Graceful + Emergency)"
+        ],
+        "hidden": [
+          "TokenCaptureForm",
+          "PreIgnitionScanner",
+          "IgnitionButton"
+        ],
+        "indicators": [
+          "Token timer (time until expiry)",
+          "Backend health (API OK/Error)",
+          "Network status (Online/Offline)",
+          "Error count (if any)",
+          "Simulation badge (if simulated data)"
+        ]
+      },
+      "backendHealthConditions": {
+        "required": true,
+        "pollingInterval": 30000,
+        "onFailure": "Display error, allow retry"
+      },
+      "cockpitIndicators": {
+        "tokenTimer": {
+          "visible": true,
+          "location": "StatusBar or dedicated component",
+          "format": "HH:MM:SS until expiry"
+        },
+        "backendHealth": {
+          "visible": true,
+          "location": "StatusBar",
+          "states": ["API OK", "API Error", "Checking..."]
+        },
+        "networkStatus": {
+          "visible": true,
+          "location": "StatusBar",
+          "states": ["Online", "Offline"]
+        },
+        "errorCount": {
+          "visible": true,
+          "location": "StatusBar",
+          "showWhen": "errors > 0"
+        }
+      }
+    },
+    "shutdown": {
+      "id": "shutdown",
+      "name": "Shutdown",
+      "description": "6-step graceful termination sequence (CR-002)",
+      "order": 4,
+      "entryConditions": [
+        "User initiates shutdown from running phase",
+        "OR: Critical error requires shutdown"
+      ],
+      "exitConditions": [
+        "All shutdown steps complete",
+        "shutdownStore.phase === 'complete'"
+      ],
+      "legalTransitions": ["token"],
+      "illegalTransitions": ["scan", "ignition", "running"],
+      "requiredUISignals": {
+        "visible": [
+          "ShutdownPanel",
+          "Step progress indicators",
+          "Step status (pending/running/complete/error)",
+          "Overall progress bar",
+          "Return to Start button (after complete)"
+        ],
+        "hidden": [
+          "TokenCaptureForm",
+          "PreIgnitionScanner",
+          "IgnitionButton",
+          "TelemetryDashboard"
+        ],
+        "indicators": [
+          "Current step name",
+          "Step completion status",
+          "Overall percentage",
+          "Error details (if any)"
+        ]
+      },
+      "backendHealthConditions": {
+        "required": false,
+        "reason": "Shutdown proceeds regardless of backend state"
+      },
+      "shutdownSteps": {
+        "graceful": [
+          { "id": "cancel-orders", "name": "Cancel Pending Orders", "order": 1, "skippableOnEmergency": true },
+          { "id": "flatten-positions", "name": "Flatten Positions", "order": 2, "skippableOnEmergency": true },
+          { "id": "close-websocket", "name": "Close WebSocket", "order": 3, "skippableOnEmergency": false },
+          { "id": "notify-backend", "name": "Notify Backend", "order": 4, "skippableOnEmergency": false },
+          { "id": "save-state", "name": "Save State", "order": 5, "skippableOnEmergency": false },
+          { "id": "clear-session", "name": "Clear Session", "order": 6, "skippableOnEmergency": false }
+        ],
+        "emergency": [
+          { "id": "close-websocket", "name": "Close WebSocket", "order": 1 },
+          { "id": "notify-backend", "name": "Notify Backend", "order": 2 },
+          { "id": "save-state", "name": "Save State", "order": 3 },
+          { "id": "clear-session", "name": "Clear Session", "order": 4 }
+        ]
+      }
+    }
+  },
+  "transitionMatrix": {
+    "token": { "scan": true, "ignition": false, "running": false, "shutdown": false },
+    "scan": { "token": false, "ignition": true, "running": false, "shutdown": false },
+    "ignition": { "token": false, "scan": false, "running": true, "shutdown": false },
+    "running": { "token": false, "scan": false, "ignition": false, "shutdown": true },
+    "shutdown": { "token": true, "scan": false, "ignition": false, "running": false }
+  },
+  "phaseAuthority": {
+    "controller": "App.tsx",
+    "stateSource": "Derived from tokenStore, scannerStore, ignitionStore, shutdownStore",
+    "renderingRule": "Only one phase component rendered at a time",
+    "childGuardPolicy": "Child components MUST NOT contain phase guards that duplicate App.tsx logic"
+  }
+}

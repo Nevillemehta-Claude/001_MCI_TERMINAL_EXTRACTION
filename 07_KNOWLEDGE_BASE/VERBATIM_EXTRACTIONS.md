@@ -642,7 +642,7 @@ It is a **frontend application** designed to provide a "NASA-grade mission contr
 
 3. **Technology:** React, TypeScript, Zustand, Hono/Bun, Tailwind
 
-4. **It was originally built for Alpaca API, then remediated to Kite API**
+4. **It was originally built for [Out-of-Scope-Broker] API, then remediated to Kite API**
 
 ---
 
@@ -708,7 +708,7 @@ Key insights captured from `MCI_MASTER_USE_CASE_SPECIFICATION.html` (1,697 lines
 
 **CLEAN SLATE PROTOCOL:**
 - ALL PREVIOUS CODE TO BE ERADICATED
-- Alpaca-based implementation (VOID)
+- [Out-of-Scope-Broker]-based implementation (VOID)
 - Current 04_IMPLEMENTATION/mci/ (VOID)
 - Reason: Built WITHOUT proper use case understanding
 - New implementation MUST be built from scratch
@@ -1895,8 +1895,8 @@ Ready for Document 19. Please provide the next file path.
 
 ```
 ╔════════════════════════════════════════════════════════════════════════════════════════╗
-║  ☠️ QUARANTINED #1: COMPLETE_EXECUTION_GUIDE.md (1,861 lines) - Alpaca contamination   ║
-║  ☠️ QUARANTINED #2: SECTION_N_SENTRY_OPERATIONS.md (718 lines) - Alpaca contamination  ║
+║  ☠️ QUARANTINED #1: COMPLETE_EXECUTION_GUIDE.md (1,861 lines) - [Out-of-Scope-Broker] contamination   ║
+║  ☠️ QUARANTINED #2: SECTION_N_SENTRY_OPERATIONS.md (718 lines) - [Out-of-Scope-Broker] contamination  ║
 ║                                                                                        ║
 ║  TOTAL QUARANTINED: 2,579 lines - NEVER REFERENCE FOR ANY PURPOSE                      ║
 ╚════════════════════════════════════════════════════════════════════════════════════════╝
@@ -1932,7 +1932,7 @@ Ready for Document 19. Please provide the next file path.
 | CR-004 | Token Lifecycle Accuracy | **6:00 AM IST SACRED** |
 | CR-005 | UXMI 7-State Components | 300ms tooltip, WHAT/WHY/HOW |
 
-### CORRECT TRADING BACKEND (NOT Alpaca)
+### CORRECT TRADING BACKEND (NOT [Out-of-Scope-Broker])
 - **Zerodha Kite Connect**: `https://api.kite.trade`, `wss://ws.kite.trade`
 - **4 Indian Brokers**: ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite
 - **Token Expiry**: 6:00:00 AM IST daily (00:30 UTC)
@@ -2052,17 +2052,17 @@ Then provide this checkpoint summary to Claude.
 
 ---
 
-### ❌ ALPACA CONTAMINATION CONFIRMED (P2 HIGH)
+### ❌ [OUT-OF-SCOPE-BROKER] CONTAMINATION CONFIRMED (P2 HIGH)
 
 | Should Be | Currently Is |
 |-----------|--------------|
-| Zerodha Kite | Alpaca Markets ❌ |
-| NSE/BSE (India) | NYSE/NASDAQ (US) ❌ |
-| api.kite.trade | paper-api.alpaca.markets ❌ |
-| Kite Access Token | Alpaca Key/Secret ❌ |
+| Zerodha Kite | [Out-of-Scope-Broker] Markets ❌ |
+| NSE/BSE (India) | NSE/BSE (US) ❌ |
+| api.kite.trade | paper-api.[out-of-scope-broker].markets ❌ |
+| Kite Access Token | [Out-of-Scope-Broker] Key/Secret ❌ |
 
 **Files with Wrong References**:
-- `/src/server/routes/auth.ts` - Line 38 calls Alpaca API
+- `/src/server/routes/auth.ts` - Line 38 calls [Out-of-Scope-Broker] API
 - `/src/client/components/phase0/__tests__/TokenCaptureForm.test.tsx`
 - `/src/client/components/phase0/index.ts`
 
@@ -2124,7 +2124,7 @@ Then provide this checkpoint summary to Claude.
 ║   ARCHITECTURE DOCUMENTS:         COMPLIANT                               ║
 ║   UXMI COMPONENTS (CR-005):       7/7 IMPLEMENTED (100%)                  ║
 ║   TOKEN LIFECYCLE (CR-004):       ❌ DIVERGENT - P1 CRITICAL              ║
-║   API INTEGRATION:                ❌ DIVERGENT - Alpaca vs Kite           ║
+║   API INTEGRATION:                ❌ DIVERGENT - [Out-of-Scope-Broker] vs Kite           ║
 ║                                                                           ║
 ║   OVERALL GATE RECOMMENDATION:    ⚠️ REQUIRES REMEDIATION                 ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
@@ -2136,7 +2136,7 @@ Then provide this checkpoint summary to Claude.
 
 ### P1 CRITICAL (Block Release)
 1. **CR-004 Token Expiry Fix** - Change 24h to 6:00 AM IST in `tokenStore.ts`
-2. **Alpaca References Removal** - Replace all with Kite Connect API
+2. **[Out-of-Scope-Broker] References Removal** - Replace all with Kite Connect API
 
 ### P2 HIGH (Before Production)
 1. CR-002 UI Implementation - Bullish/bearish equal weight display
@@ -2158,7 +2158,7 @@ Then provide this checkpoint summary to Claude.
 
 ---
 
-**Master transcripts ingestion complete. The transcripts CONFIRM the Alpaca contamination and CR-004 violation that requires surgical correction.**
+**Master transcripts ingestion complete. The transcripts CONFIRM the [Out-of-Scope-Broker] contamination and CR-004 violation that requires surgical correction.**
 
 Awaiting your direction:
 1. Continue document ingestion (provide next path), OR
@@ -2262,7 +2262,7 @@ I will explain the science honestly and accurately. No action will be taken.
 │   • Identify ENTITIES (CR-001, Kite Connect, tokenStore.ts)         │
 │   • Identify RELATIONSHIPS (CR-004 → 6:00 AM IST → tokenStore.ts)   │
 │   • Identify CATEGORIES (Constitutional, UXMI, Phase, Backend)      │
-│   • Identify CONFLICTS (Alpaca vs Kite, 24h vs 6:00 AM IST)         │
+│   • Identify CONFLICTS ([Out-of-Scope-Broker] vs Kite, 24h vs 6:00 AM IST)         │
 │   • Identify DEPENDENCIES (Phase 0 → Phase 1 → Phase 2)             │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
@@ -2411,9 +2411,9 @@ Nodes:
 ├── Requirements: CR-001, CR-002, CR-003, CR-004, CR-005
 ├── Components: TokenTimer, tokenStore, IgnitionButton, etc.
 ├── Phases: Phase 0, 1, 2, 3, 3.5, 4
-├── APIs: Kite Connect, Alpaca (contaminated)
+├── APIs: Kite Connect, [Out-of-Scope-Broker] (contaminated)
 ├── Files: 92 source files, 30 spec documents
-└── Violations: CR-004 divergence, Alpaca contamination
+└── Violations: CR-004 divergence, [Out-of-Scope-Broker] contamination
 
 Edges:
 ├── IMPLEMENTS: Component → Requirement

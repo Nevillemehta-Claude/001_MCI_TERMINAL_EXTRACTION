@@ -633,7 +633,7 @@ Key content:
 ### SHUTDOWN REF 46
 
   **WHAT MUST BE DONE?**
-  1. ERADICATE all previous implementations (Alpaca, current code)
+  1. ERADICATE all previous implementations ([Out-of-Scope-Broker], current code)
   2. BUILD UXMI component library FIRST (CR-005)
   3. BUILD each module in order: Token → Scanner → Ignition → Telemetry → Shutdown
   4. PASS each Quality Gate before proceeding
@@ -651,7 +651,7 @@ Key content:
 - **13 Use Cases:** UC-001 to UC-013 across 4 groups (Token, Ignition, Telemetry, Alerts)
 - **5 Operational Phases:** Token Capture → Pre-Ignition → Ignition → Telemetry → Shutdown
 - **FMEA (Failure Mode Analysis):** 13 failure modes identified with mitigations
-- **CLEAN SLATE PROTOCOL:** Eradicate all previous implementations including Alpaca code
+- **CLEAN SLATE PROTOCOL:** Eradicate all previous implementations including [Out-of-Scope-Broker] code
 - **MANDATORY BUILD ORDER:** UXMI FIRST → Token → Scanner → Ignition → Telemetry → Shutdown
 - **5 Constitutional Requirements:** CR-001 to CR-005 (NON-NEGOTIABLE)
 - **6 Quality Gates:** QG-1 to QG-6, must PASS each before proceeding

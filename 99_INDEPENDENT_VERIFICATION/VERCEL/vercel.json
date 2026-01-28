@@ -1,0 +1,38 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "name": "mci-independent-verification",
+  "version": 2,
+  "framework": "vite",
+  "installCommand": "cd 12_APPLICATION_CODE && npm ci",
+  "buildCommand": "cd 12_APPLICATION_CODE && npm run build && npm run test:ci",
+  "outputDirectory": "12_APPLICATION_CODE/dist",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-MCI-Verification",
+          "value": "prepared-not-authorized"
+        }
+      ]
+    }
+  ],
+  "env": {
+    "MCI_VERIFICATION_MODE": "true",
+    "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "MCI_VERIFICATION_MODE": "true"
+    }
+  },
+  "functions": {},
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ],
+  "redirects": [],
+  "crons": []
+}

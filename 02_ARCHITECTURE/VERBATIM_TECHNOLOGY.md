@@ -1583,7 +1583,7 @@ Batch 1 ingested (lines 1-75). MCI Completion Roadmap: 95% Complete, 7 phases re
 
 ### TECH REF 145
 
-Batch 5 ingested (lines 300-374). Step 1.5 Test Local Environment: Backend (bun run server, port 3001), Frontend (bun run dev, port 5173). Expected outputs with Sentry initialization. Test token validation with Alpaca Paper keys. Step 1.6 Push Configuration: git status verification (env files should be ignored), commit .gitignore and .env.example. Continuing.
+Batch 5 ingested (lines 300-374). Step 1.5 Test Local Environment: Backend (bun run server, port 3001), Frontend (bun run dev, port 5173). Expected outputs with Sentry initialization. Test token validation with [Out-of-Scope-Broker] Paper keys. Step 1.6 Push Configuration: git status verification (env files should be ignored), commit .gitignore and .env.example. Continuing.
 
 ---
 
@@ -1595,13 +1595,13 @@ Batch 6 ingested (lines 375-449). Step 1.6 continued: Push to GitHub, verify CI 
 
 ### TECH REF 147
 
-Batch 7 ingested (lines 450-524). Phase 2 WebSocket Integration (4-5 days): Replace simulated data with real Alpaca streams for positions, orders, market data. Step 2.1 Prototype in Replit: Create isolated test before modifying production. Node.js with ws package. Alpaca WebSocket URL: wss://paper-api.alpaca.markets/stream. Authentication flow: connect → send auth action with key/secret → on success, subscribe to trade_updates. Continuing.
+Batch 7 ingested (lines 450-524). Phase 2 WebSocket Integration (4-5 days): Replace simulated data with real [Out-of-Scope-Broker] streams for positions, orders, market data. Step 2.1 Prototype in Replit: Create isolated test before modifying production. Node.js with ws package. [Out-of-Scope-Broker] WebSocket URL: wss://paper-api.[out-of-scope-broker].markets/stream. Authentication flow: connect → send auth action with key/secret → on success, subscribe to trade_updates. Continuing.
 
 ---
 
 ### TECH REF 148
 
-Batch 8 ingested (lines 525-599). WebSocket test continued: error/close handlers, heartbeat every 30 seconds. Test trading events via paper-api.alpaca.markets. Troubleshooting: connection refused → check keys, auth failed → verify paper keys. Step 2.2 Design WebSocket Manager Architecture: Claude prompt for production-grade manager with exponential backoff (1s→2s→4s→8s→max 30s), multiple streams (trade_updates, account_updates), heartbeat, graceful shutdown, Zustand telemetryStore integration. Continuing.
+Batch 8 ingested (lines 525-599). WebSocket test continued: error/close handlers, heartbeat every 30 seconds. Test trading events via paper-api.[out-of-scope-broker].markets. Troubleshooting: connection refused → check keys, auth failed → verify paper keys. Step 2.2 Design WebSocket Manager Architecture: Claude prompt for production-grade manager with exponential backoff (1s→2s→4s→8s→max 30s), multiple streams (trade_updates, account_updates), heartbeat, graceful shutdown, Zustand telemetryStore integration. Continuing.
 
 ---
 

@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MCI System Invariants",
+  "description": "Machine-readable definitions of all system invariants that MUST hold at all times. External verifiers use this to validate compliance.",
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-28",
+  "invariants": {
+    "INV-001": {
+      "id": "INV-001",
+      "name": "Daily Credential Continuity",
+      "description": "Client-side localStorage persistence with forced clearing at 6:00 AM IST",
+      "category": "credential_management",
+      "preconditions": [
+        "localStorage is available in the browser",
+        "System clock is accurate"
+      ],
+      "postconditions": [
+        "Credentials persist across page reloads within the same day",
+        "Credentials are cleared at 6:00 AM IST (00:30 UTC)",
+        "Corrupted credentials are cleared, not used"
+      ],
+      "forbiddenStates": [
+        "Credentials used after 6:00 AM IST expiry",
+        "Corrupted credentials loaded without sanitization",
+        "Credentials stored without sanitization"
+      ],
+      "failureSemantics": {
+        "onExpiry": "Clear credentials, redirect to token phase",
+        "onCorruption": "Clear credentials, log warning, redirect to token phase",
+        "onStorageUnavailable": "Operate without persistence, warn user"
+      },
+      "verificationMethod": "Check localStorage key 'mci-token-storage', verify expiry logic, verify rehydration sanitization"
+    },
+    "INV-002": {
+      "id": "INV-002",
+      "name": "System Lifecycle Discipline",
+      "description": "Deterministic launch, shutdown, and state management via unified scripts",
+      "category": "lifecycle_management",
+      "preconditions": [
+        "start.sh, stop.sh, status.sh scripts exist",
+        "Both frontend and backend can be started",
+        "PID file directory is writable"
+      ],
+      "postconditions": [
+        "start.sh launches both frontend and backend",
+        "stop.sh terminates both processes",
+        "status.sh reports accurate process state",
+        "PID files track running processes"
+      ],
+      "forbiddenStates": [
+        "Backend running without frontend awareness",
+        "Frontend running without backend",
+        "Orphan processes after stop.sh",
+        "Stale PID files"
+      ],
+      "failureSemantics": {
+        "onStartFailure": "Report error, do not leave partial state",
+        "onStopFailure": "Force kill if graceful fails, clean PID files",
+        "onStatusFailure": "Report unknown state, suggest restart"
+      },
+      "verificationMethod": "Execute scripts in sequence, verify process state matches expected"
+    },
+    "INV-003": {
+      "id": "INV-003",
+      "name": "Time & Clock Authority",
+      "description": "UTC-based time operations with IST display conversion",
+      "category": "time_management",
+      "preconditions": [
+        "System clock is available",
+        "Timezone data is accessible"
+      ],
+      "postconditions": [
+        "All time comparisons use UTC internally",
+        "6:00 AM IST maps to 00:30 UTC",
+        "Token timer displays in user-friendly format"
+      ],
+      "forbiddenStates": [
+        "Local time used for expiry comparison",
+        "Incorrect IST to UTC conversion",
+        "Timer showing negative values"
+      ],
+      "failureSemantics": {
+        "onClockUnavailable": "Assume expired, force re-authentication",
+        "onTimezoneError": "Use UTC, log warning"
+      },
+      "verificationMethod": "Verify expiry calculation, test across timezone boundaries"
+    },
+    "INV-004": {
+      "id": "INV-004",
+      "name": "State Legality & Transition Control",
+      "description": "Explicit entry/exit conditions for all phases, App.tsx as authoritative controller",
+      "category": "state_management",
+      "preconditions": [
+        "App.tsx is the root component",
+        "Phase state is managed centrally"
+      ],
+      "postconditions": [
+        "Only legal phase transitions occur",
+        "Child components do not contain phase guards",
+        "Phase rendering is deterministic"
+      ],
+      "forbiddenStates": [
+        "Direct transition from token to running",
+        "Transition from running to scan",
+        "Multiple phases rendered simultaneously",
+        "Child component blocking phase render"
+      ],
+      "failureSemantics": {
+        "onIllegalTransition": "Log error, maintain current phase, display error",
+        "onPhaseConflict": "App.tsx state takes precedence"
+      },
+      "verificationMethod": "Trace phase transitions in code, verify no child phase guards"
+    },
+    "INV-005": {
+      "id": "INV-005",
+      "name": "Failure Visibility & Recoverability",
+      "description": "All errors visible to operator with WHAT/WHY/HOW format and recovery path",
+      "category": "error_handling",
+      "preconditions": [
+        "Error boundaries are in place",
+        "ErrorDisplay component is available"
+      ],
+      "postconditions": [
+        "All errors display WHAT/WHY/HOW",
+        "All errors have a recovery action",
+        "Errors are logged for debugging"
+      ],
+      "forbiddenStates": [
+        "Silent failure",
+        "Error without recovery path",
+        "Generic error message without specifics",
+        "Uncaught exception reaching user"
+      ],
+      "failureSemantics": {
+        "onUnexpectedError": "Catch at boundary, format as WHAT/WHY/HOW, log full details",
+        "onRecoveryFailure": "Offer system restart as fallback"
+      },
+      "verificationMethod": "Inject errors at each layer, verify display and recovery"
+    },
+    "INV-006": {
+      "id": "INV-006",
+      "name": "Input Sanitization & Boundary Cleanliness",
+      "description": "Centralized sanitization of all string inputs at defined boundary points",
+      "category": "security",
+      "preconditions": [
+        "sanitize.ts module exists",
+        "All input paths are identified"
+      ],
+      "postconditions": [
+        "All string inputs are trimmed",
+        "Control characters are rejected",
+        "Protocol-unsafe characters are rejected",
+        "Credentials are alphanumeric only"
+      ],
+      "forbiddenStates": [
+        "Whitespace in credentials",
+        "Control characters in any input",
+        "Unsanitized credential in HTTP header",
+        "Unsanitized credential in localStorage"
+      ],
+      "failureSemantics": {
+        "onInvalidInput": "Reject with specific error message",
+        "onSanitizationFailure": "Clear credentials, force re-entry"
+      },
+      "sanitizationPoints": [
+        {
+          "point": "UI Entry",
+          "location": "TokenCaptureForm.tsx:handleSubmit",
+          "function": "sanitizeKiteCredentials"
+        },
+        {
+          "point": "API Boundary",
+          "location": "auth.ts:/validate",
+          "function": "sanitizeCredentialsFromRequest"
+        },
+        {
+          "point": "Header Construction",
+          "location": "auth.ts:/validate",
+          "function": "buildKiteAuthHeader"
+        },
+        {
+          "point": "Storage Rehydration",
+          "location": "tokenStore.ts:persist.merge",
+          "function": "sanitizeApiKey, sanitizeAccessToken, sanitizeUserId"
+        }
+      ],
+      "verificationMethod": "Test each sanitization point with boundary inputs"
+    }
+  },
+  "constitutionalRequirements": {
+    "CR-001": {
+      "id": "CR-001",
+      "name": "Token Validity",
+      "description": "Validate token before every operation",
+      "enforcement": "tokenStore.validateTokens() called before phase transitions",
+      "failureAction": "Block operation, display error"
+    },
+    "CR-002": {
+      "id": "CR-002",
+      "name": "Graceful Shutdown",
+      "description": "6-step shutdown sequence",
+      "steps": [
+        "cancel-orders",
+        "flatten-positions",
+        "close-websocket",
+        "notify-backend",
+        "save-state",
+        "clear-session"
+      ],
+      "emergencyBehavior": "Skip steps 1-2, execute 3-6",
+      "failureAction": "Log failure, attempt remaining steps"
+    },
+    "CR-003": {
+      "id": "CR-003",
+      "name": "Error Format",
+      "description": "WHAT/WHY/HOW error structure",
+      "requiredFields": ["what", "why", "how"],
+      "failureAction": "Do not display incomplete errors"
+    },
+    "CR-004": {
+      "id": "CR-004",
+      "name": "Token Expiry",
+      "description": "6:00 AM IST daily expiry",
+      "expiryTimeIST": "06:00",
+      "expiryTimeUTC": "00:30",
+      "failureAction": "Clear credentials, force re-authentication"
+    },
+    "CR-005": {
+      "id": "CR-005",
+      "name": "UXMI 7-State",
+      "description": "Micro-interaction states for all components",
+      "states": ["idle", "hover", "active", "focus", "disabled", "loading", "error"],
+      "failureAction": "Component MUST NOT render without state support"
+    }
+  }
+}

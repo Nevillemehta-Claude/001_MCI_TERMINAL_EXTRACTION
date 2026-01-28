@@ -24,27 +24,27 @@ const customRender = (
 export * from '@testing-library/react';
 export { customRender as render };
 
-// Mock data factories
+// Mock data factories - Indian Market Symbols
 export const createMockPosition = (overrides = {}) => ({
-  symbol: 'AAPL',
+  symbol: 'RELIANCE',
   qty: 100,
   side: 'long' as const,
-  entryPrice: 150.0,
-  currentPrice: 155.0,
-  unrealizedPL: 500.0,
-  unrealizedPLPercent: 3.33,
-  marketValue: 15500.0,
+  entryPrice: 2400.0,
+  currentPrice: 2450.0,
+  unrealizedPL: 5000.0,
+  unrealizedPLPercent: 2.08,
+  marketValue: 245000.0,
   ...overrides,
 });
 
 export const createMockOrder = (overrides = {}) => ({
   id: `order-${Date.now()}`,
-  symbol: 'AAPL',
+  symbol: 'RELIANCE',
   side: 'buy' as const,
   type: 'limit' as const,
   qty: 100,
   filledQty: 0,
-  price: 150.0,
+  price: 2400.0,
   status: 'new' as const,
   createdAt: Date.now(),
   ...overrides,

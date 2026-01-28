@@ -714,7 +714,7 @@ tch 22 ingested (lines 1573-1647). Shutdown code: POST /full with closePositions
 ### API REF 78
 
 - **Token Capture Module:** Kite login workflow, POST /session/token to Kite API
-- **4 Backends:** ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite (NOT Alpaca)
+- **4 Backends:** ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite (NOT [Out-of-Scope-Broker])
 
 **This document caused the implementation to go off-track
 

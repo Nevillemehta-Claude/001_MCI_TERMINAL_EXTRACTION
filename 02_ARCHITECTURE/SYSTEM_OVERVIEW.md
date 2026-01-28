@@ -102,7 +102,7 @@
 
 ## BROKER BACKENDS
 
-MCI supports 4 Indian broker backends (NOT Alpaca/Polygon):
+MCI supports 4 Indian broker backends (NOT [Out-of-Scope-Broker]/[Out-of-Scope-Data-Provider]):
 
 | Broker | API Base | WebSocket |
 |--------|----------|-----------|
@@ -242,9 +242,54 @@ User Display ← MCI Frontend ← MCI Backend ← WebSocket Telemetry
 
 ---
 
+## PHASE ORCHESTRATION PATTERN
+
+### Authoritative Phase Controller: `App.tsx`
+
+`App.tsx` is the SINGLE AUTHORITATIVE controller for phase transitions. Child components should NOT duplicate phase guards.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  App.tsx (AUTHORITATIVE PHASE CONTROLLER)                          │
+│  ─────────────────────────────────────────────────────────────────  │
+│  currentPhase: 'token' | 'scan' | 'ignition' | 'running' | 'shutdown'│
+│                                                                      │
+│  RENDERS:                                                            │
+│  ├── 'token'    → TokenCaptureForm + CredentialsHelper              │
+│  ├── 'scan'     → PreIgnitionScanner                                │
+│  ├── 'ignition' → BackendSelector + IgnitionButton                  │
+│  ├── 'running'  → TelemetryDashboard                                │
+│  └── 'shutdown' → ShutdownPanel                                     │
+│                                                                      │
+│  CRITICAL PATTERN:                                                   │
+│  ✓ App.tsx controls WHEN components render                          │
+│  ✓ Child components trust App.tsx's decision                        │
+│  ✗ Child components should NOT check ignitionStore.phase            │
+│  ✗ Duplicate phase guards cause race conditions                     │
+│                                                                      │
+│  See BUG-007 for historical context (race condition resolved)       │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Sync Between ignitionStore and App.tsx
+
+```typescript
+// App.tsx line 123-128: Syncs ignition phase to current phase
+React.useEffect(() => {
+  if (ignitionPhase === 'running' && currentPhase !== 'running') {
+    setCurrentPhase('running');
+  }
+}, [ignitionPhase, currentPhase]);
+```
+
+Child components (TelemetryDashboard, ShutdownPanel) are rendered by App.tsx based on `currentPhase`, not `ignitionStore.phase`. This ensures no race conditions from async state propagation.
+
+---
+
 ## CROSS-REFERENCES
 
 - **Constitutional Constraints:** See `00_GOVERNANCE/CONSTITUTIONAL_CONSTRAINTS.md`
 - **Phase Details:** See `02_ARCHITECTURE/PHASE_*` directories
 - **UXMI Components:** See `02_ARCHITECTURE/UXMI/`
 - **Implementation:** See `04_IMPLEMENTATION/`
+- **Bug Registry:** See `05_PROBLEMS_SOLVED/BUG_REGISTRY.md` (BUG-007 for phase race condition)

@@ -1,4 +1,15 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+/**
+ * TokenCaptureForm Tests
+ * Tests for Kite Connect credential capture
+ * CR-001: Token Validity | CR-004: Token Expiry
+ * INV-006: Input Sanitization
+ * India-market-only compliant (Kite Connect)
+ * 
+ * NOTE: Test credentials must be alphanumeric per INV-006 sanitization rules.
+ * Real Kite credentials are alphanumeric (e.g., "Dl81D7apaLi3mpCCx0vrTa3gJeRRZ5GO").
+ */
+
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TokenCaptureForm } from '../TokenCaptureForm';
@@ -9,47 +20,44 @@ vi.mock('../../../stores/tokenStore', () => ({
   useTokenStore: vi.fn(),
 }));
 
-describe('TokenCaptureForm component', () => {
+// Valid test credentials (INV-006 compliant: alphanumeric only)
+const VALID_API_KEY = 'testApiKey12345';
+const VALID_ACCESS_TOKEN = 'Dl81D7apaLi3mpCCx0vrTa3gJeRRZ5GO';
+const VALID_USER_ID = 'AB1234';
+
+describe('TokenCaptureForm', () => {
   const mockStore = {
-    setAlpacaCredentials: vi.fn(),
-    setPolygonKey: vi.fn(),
-    validateTokens: vi.fn(),
+    setKiteCredentials: vi.fn(),
+    validateTokens: vi.fn().mockResolvedValue(true),
     isCapturing: false,
     captureError: null,
     setCaptureError: vi.fn(),
   };
 
   beforeEach(() => {
-    vi.mocked(useTokenStore).mockReturnValue(mockStore);
     vi.clearAllMocks();
+    (useTokenStore as any).mockReturnValue(mockStore);
   });
 
   describe('rendering', () => {
-    it('should render form with heading', () => {
+    it('should render the form', () => {
       render(<TokenCaptureForm />);
-      expect(screen.getByText('Token Capture')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Kite Token Capture/i })).toBeInTheDocument();
     });
 
-    it('should render description text', () => {
+    it('should render Kite API Key input', () => {
       render(<TokenCaptureForm />);
-      expect(
-        screen.getByText(/Enter your API credentials to initialize the trading system/)
-      ).toBeInTheDocument();
+      expect(screen.getByLabelText(/Kite API Key/i)).toBeInTheDocument();
     });
 
-    it('should render Alpaca API Key input', () => {
+    it('should render Kite Access Token input', () => {
       render(<TokenCaptureForm />);
-      expect(screen.getByLabelText(/Alpaca API Key/)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Kite Access Token/i)).toBeInTheDocument();
     });
 
-    it('should render Alpaca Secret Key input', () => {
+    it('should render Kite User ID input', () => {
       render(<TokenCaptureForm />);
-      expect(screen.getByLabelText(/Alpaca Secret Key/)).toBeInTheDocument();
-    });
-
-    it('should render Polygon API Key input', () => {
-      render(<TokenCaptureForm />);
-      expect(screen.getByLabelText(/Polygon API Key/)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Kite User ID/i)).toBeInTheDocument();
     });
 
     it('should render submit button', () => {
@@ -57,240 +65,204 @@ describe('TokenCaptureForm component', () => {
       expect(screen.getByRole('button', { name: /Capture Tokens/i })).toBeInTheDocument();
     });
 
-    it('should not render cancel button when onCancel is not provided', () => {
+    it('should display CR-004 expiry notice', () => {
       render(<TokenCaptureForm />);
-      expect(screen.queryByRole('button', { name: /Cancel/i })).not.toBeInTheDocument();
-    });
-
-    it('should render cancel button when onCancel is provided', () => {
-      render(<TokenCaptureForm onCancel={vi.fn()} />);
-      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
-    });
-
-    it('should render security notice', () => {
-      render(<TokenCaptureForm />);
-      expect(
-        screen.getByText(/Your credentials are encrypted and stored securely/)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Tokens expire daily at 6:00 AM IST/i)).toBeInTheDocument();
     });
   });
 
-  describe('password visibility toggle', () => {
-    it('should have password inputs hidden by default', () => {
+  describe('input fields', () => {
+    it('should have password type for API Key by default', () => {
       render(<TokenCaptureForm />);
-      const alpacaKeyInput = screen.getByLabelText(/Alpaca API Key/);
-      const alpacaSecretInput = screen.getByLabelText(/Alpaca Secret Key/);
-      const polygonKeyInput = screen.getByLabelText(/Polygon API Key/);
-
-      expect(alpacaKeyInput).toHaveAttribute('type', 'password');
-      expect(alpacaSecretInput).toHaveAttribute('type', 'password');
-      expect(polygonKeyInput).toHaveAttribute('type', 'password');
+      const apiKeyInput = screen.getByLabelText(/Kite API Key/i);
+      expect(apiKeyInput).toHaveAttribute('type', 'password');
     });
 
-    it('should toggle Alpaca Key visibility', async () => {
+    it('should have password type for Access Token by default', () => {
       render(<TokenCaptureForm />);
-      const toggleButton = screen.getByLabelText('Show API key');
-      const input = screen.getByLabelText(/Alpaca API Key/);
-
-      expect(input).toHaveAttribute('type', 'password');
-
-      fireEvent.click(toggleButton);
-      expect(input).toHaveAttribute('type', 'text');
-
-      fireEvent.click(screen.getByLabelText('Hide API key'));
-      expect(input).toHaveAttribute('type', 'password');
+      const tokenInput = screen.getByLabelText(/Kite Access Token/i);
+      expect(tokenInput).toHaveAttribute('type', 'password');
     });
 
-    it('should toggle Secret Key visibility', async () => {
+    it('should have password type for User ID by default', () => {
       render(<TokenCaptureForm />);
-      const toggleButton = screen.getByLabelText('Show secret');
-      const input = screen.getByLabelText(/Alpaca Secret Key/);
+      const userIdInput = screen.getByLabelText(/Kite User ID/i);
+      expect(userIdInput).toHaveAttribute('type', 'password');
+    });
 
-      expect(input).toHaveAttribute('type', 'password');
+    it('should allow toggling API Key visibility', async () => {
+      const user = userEvent.setup();
+      render(<TokenCaptureForm />);
+      const apiKeyInput = screen.getByLabelText(/Kite API Key/i);
+      const toggleButton = screen.getByLabelText(/Show API key/i);
 
-      fireEvent.click(toggleButton);
-      expect(input).toHaveAttribute('type', 'text');
+      expect(apiKeyInput).toHaveAttribute('type', 'password');
+
+      await user.click(toggleButton);
+
+      expect(apiKeyInput).toHaveAttribute('type', 'text');
+    });
+
+    it('should allow toggling Access Token visibility', async () => {
+      const user = userEvent.setup();
+      render(<TokenCaptureForm />);
+      const tokenInput = screen.getByLabelText(/Kite Access Token/i);
+      const toggleButton = screen.getByLabelText(/Show token/i);
+
+      expect(tokenInput).toHaveAttribute('type', 'password');
+
+      await user.click(toggleButton);
+
+      expect(tokenInput).toHaveAttribute('type', 'text');
     });
   });
 
-  describe('field validation', () => {
-    it('should show error when Alpaca API Key is empty on blur', async () => {
+  describe('validation', () => {
+    it('should show error for empty API Key on blur', async () => {
       render(<TokenCaptureForm />);
-      const input = screen.getByLabelText(/Alpaca API Key/);
+      const input = screen.getByLabelText(/Kite API Key/i);
 
       fireEvent.blur(input);
 
       await waitFor(() => {
-        expect(screen.getByText('Alpaca API Key is required')).toBeInTheDocument();
+        expect(screen.getByText(/Kite API Key is required/i)).toBeInTheDocument();
       });
     });
 
-    it('should show error when Alpaca API Key is too short', async () => {
+    it('should show error for empty Access Token on blur', async () => {
       render(<TokenCaptureForm />);
-      const input = screen.getByLabelText(/Alpaca API Key/);
+      const input = screen.getByLabelText(/Kite Access Token/i);
 
-      fireEvent.change(input, { target: { value: 'ABC' } });
       fireEvent.blur(input);
 
       await waitFor(() => {
-        expect(screen.getByText('API Key appears too short')).toBeInTheDocument();
+        expect(screen.getByText(/Kite Access Token is required/i)).toBeInTheDocument();
       });
     });
 
-    it('should show error when Alpaca API Key has invalid characters', async () => {
+    it('should show error for empty User ID on blur', async () => {
       render(<TokenCaptureForm />);
-      const input = screen.getByLabelText(/Alpaca API Key/);
+      const input = screen.getByLabelText(/Kite User ID/i);
 
-      fireEvent.change(input, { target: { value: 'INVALID@KEY#123456' } });
       fireEvent.blur(input);
 
       await waitFor(() => {
-        expect(screen.getByText('API Key contains invalid characters')).toBeInTheDocument();
+        expect(screen.getByText(/Kite User ID is required/i)).toBeInTheDocument();
       });
     });
 
-    it('should show error when Alpaca Secret Key is empty on blur', async () => {
+    it('should show error for short API Key', async () => {
+      const user = userEvent.setup();
       render(<TokenCaptureForm />);
-      const input = screen.getByLabelText(/Alpaca Secret Key/);
+      const input = screen.getByLabelText(/Kite API Key/i);
 
+      await user.type(input, 'short');
       fireEvent.blur(input);
 
       await waitFor(() => {
-        expect(screen.getByText('Alpaca Secret Key is required')).toBeInTheDocument();
+        expect(screen.getByText(/API Key appears too short/i)).toBeInTheDocument();
       });
     });
 
-    it('should show error when Alpaca Secret Key is too short', async () => {
+    it('should show error for short Access Token', async () => {
+      const user = userEvent.setup();
       render(<TokenCaptureForm />);
-      const input = screen.getByLabelText(/Alpaca Secret Key/);
+      const input = screen.getByLabelText(/Kite Access Token/i);
 
-      fireEvent.change(input, { target: { value: 'short' } });
+      await user.type(input, 'short');
       fireEvent.blur(input);
 
       await waitFor(() => {
-        expect(screen.getByText('Secret Key appears too short')).toBeInTheDocument();
+        expect(screen.getByText(/Access Token appears too short/i)).toBeInTheDocument();
       });
     });
 
-    it('should show error when Polygon Key is provided but too short', async () => {
+    it('should show error for invalid User ID format', async () => {
+      const user = userEvent.setup();
       render(<TokenCaptureForm />);
-      const input = screen.getByLabelText(/Polygon API Key/);
+      const input = screen.getByLabelText(/Kite User ID/i);
 
-      fireEvent.change(input, { target: { value: 'short' } });
+      await user.type(input, 'invalid');
       fireEvent.blur(input);
 
       await waitFor(() => {
-        expect(screen.getByText('Polygon Key appears too short')).toBeInTheDocument();
+        expect(screen.getByText(/User ID format appears invalid/i)).toBeInTheDocument();
       });
     });
 
-    it('should not show error when Polygon Key is empty (optional)', async () => {
+    it('should clear error when valid input provided', async () => {
+      const user = userEvent.setup();
       render(<TokenCaptureForm />);
-      const input = screen.getByLabelText(/Polygon API Key/);
+      const input = screen.getByLabelText(/Kite API Key/i);
 
       fireEvent.blur(input);
 
       await waitFor(() => {
-        expect(screen.queryByText(/Polygon Key/)).not.toBeInTheDocument();
+        expect(screen.getByText(/Kite API Key is required/i)).toBeInTheDocument();
       });
-    });
 
-    it('should clear error when typing in field', async () => {
-      render(<TokenCaptureForm />);
-      const input = screen.getByLabelText(/Alpaca API Key/);
-
-      // Trigger error
+      await user.type(input, 'valid_api_key_12345');
       fireEvent.blur(input);
-      await waitFor(() => {
-        expect(screen.getByText('Alpaca API Key is required')).toBeInTheDocument();
-      });
 
-      // Type in field - should clear error
-      fireEvent.change(input, { target: { value: 'ABC' } });
       await waitFor(() => {
-        expect(screen.queryByText('Alpaca API Key is required')).not.toBeInTheDocument();
+        expect(screen.queryByText(/Kite API Key is required/i)).not.toBeInTheDocument();
       });
     });
   });
 
   describe('form submission', () => {
-    it('should prevent submission when required fields are empty', async () => {
+    it('should not submit with empty fields', async () => {
       const user = userEvent.setup();
       render(<TokenCaptureForm />);
 
-      await user.click(screen.getByRole('button', { name: /Capture Tokens/i }));
+      const submitButton = screen.getByRole('button', { name: /Capture Tokens/i });
+      await user.click(submitButton);
 
-      await waitFor(() => {
-        expect(screen.getByText('Alpaca API Key is required')).toBeInTheDocument();
-        expect(screen.getByText('Alpaca Secret Key is required')).toBeInTheDocument();
-      });
-
-      expect(mockStore.setAlpacaCredentials).not.toHaveBeenCalled();
+      expect(mockStore.setKiteCredentials).not.toHaveBeenCalled();
     });
 
-    it('should call store methods when form is valid', async () => {
+    it('should call setKiteCredentials and validateTokens when form is valid', async () => {
       const user = userEvent.setup();
-      mockStore.validateTokens.mockResolvedValue(true);
-
       render(<TokenCaptureForm />);
 
-      await user.type(screen.getByLabelText(/Alpaca API Key/), 'PKABCDEFGHIJ123456');
-      await user.type(screen.getByLabelText(/Alpaca Secret Key/), 'SKABCDEFGHIJ1234567890ABCD');
+      await user.type(screen.getByLabelText(/Kite API Key/i), VALID_API_KEY);
+      await user.type(screen.getByLabelText(/Kite Access Token/i), VALID_ACCESS_TOKEN);
+      await user.type(screen.getByLabelText(/Kite User ID/i), VALID_USER_ID);
 
-      await user.click(screen.getByRole('button', { name: /Capture Tokens/i }));
+      const submitButton = screen.getByRole('button', { name: /Capture Tokens/i });
+      await user.click(submitButton);
 
       await waitFor(() => {
-        expect(mockStore.setAlpacaCredentials).toHaveBeenCalledWith(
-          'PKABCDEFGHIJ123456',
-          'SKABCDEFGHIJ1234567890ABCD'
+        expect(mockStore.setKiteCredentials).toHaveBeenCalledWith(
+          VALID_API_KEY,
+          VALID_ACCESS_TOKEN,
+          VALID_USER_ID
         );
-      });
-    });
-
-    it('should call setPolygonKey when polygon key is provided', async () => {
-      const user = userEvent.setup();
-      mockStore.validateTokens.mockResolvedValue(true);
-
-      render(<TokenCaptureForm />);
-
-      await user.type(screen.getByLabelText(/Alpaca API Key/), 'PKABCDEFGHIJ123456');
-      await user.type(screen.getByLabelText(/Alpaca Secret Key/), 'SKABCDEFGHIJ1234567890ABCD');
-      await user.type(screen.getByLabelText(/Polygon API Key/), 'POLYGONKEY12345');
-
-      await user.click(screen.getByRole('button', { name: /Capture Tokens/i }));
-
-      await waitFor(() => {
-        expect(mockStore.setPolygonKey).toHaveBeenCalledWith('POLYGONKEY12345');
-      });
-    });
-
-    it('should call validateTokens after storing credentials', async () => {
-      const user = userEvent.setup();
-      mockStore.validateTokens.mockResolvedValue(true);
-
-      render(<TokenCaptureForm />);
-
-      await user.type(screen.getByLabelText(/Alpaca API Key/), 'PKABCDEFGHIJ123456');
-      await user.type(screen.getByLabelText(/Alpaca Secret Key/), 'SKABCDEFGHIJ1234567890ABCD');
-
-      await user.click(screen.getByRole('button', { name: /Capture Tokens/i }));
-
-      await waitFor(() => {
         expect(mockStore.validateTokens).toHaveBeenCalled();
       });
     });
 
     it('should call onSuccess when validation succeeds', async () => {
-      const user = userEvent.setup();
-      mockStore.validateTokens.mockResolvedValue(true);
-      const onSuccess = vi.fn();
+      const validateTokensMock = vi.fn().mockResolvedValue(true);
+      (useTokenStore as any).mockReturnValue({
+        ...mockStore,
+        validateTokens: validateTokensMock,
+      });
 
+      const onSuccess = vi.fn();
+      const user = userEvent.setup();
       render(<TokenCaptureForm onSuccess={onSuccess} />);
 
-      await user.type(screen.getByLabelText(/Alpaca API Key/), 'PKABCDEFGHIJ123456');
-      await user.type(screen.getByLabelText(/Alpaca Secret Key/), 'SKABCDEFGHIJ1234567890ABCD');
+      await user.type(screen.getByLabelText(/Kite API Key/i), VALID_API_KEY);
+      await user.type(screen.getByLabelText(/Kite Access Token/i), VALID_ACCESS_TOKEN);
+      await user.type(screen.getByLabelText(/Kite User ID/i), VALID_USER_ID);
 
-      await user.click(screen.getByRole('button', { name: /Capture Tokens/i }));
+      const submitButton = screen.getByRole('button', { name: /Capture Tokens/i });
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(validateTokensMock).toHaveBeenCalled();
+      });
 
       await waitFor(() => {
         expect(onSuccess).toHaveBeenCalled();
@@ -298,98 +270,109 @@ describe('TokenCaptureForm component', () => {
     });
 
     it('should not call onSuccess when validation fails', async () => {
-      const user = userEvent.setup();
-      mockStore.validateTokens.mockResolvedValue(false);
-      const onSuccess = vi.fn();
-
-      render(<TokenCaptureForm onSuccess={onSuccess} />);
-
-      await user.type(screen.getByLabelText(/Alpaca API Key/), 'PKABCDEFGHIJ123456');
-      await user.type(screen.getByLabelText(/Alpaca Secret Key/), 'SKABCDEFGHIJ1234567890ABCD');
-
-      await user.click(screen.getByRole('button', { name: /Capture Tokens/i }));
-
-      await waitFor(() => {
-        expect(mockStore.validateTokens).toHaveBeenCalled();
+      const validateTokensMock = vi.fn().mockResolvedValue(false);
+      (useTokenStore as any).mockReturnValue({
+        ...mockStore,
+        validateTokens: validateTokensMock,
       });
 
-      expect(onSuccess).not.toHaveBeenCalled();
+      const onSuccess = vi.fn();
+      const user = userEvent.setup();
+      render(<TokenCaptureForm onSuccess={onSuccess} />);
+
+      await user.type(screen.getByLabelText(/Kite API Key/i), VALID_API_KEY);
+      await user.type(screen.getByLabelText(/Kite Access Token/i), VALID_ACCESS_TOKEN);
+      await user.type(screen.getByLabelText(/Kite User ID/i), VALID_USER_ID);
+
+      const submitButton = screen.getByRole('button', { name: /Capture Tokens/i });
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(validateTokensMock).toHaveBeenCalled();
+      });
+
+      // Give time for any async operations to complete
+      await waitFor(() => {
+        expect(onSuccess).not.toHaveBeenCalled();
+      });
     });
   });
 
   describe('loading state', () => {
-    it('should show loading state when isCapturing is true', () => {
-      vi.mocked(useTokenStore).mockReturnValue({
+    it('should show loading indicator during validation', () => {
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         isCapturing: true,
       });
 
       render(<TokenCaptureForm />);
 
-      // Button component shows "Loading..." when loading=true
-      expect(screen.getByRole('button', { name: /Loading/i })).toBeDisabled();
+      // Button shows "Loading..." text when in loading state (via UXMI Button component)
+      const submitButton = screen.getByRole('button', { name: /Loading/i });
+      expect(submitButton).toBeDisabled();
     });
 
-    it('should disable submit button when loading', () => {
-      vi.mocked(useTokenStore).mockReturnValue({
+    it('should disable submit button during capture', () => {
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         isCapturing: true,
       });
 
       render(<TokenCaptureForm />);
 
-      // Button component shows "Loading..." when loading=true
-      expect(screen.getByRole('button', { name: /Loading/i })).toBeDisabled();
+      // The submit button should be disabled and show loading state
+      // Find by submit type since the button text changes to "Loading..."
+      const submitButton = screen.getByRole('button', { name: /Loading/i });
+      expect(submitButton).toBeDisabled();
+      expect(submitButton).toHaveAttribute('aria-busy', 'true');
     });
   });
 
   describe('error display', () => {
-    it('should show error display when captureError exists', () => {
-      vi.mocked(useTokenStore).mockReturnValue({
+    it('should display capture error when present', () => {
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
-        captureError: 'Invalid API credentials',
+        captureError: 'Invalid Kite credentials',
       });
 
       render(<TokenCaptureForm />);
-
-      expect(screen.getByText('Token validation failed')).toBeInTheDocument();
-      expect(screen.getByText(/Invalid API credentials/)).toBeInTheDocument();
+      expect(screen.getByText(/Invalid Kite credentials/i)).toBeInTheDocument();
     });
 
-    it('should dismiss error when dismiss button clicked', () => {
-      vi.mocked(useTokenStore).mockReturnValue({
+    it('should call setCaptureError(null) when error is dismissed', async () => {
+      const user = userEvent.setup();
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
-        captureError: 'Invalid API credentials',
+        captureError: 'Invalid Kite credentials',
       });
 
       render(<TokenCaptureForm />);
 
-      fireEvent.click(screen.getByText('Dismiss'));
-      expect(mockStore.setCaptureError).toHaveBeenCalledWith(null);
-    });
-
-    it('should clear global error when typing in any field', () => {
-      vi.mocked(useTokenStore).mockReturnValue({
-        ...mockStore,
-        captureError: 'Some error',
-      });
-
-      render(<TokenCaptureForm />);
-
-      fireEvent.change(screen.getByLabelText(/Alpaca API Key/), {
-        target: { value: 'test' },
-      });
+      // Find and click dismiss button (usually an X or close button in ErrorDisplay)
+      const dismissButton = screen.getByRole('button', { name: /dismiss/i });
+      await user.click(dismissButton);
 
       expect(mockStore.setCaptureError).toHaveBeenCalledWith(null);
     });
   });
 
   describe('cancel button', () => {
-    it('should call onCancel when cancel button is clicked', () => {
+    it('should render cancel button when onCancel is provided', () => {
+      render(<TokenCaptureForm onCancel={() => {}} />);
+      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
+    });
+
+    it('should not render cancel button when onCancel is not provided', () => {
+      render(<TokenCaptureForm />);
+      expect(screen.queryByRole('button', { name: /Cancel/i })).not.toBeInTheDocument();
+    });
+
+    it('should call onCancel when cancel button is clicked', async () => {
       const onCancel = vi.fn();
+      const user = userEvent.setup();
       render(<TokenCaptureForm onCancel={onCancel} />);
 
-      fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
+      await user.click(screen.getByRole('button', { name: /Cancel/i }));
 
       expect(onCancel).toHaveBeenCalled();
     });

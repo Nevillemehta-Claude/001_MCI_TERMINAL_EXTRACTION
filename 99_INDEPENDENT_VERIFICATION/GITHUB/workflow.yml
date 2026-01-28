@@ -1,0 +1,208 @@
+# =============================================================================
+# MCI INDEPENDENT VERIFICATION - GITHUB ACTIONS WORKFLOW
+# =============================================================================
+#
+# PURPOSE: Neutral CI authority for automated verification
+# STATUS: PREPARED FOR EXECUTION
+# 
+# ⚠️  EXECUTION REQUIRES EXPLICIT PROGRAM DIRECTOR AUTHORIZATION  ⚠️
+#
+# This workflow will:
+# 1. Checkout the repository
+# 2. Install dependencies
+# 3. Run all tests
+# 4. Validate against COMMON contracts
+# 5. Generate convergence evidence
+#
+# =============================================================================
+
+name: MCI Independent Verification
+
+on:
+  # Manual trigger only - requires explicit authorization
+  workflow_dispatch:
+    inputs:
+      authorization_code:
+        description: 'Program Director Authorization Code'
+        required: true
+        type: string
+      environment_label:
+        description: 'Verification environment label'
+        required: false
+        default: 'github-actions'
+        type: string
+
+# Prevent concurrent executions
+concurrency:
+  group: mci-verification
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: MCI System Verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      # -----------------------------------------------------------------------
+      # STEP 1: Authorization Check
+      # -----------------------------------------------------------------------
+      - name: Verify Authorization
+        run: |
+          echo "=============================================="
+          echo "MCI INDEPENDENT VERIFICATION"
+          echo "=============================================="
+          echo ""
+          echo "Environment: GitHub Actions"
+          echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          echo "Authorization Code: ${{ github.event.inputs.authorization_code }}"
+          echo ""
+          echo "⚠️  This execution was triggered manually."
+          echo "    Verify that Program Director authorization was obtained."
+          echo ""
+          echo "=============================================="
+      
+      # -----------------------------------------------------------------------
+      # STEP 2: Checkout Repository
+      # -----------------------------------------------------------------------
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      
+      # -----------------------------------------------------------------------
+      # STEP 3: Setup Node.js
+      # -----------------------------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: '12_APPLICATION_CODE/package-lock.json'
+      
+      # -----------------------------------------------------------------------
+      # STEP 4: Install Dependencies
+      # -----------------------------------------------------------------------
+      - name: Install Dependencies
+        working-directory: 12_APPLICATION_CODE
+        run: npm ci
+      
+      # -----------------------------------------------------------------------
+      # STEP 5: Run Type Check
+      # -----------------------------------------------------------------------
+      - name: TypeScript Type Check
+        working-directory: 12_APPLICATION_CODE
+        run: npx tsc --noEmit
+      
+      # -----------------------------------------------------------------------
+      # STEP 6: Run Tests with JSON Output
+      # -----------------------------------------------------------------------
+      - name: Run Tests
+        working-directory: 12_APPLICATION_CODE
+        run: |
+          npx vitest run --reporter=json --outputFile=../99_INDEPENDENT_VERIFICATION/GITHUB/results/test-results.json
+          npx vitest run 2>&1 | tee ../99_INDEPENDENT_VERIFICATION/GITHUB/results/test-output.txt
+      
+      # -----------------------------------------------------------------------
+      # STEP 7: Validate Against COMMON Contracts
+      # -----------------------------------------------------------------------
+      - name: Validate Contracts
+        run: |
+          echo "Validating against COMMON contracts..."
+          
+          # Check expected test counts
+          EXPECTED_TESTS=658
+          ACTUAL_TESTS=$(jq '.numTotalTests' 99_INDEPENDENT_VERIFICATION/GITHUB/results/test-results.json)
+          
+          echo "Expected tests: $EXPECTED_TESTS"
+          echo "Actual tests: $ACTUAL_TESTS"
+          
+          if [ "$ACTUAL_TESTS" -lt "$EXPECTED_TESTS" ]; then
+            echo "❌ FAIL: Test count below expected ($ACTUAL_TESTS < $EXPECTED_TESTS)"
+            exit 1
+          fi
+          
+          # Check pass rate
+          PASSED=$(jq '.numPassedTests' 99_INDEPENDENT_VERIFICATION/GITHUB/results/test-results.json)
+          FAILED=$(jq '.numFailedTests' 99_INDEPENDENT_VERIFICATION/GITHUB/results/test-results.json)
+          
+          echo "Passed: $PASSED"
+          echo "Failed: $FAILED"
+          
+          if [ "$FAILED" -gt 0 ]; then
+            echo "❌ FAIL: $FAILED tests failed"
+            exit 1
+          fi
+          
+          echo "✅ PASS: All tests passed"
+      
+      # -----------------------------------------------------------------------
+      # STEP 8: Generate Convergence Hash
+      # -----------------------------------------------------------------------
+      - name: Generate Convergence Hash
+        run: |
+          PASSED=$(jq '.numPassedTests' 99_INDEPENDENT_VERIFICATION/GITHUB/results/test-results.json)
+          FAILED=$(jq '.numFailedTests' 99_INDEPENDENT_VERIFICATION/GITHUB/results/test-results.json)
+          SKIPPED=$(jq '.numPendingTests' 99_INDEPENDENT_VERIFICATION/GITHUB/results/test-results.json)
+          
+          HASH_INPUT="P${PASSED}F${FAILED}S${SKIPPED}"
+          CONVERGENCE_HASH=$(echo -n "$HASH_INPUT" | sha256sum | cut -c1-16)
+          
+          echo "Convergence Hash: $CONVERGENCE_HASH"
+          echo "$CONVERGENCE_HASH" > 99_INDEPENDENT_VERIFICATION/GITHUB/results/convergence-hash.txt
+      
+      # -----------------------------------------------------------------------
+      # STEP 9: Generate Verification Report
+      # -----------------------------------------------------------------------
+      - name: Generate Report
+        run: |
+          cat > 99_INDEPENDENT_VERIFICATION/GITHUB/results/verification-report.md << 'EOF'
+          # GitHub Actions Verification Report
+          
+          **Environment:** GitHub Actions
+          **Workflow Run:** ${{ github.run_id }}
+          **Timestamp:** $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          **Authorization:** ${{ github.event.inputs.authorization_code }}
+          
+          ## Test Results
+          
+          - Total Tests: $(jq '.numTotalTests' 99_INDEPENDENT_VERIFICATION/GITHUB/results/test-results.json)
+          - Passed: $(jq '.numPassedTests' 99_INDEPENDENT_VERIFICATION/GITHUB/results/test-results.json)
+          - Failed: $(jq '.numFailedTests' 99_INDEPENDENT_VERIFICATION/GITHUB/results/test-results.json)
+          
+          ## Convergence Hash
+          
+          $(cat 99_INDEPENDENT_VERIFICATION/GITHUB/results/convergence-hash.txt)
+          
+          ## Status
+          
+          ✅ VERIFICATION COMPLETE
+          EOF
+      
+      # -----------------------------------------------------------------------
+      # STEP 10: Upload Artifacts
+      # -----------------------------------------------------------------------
+      - name: Upload Verification Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-results-${{ github.run_id }}
+          path: 99_INDEPENDENT_VERIFICATION/GITHUB/results/
+          retention-days: 90
+      
+      # -----------------------------------------------------------------------
+      # STEP 11: Summary
+      # -----------------------------------------------------------------------
+      - name: Summary
+        run: |
+          echo "=============================================="
+          echo "VERIFICATION COMPLETE"
+          echo "=============================================="
+          echo ""
+          echo "Results uploaded as artifact: verification-results-${{ github.run_id }}"
+          echo ""
+          echo "Next Steps:"
+          echo "1. Download artifacts"
+          echo "2. Compare convergence hash with other environments"
+          echo "3. Complete ENVIRONMENT_VERIFICATION_SUMMARY.md"
+          echo ""
+          echo "=============================================="

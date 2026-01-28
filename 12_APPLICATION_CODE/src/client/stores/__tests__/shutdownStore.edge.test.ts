@@ -12,6 +12,18 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { useShutdownStore, ShutdownPhase } from '../shutdownStore';
 
+// Mock Sentry
+vi.mock('../lib/sentry', () => ({
+  logTradingBreadcrumb: vi.fn(),
+  captureTradeError: vi.fn(),
+  Sentry: {
+    startSpan: vi.fn((_options, callback) => {
+      // Execute the callback directly - startSpan just wraps it
+      return callback();
+    }),
+  },
+}));
+
 describe('IRONCLAD: shutdownStore Edge Cases', () => {
   const originalFetch = global.fetch;
 
@@ -67,11 +79,11 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     });
 
     it('should continue emergency shutdown even when steps fail', async () => {
-      let stepIndex = 0;
+      let callCount = 0;
       global.fetch = vi.fn().mockImplementation(() => {
-        stepIndex++;
+        callCount++;
         // Fail every other step
-        if (stepIndex % 2 === 0) {
+        if (callCount % 2 === 0) {
           return Promise.resolve({
             ok: false,
             json: () => Promise.resolve({ message: 'Step failed' }),
@@ -86,12 +98,16 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
       await runWithTimers(() => useShutdownStore.getState().initiateShutdown(true));
 
       const state = useShutdownStore.getState();
-      // Should complete despite failures
+      // Should complete despite failures in emergency mode
       expect(state.phase).toBe('complete');
 
       // Should have some error steps
       const errorSteps = state.steps.filter((s) => s.status === 'error');
       expect(errorSteps.length).toBeGreaterThan(0);
+      
+      // All steps should have been attempted (not skipped)
+      const attemptedSteps = state.steps.filter((s) => s.status !== 'skipped');
+      expect(attemptedSteps.length).toBeGreaterThan(0);
     });
 
     it('should complete emergency shutdown even with network failures', async () => {
@@ -100,14 +116,20 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
       await runWithTimers(() => useShutdownStore.getState().initiateShutdown(true));
 
       const state = useShutdownStore.getState();
-      // Emergency shutdown should still "complete" (all steps attempted)
+      // Emergency shutdown should still "complete" (all steps attempted, even if they failed)
       expect(state.phase).toBe('complete');
+      
+      // All attempted steps should have error status
+      const attemptedSteps = state.steps.filter((s) => s.status !== 'skipped');
+      attemptedSteps.forEach(step => {
+        expect(step.status).toBe('error');
+      });
     });
 
     it('should set isEmergency flag correctly', async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({}),
+        json: () => Promise.resolve({ message: 'OK' }),
       });
 
       // Normal shutdown
@@ -127,16 +149,14 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     });
 
     it('should skip visual delays in emergency mode', async () => {
-      const startTime = Date.now();
-
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({}),
+        json: () => Promise.resolve({ message: 'OK' }),
       });
 
       const shutdownPromise = useShutdownStore.getState().initiateShutdown(true);
 
-      // Fast-forward any potential delays
+      // Fast-forward any potential delays (emergency mode skips 100ms delays)
       await vi.runAllTimersAsync();
 
       await shutdownPromise;
@@ -187,16 +207,23 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
         executionOrder.push(stepId);
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({}),
+          json: () => Promise.resolve({ message: 'OK' }),
         });
       });
 
       await runWithTimers(() => useShutdownStore.getState().initiateShutdown());
 
+      const state = useShutdownStore.getState();
+      
       // Only disconnect-streams, cleanup, finalize should run
       expect(executionOrder).not.toContain('save-state');
       expect(executionOrder).not.toContain('cancel-orders');
       expect(executionOrder).not.toContain('close-positions');
+      
+      // Verify skipped steps
+      expect(state.steps.find(s => s.id === 'save-state')?.status).toBe('skipped');
+      expect(state.steps.find(s => s.id === 'cancel-orders')?.status).toBe('skipped');
+      expect(state.steps.find(s => s.id === 'close-positions')?.status).toBe('skipped');
     });
 
     it('should include close-positions when enabled', async () => {
@@ -211,13 +238,18 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
         executionOrder.push(stepId);
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({}),
+          json: () => Promise.resolve({ message: 'OK' }),
         });
       });
 
       await runWithTimers(() => useShutdownStore.getState().initiateShutdown());
 
       expect(executionOrder).toContain('close-positions');
+      
+      const state = useShutdownStore.getState();
+      const closePositionsStep = state.steps.find(s => s.id === 'close-positions');
+      expect(closePositionsStep?.status).not.toBe('skipped');
+      expect(closePositionsStep?.status).toBe('complete');
     });
   });
 
@@ -235,7 +267,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
         }
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({}),
+          json: () => Promise.resolve({ message: 'OK' }),
         });
       });
 
@@ -247,6 +279,13 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
 
       // Should not have continued past the failure
       expect(callCount).toBe(2);
+      
+      // First step should be complete, second should still be running (error thrown before status update)
+      const steps = state.steps.filter(s => s.status !== 'skipped');
+      expect(steps[0]?.status).toBe('complete');
+      // In normal mode, when error is thrown, step status is not updated to 'error'
+      // It remains in 'running' because the error is thrown immediately
+      expect(steps[1]?.status).toBe('running');
     });
 
     it('should record step duration even on failure', async () => {
@@ -262,7 +301,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
       });
 
       const shutdownPromise = useShutdownStore.getState().initiateShutdown(true);
-      await vi.runAllTimersAsync();
+      await vi.advanceTimersByTimeAsync(1000);
       await shutdownPromise;
 
       const state = useShutdownStore.getState();
@@ -285,7 +324,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
         }
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({}),
+          json: () => Promise.resolve({ message: 'OK' }),
         });
       });
 
@@ -294,8 +333,15 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
       const state = useShutdownStore.getState();
       const completedSteps = state.steps.filter((s) => s.status === 'complete');
 
-      // First 2 steps should be complete
+      // First 2 steps should be complete (before the failure)
       expect(completedSteps.length).toBe(2);
+      
+      // Third step should still be running (error thrown before status update in normal mode)
+      const steps = state.steps.filter(s => s.status !== 'skipped');
+      expect(steps[2]?.status).toBe('running');
+      
+      // Phase should be error
+      expect(state.phase).toBe('error');
     });
   });
 
@@ -306,7 +352,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
 
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({}),
+        json: () => Promise.resolve({ message: 'OK' }),
       });
 
       await runWithTimers(() => useShutdownStore.getState().initiateShutdown());
@@ -320,19 +366,21 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
 
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({}),
+        json: () => Promise.resolve({ message: 'OK' }),
       });
 
       const shutdownPromise = useShutdownStore.getState().initiateShutdown();
 
       // Advance time to allow all steps to complete with their 100ms delays
-      await vi.advanceTimersByTimeAsync(5000);
+      // Each step has 100ms delay (non-emergency), plus fetch time
+      await vi.advanceTimersByTimeAsync(2000);
 
       await shutdownPromise;
 
       const state = useShutdownStore.getState();
       // Timestamp should reflect the advanced time
       expect(state.shutdownCompletedAt).toBeGreaterThanOrEqual(startTime);
+      expect(state.shutdownCompletedAt).toBeDefined();
     });
 
     it('should not set shutdownCompletedAt on failure', async () => {
@@ -343,7 +391,9 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
 
       await runWithTimers(() => useShutdownStore.getState().initiateShutdown(false));
 
-      expect(useShutdownStore.getState().shutdownCompletedAt).toBeNull();
+      const state = useShutdownStore.getState();
+      expect(state.shutdownCompletedAt).toBeNull();
+      expect(state.phase).toBe('error');
     });
   });
 
@@ -356,7 +406,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
             useShutdownStore.getState().setOptions({ saveState: false });
             resolve({
               ok: true,
-              json: () => Promise.resolve({}),
+              json: () => Promise.resolve({ message: 'OK' }),
             });
           })
       );
@@ -369,17 +419,22 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
         (s) => s.id === 'save-state'
       );
       expect(saveStateStep?.status).not.toBe('skipped');
+      expect(saveStateStep?.status).toBe('complete');
     });
 
     it('should preserve options isolation between shutdowns', async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({}),
+        json: () => Promise.resolve({ message: 'OK' }),
       });
 
       // First shutdown with closePositions: true
       useShutdownStore.getState().setOptions({ closePositions: true });
       await runWithTimers(() => useShutdownStore.getState().initiateShutdown());
+
+      const firstShutdown = useShutdownStore.getState();
+      const firstClosePositions = firstShutdown.steps.find(s => s.id === 'close-positions');
+      expect(firstClosePositions?.status).not.toBe('skipped');
 
       useShutdownStore.getState().reset();
       // Reset options to defaults
@@ -403,7 +458,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     it('should update only the specified step', async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({}),
+        json: () => Promise.resolve({ message: 'OK' }),
       });
 
       await runWithTimers(() => useShutdownStore.getState().initiateShutdown());
@@ -425,16 +480,17 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
       otherSteps.forEach((step) => {
         const original = initialSteps.find((s) => s.id === step.id);
         expect(step.status).toBe(original?.status);
+        expect(step.message).toBe(original?.message);
       });
     });
 
-    it('should handle update for non-existent step ID', () => {
+    it('should handle update for non-existent step ID', async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({}),
+        json: () => Promise.resolve({ message: 'OK' }),
       });
 
-      useShutdownStore.getState().initiateShutdown();
+      await runWithTimers(() => useShutdownStore.getState().initiateShutdown());
 
       // Should not throw
       expect(() => {
@@ -442,6 +498,12 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
           status: 'complete',
         });
       }).not.toThrow();
+      
+      // Step should not exist in steps array
+      const nonExistentStep = useShutdownStore.getState().steps.find(
+        s => s.id === 'non-existent-step'
+      );
+      expect(nonExistentStep).toBeUndefined();
     });
   });
 
@@ -449,10 +511,15 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     it('should reset ALL state properties', async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({}),
+        json: () => Promise.resolve({ message: 'OK' }),
       });
 
       await runWithTimers(() => useShutdownStore.getState().initiateShutdown(true));
+
+      // Verify state before reset
+      const beforeReset = useShutdownStore.getState();
+      expect(beforeReset.phase).toBe('complete');
+      expect(beforeReset.steps.length).toBeGreaterThan(0);
 
       useShutdownStore.getState().reset();
 
@@ -484,7 +551,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     it('should have all 6 required steps', async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({}),
+        json: () => Promise.resolve({ message: 'OK' }),
       });
 
       await runWithTimers(() => useShutdownStore.getState().initiateShutdown(true));
@@ -498,12 +565,21 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
       expect(stepIds).toContain('cleanup');
       expect(stepIds).toContain('finalize');
       expect(stepIds).toHaveLength(6);
+      
+      // Verify all steps have required properties
+      const state = useShutdownStore.getState();
+      state.steps.forEach(step => {
+        expect(step.id).toBeDefined();
+        expect(step.name).toBeDefined();
+        expect(step.description).toBeDefined();
+        expect(step.status).toBeDefined();
+      });
     });
 
     it('should have unique step IDs', async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({}),
+        json: () => Promise.resolve({ message: 'OK' }),
       });
 
       await runWithTimers(() => useShutdownStore.getState().initiateShutdown());
@@ -512,6 +588,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
       const uniqueIds = new Set(stepIds);
 
       expect(uniqueIds.size).toBe(stepIds.length);
+      expect(stepIds.length).toBe(6);
     });
   });
 });

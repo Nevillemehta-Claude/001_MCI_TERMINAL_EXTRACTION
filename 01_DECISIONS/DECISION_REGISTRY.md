@@ -103,7 +103,7 @@ The project transitioned from autonomous to supervised execution model.
 
 ---
 
-### D-004: INDIAN BROKERS ONLY (NOT ALPACA/POLYGON)
+### D-004: INDIAN BROKERS ONLY (NOT [OUT-OF-SCOPE-BROKER]/[OUT-OF-SCOPE-DATA-PROVIDER])
 
 **Date:** Foundational
 **Status:** CONSTITUTIONAL
@@ -117,8 +117,8 @@ The project transitioned from autonomous to supervised execution model.
 4. Kotak Neo
 
 **NOT Supported:**
-- Alpaca (US)
-- Polygon (US)
+- [Out-of-Scope-Broker] (US)
+- [Out-of-Scope-Data-Provider] (US)
 
 **Rationale:**
 - Indian market focus

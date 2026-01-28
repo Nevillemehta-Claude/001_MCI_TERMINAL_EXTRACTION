@@ -6,6 +6,7 @@ import { BackendSelector, IgnitionButton } from './components/phase2';
 import { TelemetryDashboard } from './components/phase3';
 import { ShutdownPanel } from './components/phase4';
 import { ToastContainer } from './components/uxmi';
+import { StatusBar } from './components/cockpit';
 
 type AppPhase = 'token' | 'scan' | 'ignition' | 'running' | 'shutdown';
 
@@ -209,7 +210,10 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      {/* COCKPIT INTEGRITY: StatusBar - Always visible, always truthful */}
+      <StatusBar />
+
       {/* Header */}
       <header className="bg-gray-900 text-white py-4 px-6 shadow-lg">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -290,8 +294,10 @@ export const App: React.FC = () => {
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-4 px-6 mt-auto">
-        <div className="max-w-7xl mx-auto text-center text-sm">
-          CIA-SIE-START-STOP • MCI v1.0.0 • CR-005 Compliant
+        <div className="max-w-7xl mx-auto flex items-center justify-between text-sm">
+          <span>MCI - Mission Control Interface • v1.0.0 • CR-005 Compliant</span>
+          {/* COCKPIT INTEGRITY: Compact status in footer */}
+          <StatusBar compact />
         </div>
       </footer>
 

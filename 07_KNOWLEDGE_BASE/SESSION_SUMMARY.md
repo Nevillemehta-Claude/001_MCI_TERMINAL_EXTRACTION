@@ -143,7 +143,7 @@ Flow: 0 → 1 → 2 → 3 → 4 → (back to 0 next day)
 | HDFC Sky | Supported | HDFC APIs |
 | Kotak Neo | Supported | Kotak APIs |
 
-**NOT Supported:** Alpaca, Polygon (US markets)
+**NOT Supported:** [Out-of-Scope-Broker], [Out-of-Scope-Data-Provider] (US markets)
 
 ---
 

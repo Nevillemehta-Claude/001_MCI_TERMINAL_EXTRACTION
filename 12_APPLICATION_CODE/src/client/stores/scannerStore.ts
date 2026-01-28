@@ -40,8 +40,8 @@ export interface ScannerState {
 }
 
 /**
- * P3 REMEDIATION: 12-point pre-ignition checks for Indian markets
- * Updated from Alpaca/Polygon to Kite Connect/NSE/BSE
+ * 12-point pre-ignition checks for Indian markets
+ * Uses Kite Connect API for NSE/BSE connectivity
  */
 const DEFAULT_CHECKS: Omit<ScanCheck, 'status'>[] = [
   // Connection Checks (1-3)

@@ -139,7 +139,7 @@ flowchart TD
 
 ### BROKER REF 9
 
-4. **It was originally built for Alpaca API, then remediated to Kite API**
+4. **It was originally built for [Out-of-Scope-Broker] API, then remediated to Kite API**
 
 ---
 

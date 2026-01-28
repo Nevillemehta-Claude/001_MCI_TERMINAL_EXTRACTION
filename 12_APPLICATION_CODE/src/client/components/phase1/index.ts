@@ -4,8 +4,8 @@
  * 12-point diagnostic system that must complete in <500ms:
  *
  * Connection Checks (1-3):
- * - Alpaca API Connection
- * - Polygon Data Connection
+ * - Kite API Connection
+ * - NSE/BSE Data Connection
  * - WebSocket Health
  *
  * Authentication Checks (4-5):

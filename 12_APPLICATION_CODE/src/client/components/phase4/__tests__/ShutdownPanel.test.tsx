@@ -1,3 +1,8 @@
+/**
+ * ShutdownPanel Tests
+ * Tests for Phase 4 shutdown functionality
+ */
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -14,6 +19,54 @@ vi.mock('../../../stores/ignitionStore', () => ({
   useIgnitionStore: vi.fn(),
 }));
 
+// Mock UXMI components
+vi.mock('../../uxmi', () => ({
+  Button: ({ children, onClick, disabled, variant, className }: any) => (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={className}
+      data-variant={variant}
+    >
+      {children}
+    </button>
+  ),
+  ProgressBar: ({ value, variant, showLabel, animated, striped }: any) => (
+    <div
+      role="progressbar"
+      aria-valuenow={value}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      data-variant={variant}
+      data-animated={animated}
+      data-striped={striped}
+    >
+      {showLabel && `${value}%`}
+    </div>
+  ),
+  ErrorDisplay: ({ what, why, how, severity, onRetry, actions }: any) => (
+    <div data-testid="error-display" data-severity={severity}>
+      <div>{what}</div>
+      <div>{why}</div>
+      <div>{how}</div>
+      {onRetry && <button onClick={onRetry}>Try Again</button>}
+      {actions?.map((action: any, idx: number) => (
+        <button key={idx} onClick={action.onClick}>
+          {action.label}
+        </button>
+      ))}
+    </div>
+  ),
+  Spinner: ({ size, color }: any) => (
+    <div role="status" data-size={size} data-color={color} />
+  ),
+  Tooltip: ({ content, children }: any) => (
+    <div data-testid="tooltip" data-content={content}>
+      {children}
+    </div>
+  ),
+}));
+
 describe('ShutdownPanel component', () => {
   const mockShutdownStore = {
     phase: 'idle' as const,
@@ -22,10 +75,10 @@ describe('ShutdownPanel component', () => {
     shutdownStartedAt: null as number | null,
     shutdownCompletedAt: null as number | null,
     error: null as string | null,
-    closePositions: true,
+    closePositions: false,
     cancelOrders: true,
     saveState: true,
-    initiateShutdown: vi.fn(),
+    initiateShutdown: vi.fn().mockResolvedValue(undefined),
     setOptions: vi.fn(),
     reset: vi.fn(),
   };
@@ -36,14 +89,27 @@ describe('ShutdownPanel component', () => {
   };
 
   beforeEach(() => {
-    // Recreate mock functions for each test
+    vi.clearAllMocks();
+    // Reset mock functions for each test
     mockShutdownStore.setOptions = vi.fn();
-    mockShutdownStore.initiateShutdown = vi.fn();
+    mockShutdownStore.initiateShutdown = vi.fn().mockResolvedValue(undefined);
     mockShutdownStore.reset = vi.fn();
     mockIgnitionStore.reset = vi.fn();
 
-    vi.mocked(useShutdownStore).mockReturnValue(mockShutdownStore);
-    vi.mocked(useIgnitionStore).mockReturnValue(mockIgnitionStore);
+    // Reset default state
+    mockShutdownStore.phase = 'idle';
+    mockShutdownStore.steps = [];
+    mockShutdownStore.isEmergency = false;
+    mockShutdownStore.shutdownStartedAt = null;
+    mockShutdownStore.shutdownCompletedAt = null;
+    mockShutdownStore.error = null;
+    mockShutdownStore.closePositions = false;
+    mockShutdownStore.cancelOrders = true;
+    mockShutdownStore.saveState = true;
+    mockIgnitionStore.phase = 'running';
+
+    (useShutdownStore as any).mockReturnValue(mockShutdownStore);
+    (useIgnitionStore as any).mockReturnValue(mockIgnitionStore);
   });
 
   describe('idle state', () => {
@@ -76,53 +142,74 @@ describe('ShutdownPanel component', () => {
       render(<ShutdownPanel />);
       expect(screen.getByText('⚠️ Emergency Stop')).toBeInTheDocument();
     });
+
+    it('should show checkboxes with correct initial state', () => {
+      render(<ShutdownPanel />);
+      const checkboxes = screen.getAllByRole('checkbox');
+      expect(checkboxes).toHaveLength(3);
+      // cancelOrders is true by default
+      expect(checkboxes[0]).toBeChecked();
+      // closePositions is false by default
+      expect(checkboxes[1]).not.toBeChecked();
+      // saveState is true by default
+      expect(checkboxes[2]).toBeChecked();
+    });
   });
 
   describe('checkbox interactions', () => {
     it('should call setOptions when Cancel Pending Orders is toggled', async () => {
       const user = userEvent.setup();
       render(<ShutdownPanel />);
-      // Checkboxes are ordered: cancelOrders, closePositions, saveState
       const checkboxes = screen.getAllByRole('checkbox');
 
       await user.click(checkboxes[0]);
-      expect(mockShutdownStore.setOptions).toHaveBeenCalled();
+      expect(mockShutdownStore.setOptions).toHaveBeenCalledWith({
+        cancelOrders: false,
+      });
     });
 
     it('should call setOptions when Close All Positions is toggled', async () => {
       const user = userEvent.setup();
       render(<ShutdownPanel />);
-      // Checkboxes are ordered: cancelOrders, closePositions, saveState
       const checkboxes = screen.getAllByRole('checkbox');
 
       await user.click(checkboxes[1]);
-      expect(mockShutdownStore.setOptions).toHaveBeenCalled();
+      expect(mockShutdownStore.setOptions).toHaveBeenCalledWith({
+        closePositions: true,
+      });
     });
 
     it('should call setOptions when Save System State is toggled', async () => {
       const user = userEvent.setup();
       render(<ShutdownPanel />);
-      // Checkboxes are ordered: cancelOrders, closePositions, saveState
       const checkboxes = screen.getAllByRole('checkbox');
 
       await user.click(checkboxes[2]);
-      expect(mockShutdownStore.setOptions).toHaveBeenCalled();
+      expect(mockShutdownStore.setOptions).toHaveBeenCalledWith({
+        saveState: false,
+      });
     });
   });
 
   describe('button states', () => {
-    it('should disable buttons when system is not running', () => {
-      vi.mocked(useIgnitionStore).mockReturnValue({
+    // NOTE: ShutdownPanel allows shutdown even when ignitionPhase is 'idle'
+    // because App.tsx only renders ShutdownPanel when currentPhase === 'shutdown',
+    // meaning the user navigated here intentionally (system was running).
+    // See ShutdownPanel.tsx line 37-39 for design rationale.
+    
+    it('should enable buttons when shutdown panel is shown (system implicitly running)', () => {
+      (useIgnitionStore as any).mockReturnValue({
         ...mockIgnitionStore,
-        phase: 'idle',
+        phase: 'idle',  // ignitionPhase is idle but we're on shutdown screen
       });
       render(<ShutdownPanel />);
 
-      expect(screen.getByText('Graceful Shutdown')).toBeDisabled();
-      expect(screen.getByText('⚠️ Emergency Stop')).toBeDisabled();
+      // Buttons are enabled because being on shutdown screen implies system was running
+      expect(screen.getByText('Graceful Shutdown')).not.toBeDisabled();
+      expect(screen.getByText('⚠️ Emergency Stop')).not.toBeDisabled();
     });
 
-    it('should enable buttons when system is running', () => {
+    it('should enable buttons when system is explicitly running', () => {
       render(<ShutdownPanel />);
 
       expect(screen.getByText('Graceful Shutdown')).not.toBeDisabled();
@@ -137,7 +224,9 @@ describe('ShutdownPanel component', () => {
       fireEvent.click(screen.getByText('Graceful Shutdown'));
 
       expect(screen.getByText('Confirm Shutdown')).toBeInTheDocument();
-      expect(screen.getByText('Are you sure you want to shut down the trading system?')).toBeInTheDocument();
+      expect(
+        screen.getByText('Are you sure you want to shut down the trading system?')
+      ).toBeInTheDocument();
     });
 
     it('should show emergency confirmation when Emergency Stop clicked', () => {
@@ -146,7 +235,11 @@ describe('ShutdownPanel component', () => {
       fireEvent.click(screen.getByText('⚠️ Emergency Stop'));
 
       expect(screen.getByText('Emergency Shutdown')).toBeInTheDocument();
-      expect(screen.getByText('This will immediately stop all operations and close all positions.')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'This will immediately stop all operations and close all positions.'
+        )
+      ).toBeInTheDocument();
     });
 
     it('should show Cancel button in confirmation dialog', () => {
@@ -188,15 +281,31 @@ describe('ShutdownPanel component', () => {
 
   describe('shutdown in progress', () => {
     const mockSteps: ShutdownStep[] = [
-      { id: 'step-1', name: 'Cancel Orders', description: 'Canceling pending orders', status: 'complete', duration: 100 },
-      { id: 'step-2', name: 'Close Positions', description: 'Closing positions', status: 'running' },
-      { id: 'step-3', name: 'Save State', description: 'Saving state', status: 'pending' },
+      {
+        id: 'step-1',
+        name: 'Cancel Orders',
+        description: 'Canceling pending orders',
+        status: 'complete',
+        duration: 100,
+      },
+      {
+        id: 'step-2',
+        name: 'Close Positions',
+        description: 'Closing positions',
+        status: 'running',
+      },
+      {
+        id: 'step-3',
+        name: 'Save State',
+        description: 'Saving state',
+        status: 'pending',
+      },
     ];
 
     beforeEach(() => {
-      vi.mocked(useShutdownStore).mockReturnValue({
+      (useShutdownStore as any).mockReturnValue({
         ...mockShutdownStore,
-        phase: 'in_progress',
+        phase: 'initiating', // Valid phase for shutdown in progress
         steps: mockSteps,
         shutdownStartedAt: Date.now() - 500,
       });
@@ -208,9 +317,9 @@ describe('ShutdownPanel component', () => {
     });
 
     it('should show Emergency Shutdown heading for emergency', () => {
-      vi.mocked(useShutdownStore).mockReturnValue({
+      (useShutdownStore as any).mockReturnValue({
         ...mockShutdownStore,
-        phase: 'in_progress',
+        phase: 'initiating',
         steps: mockSteps,
         isEmergency: true,
         shutdownStartedAt: Date.now() - 500,
@@ -245,11 +354,30 @@ describe('ShutdownPanel component', () => {
       render(<ShutdownPanel />);
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
+
+    it('should display duration in milliseconds', () => {
+      const startTime = Date.now() - 500;
+      (useShutdownStore as any).mockReturnValue({
+        ...mockShutdownStore,
+        phase: 'initiating',
+        steps: mockSteps,
+        shutdownStartedAt: startTime,
+      });
+      render(<ShutdownPanel />);
+      // Should show duration (approximately 500ms) - check for the overall duration span
+      const durationElements = screen.getAllByText(/ms/);
+      expect(durationElements.length).toBeGreaterThan(0);
+      // The overall duration should be in a span with specific classes
+      const overallDuration = durationElements.find((el) =>
+        el.className.includes('text-sm font-mono text-gray-500')
+      );
+      expect(overallDuration).toBeInTheDocument();
+    });
   });
 
   describe('error state', () => {
     beforeEach(() => {
-      vi.mocked(useShutdownStore).mockReturnValue({
+      (useShutdownStore as any).mockReturnValue({
         ...mockShutdownStore,
         phase: 'error',
         error: 'Connection lost during shutdown',
@@ -264,7 +392,9 @@ describe('ShutdownPanel component', () => {
 
     it('should display recovery instructions', () => {
       render(<ShutdownPanel />);
-      expect(screen.getByText('Try emergency shutdown or check system logs')).toBeInTheDocument();
+      expect(
+        screen.getByText('Try emergency shutdown or check system logs')
+      ).toBeInTheDocument();
     });
 
     it('should show Try Again button', () => {
@@ -292,7 +422,7 @@ describe('ShutdownPanel component', () => {
 
   describe('complete state', () => {
     beforeEach(() => {
-      vi.mocked(useShutdownStore).mockReturnValue({
+      (useShutdownStore as any).mockReturnValue({
         ...mockShutdownStore,
         phase: 'complete',
         shutdownStartedAt: Date.now() - 1000,
@@ -307,7 +437,9 @@ describe('ShutdownPanel component', () => {
 
     it('should display success message', () => {
       render(<ShutdownPanel />);
-      expect(screen.getByText('System has been safely shut down')).toBeInTheDocument();
+      expect(
+        screen.getByText('System has been safely shut down')
+      ).toBeInTheDocument();
     });
 
     it('should display duration', () => {
@@ -339,10 +471,17 @@ describe('ShutdownPanel component', () => {
 
   describe('step styling', () => {
     it('should apply blue background for running step', () => {
-      vi.mocked(useShutdownStore).mockReturnValue({
+      (useShutdownStore as any).mockReturnValue({
         ...mockShutdownStore,
-        phase: 'in_progress',
-        steps: [{ id: 'step-1', name: 'Test Step', description: 'Testing', status: 'running' }],
+        phase: 'initiating',
+        steps: [
+          {
+            id: 'step-1',
+            name: 'Test Step',
+            description: 'Testing',
+            status: 'running',
+          },
+        ],
         shutdownStartedAt: Date.now(),
       });
       const { container } = render(<ShutdownPanel />);
@@ -350,10 +489,17 @@ describe('ShutdownPanel component', () => {
     });
 
     it('should apply gray background for pending step', () => {
-      vi.mocked(useShutdownStore).mockReturnValue({
+      (useShutdownStore as any).mockReturnValue({
         ...mockShutdownStore,
-        phase: 'in_progress',
-        steps: [{ id: 'step-1', name: 'Test Step', description: 'Testing', status: 'pending' }],
+        phase: 'initiating',
+        steps: [
+          {
+            id: 'step-1',
+            name: 'Test Step',
+            description: 'Testing',
+            status: 'pending',
+          },
+        ],
         shutdownStartedAt: Date.now(),
       });
       const { container } = render(<ShutdownPanel />);
@@ -363,14 +509,34 @@ describe('ShutdownPanel component', () => {
 
   describe('progress calculation', () => {
     it('should calculate progress based on completed and skipped steps', () => {
-      vi.mocked(useShutdownStore).mockReturnValue({
+      (useShutdownStore as any).mockReturnValue({
         ...mockShutdownStore,
-        phase: 'in_progress',
+        phase: 'initiating',
         steps: [
-          { id: 'step-1', name: 'Step 1', description: '', status: 'complete' },
-          { id: 'step-2', name: 'Step 2', description: '', status: 'skipped' },
-          { id: 'step-3', name: 'Step 3', description: '', status: 'running' },
-          { id: 'step-4', name: 'Step 4', description: '', status: 'pending' },
+          {
+            id: 'step-1',
+            name: 'Step 1',
+            description: '',
+            status: 'complete',
+          },
+          {
+            id: 'step-2',
+            name: 'Step 2',
+            description: '',
+            status: 'skipped',
+          },
+          {
+            id: 'step-3',
+            name: 'Step 3',
+            description: '',
+            status: 'running',
+          },
+          {
+            id: 'step-4',
+            name: 'Step 4',
+            description: '',
+            status: 'pending',
+          },
         ],
         shutdownStartedAt: Date.now(),
       });
@@ -378,6 +544,62 @@ describe('ShutdownPanel component', () => {
       // 2 out of 4 complete = 50%
       const progressbar = screen.getByRole('progressbar');
       expect(progressbar).toHaveAttribute('aria-valuenow', '50');
+    });
+  });
+
+  describe('other shutdown phases', () => {
+    it('should show shutdown progress for closing_positions phase', () => {
+      (useShutdownStore as any).mockReturnValue({
+        ...mockShutdownStore,
+        phase: 'closing_positions',
+        steps: [
+          {
+            id: 'step-1',
+            name: 'Close Positions',
+            description: 'Closing',
+            status: 'running',
+          },
+        ],
+        shutdownStartedAt: Date.now(),
+      });
+      render(<ShutdownPanel />);
+      expect(screen.getByText('Shutting Down...')).toBeInTheDocument();
+    });
+
+    it('should show shutdown progress for canceling_orders phase', () => {
+      (useShutdownStore as any).mockReturnValue({
+        ...mockShutdownStore,
+        phase: 'canceling_orders',
+        steps: [
+          {
+            id: 'step-1',
+            name: 'Cancel Orders',
+            description: 'Canceling',
+            status: 'running',
+          },
+        ],
+        shutdownStartedAt: Date.now(),
+      });
+      render(<ShutdownPanel />);
+      expect(screen.getByText('Shutting Down...')).toBeInTheDocument();
+    });
+
+    it('should show shutdown progress for disconnecting phase', () => {
+      (useShutdownStore as any).mockReturnValue({
+        ...mockShutdownStore,
+        phase: 'disconnecting',
+        steps: [
+          {
+            id: 'step-1',
+            name: 'Disconnect',
+            description: 'Disconnecting',
+            status: 'running',
+          },
+        ],
+        shutdownStartedAt: Date.now(),
+      });
+      render(<ShutdownPanel />);
+      expect(screen.getByText('Shutting Down...')).toBeInTheDocument();
     });
   });
 });

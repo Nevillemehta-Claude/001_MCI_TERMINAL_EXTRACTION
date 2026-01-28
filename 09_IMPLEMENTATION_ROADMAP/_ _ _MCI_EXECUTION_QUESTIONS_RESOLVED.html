@@ -1,0 +1,1840 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>MCI_EXECUTION_QUESTIONS_RESOLVED</title><style>html{font-size:16.000000px;}</style><style>/* copy from https://github.com/sindresorhus/github-markdown-css/ */
+
+html,body{background-color: #feffff;}
+
+.markdown-body {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  line-height: 1.5;
+  color: #333333;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+  font-size: 1rem;
+  word-wrap: break-word;
+}
+
+.markdown-body .octicon {
+  display: inline-block;
+  fill: currentColor;
+  vertical-align: text-bottom;
+}
+
+.markdown-body figure{margin:0;padding:0; display:table;}
+.markdown-body figure figcaption{font-size:92%; text-align:center; color:#09844f;}
+
+.markdown-body .anchor {
+  float: left;
+  line-height: 1;
+  margin-left: -1.25rem;
+  padding-right: 0.25rem;
+}
+
+.markdown-body .anchor:focus {
+  outline: none;
+}
+
+.markdown-body h1 .octicon-link,
+.markdown-body h2 .octicon-link,
+.markdown-body h3 .octicon-link,
+.markdown-body h4 .octicon-link,
+.markdown-body h5 .octicon-link,
+.markdown-body h6 .octicon-link {
+  color: #0595bf;
+  vertical-align: middle;
+  visibility: hidden;
+}
+
+.markdown-body h1:hover .anchor,
+.markdown-body h2:hover .anchor,
+.markdown-body h3:hover .anchor,
+.markdown-body h4:hover .anchor,
+.markdown-body h5:hover .anchor,
+.markdown-body h6:hover .anchor {
+  text-decoration: none;
+}
+
+.markdown-body details {
+  display: block;
+}
+
+.markdown-body summary {
+  display: list-item;
+}
+
+.markdown-body a {
+  background-color: initial;
+}
+
+.markdown-body a:active,
+.markdown-body a:hover {
+  outline-width: 0;
+}
+
+.markdown-body strong {
+  font-weight: inherit;
+  font-weight: bolder;
+}
+.markdown-body strong{
+  color: #333333;
+}
+.markdown-body em{
+  color: #333333;
+}
+
+.markdown-body img {
+  border-style: none;
+}
+
+.markdown-body code,
+.markdown-body kbd,
+.markdown-body pre {
+  font-family: monospace,monospace;
+  font-size: 0.9rem;
+}
+
+.markdown-body hr {
+  box-sizing: initial;
+  height: 0;
+  overflow: visible;
+}
+
+.markdown-body input {
+  font: inherit;
+  margin: 0;
+}
+
+.markdown-body input {
+  overflow: visible;
+}
+
+.markdown-body [type=checkbox] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.markdown-body * {
+  box-sizing: border-box;
+}
+
+.markdown-body input {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.markdown-body a {
+  color: #0366dd;
+  text-decoration: none;
+}
+.markdown-body mjx-container[jax="SVG"] > svg a{fill:#0366dd;stroke: #0366dd;}
+
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+
+.markdown-body strong {
+  font-weight: 600;
+}
+
+.markdown-body hr:after,
+.markdown-body hr:before {
+  display: table;
+  content: "";
+}
+
+.markdown-body hr:after {
+  clear: both;
+}
+
+.markdown-body table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.markdown-body td,
+.markdown-body th {
+  padding: 0;
+}
+
+.markdown-body details summary {
+  cursor: pointer;
+}
+
+.markdown-body kbd {
+  display: inline-block;
+  padding: 0.1875rem 0.3125rem;
+  font: 0.75rem SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  line-height: 0.75rem;
+  color: #09844f;
+  vertical-align: middle;
+  background-color: #f7f8f8;
+  border: 1px solid #e1e2e2;
+  border-radius: 0.1875rem;
+}
+
+.markdown-body p {
+  margin-top: 0;
+  margin-bottom: 0.625rem;
+}
+
+.markdown-body blockquote {
+  margin: 0;
+}
+
+.markdown-body ol,
+.markdown-body ul {
+  padding-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body ol ol,
+.markdown-body ul ol {
+  list-style-type: lower-roman;
+}
+
+.markdown-body ol ol ol,
+.markdown-body ol ul ol,
+.markdown-body ul ol ol,
+.markdown-body ul ul ol {
+  list-style-type: lower-alpha;
+}
+
+.markdown-body dd {
+  margin-left: 0;
+}
+
+.markdown-body code,
+.markdown-body pre {
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  font-size: 0.75rem;
+}
+
+.markdown-body pre {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body input::-webkit-inner-spin-button,
+.markdown-body input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.markdown-body:after,
+.markdown-body:before {
+  display: table;
+  content: "";
+}
+
+.markdown-body:after {
+  clear: both;
+}
+
+.markdown-body>:first-child {
+  margin-top: 0!important;
+}
+
+.markdown-body>:last-child {
+  margin-bottom: 0!important;
+}
+
+.markdown-body a:not([href]) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.markdown-body blockquote,
+.markdown-body details,
+.markdown-body dl,
+.markdown-body ol,
+.markdown-body p,
+.markdown-body pre,
+.markdown-body table,
+.markdown-body ul {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.markdown-body hr {
+  height: .25rem;
+  padding: 0;
+  margin: 1.5rem 0;
+  background-color: #e1e2e2;
+  border: 0;
+}
+
+.markdown-body blockquote {
+  padding: 0 1rem;
+  color: #636363;
+  border-left: .25rem solid #bbbbbb;
+}
+
+.markdown-body blockquote>:first-child {
+  margin-top: 0;
+}
+
+.markdown-body blockquote>:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
+}
+
+.markdown-body h1,
+.markdown-body h2 {
+  padding-bottom: .3rem;
+  border-bottom: 1px solid #e7e8e8;
+  color: #0595bf;
+}
+
+.markdown-body h2 {
+  font-size: 1.5rem;
+  color: #0595bf;
+}
+
+.markdown-body h3 {
+  font-size: 1.25rem;
+  color: #0595bf;
+}
+
+.markdown-body h4 {
+  font-size: 1rem;
+  color: #0595bf;
+}
+
+.markdown-body h5 {
+  font-size: .875rem;
+  color: #0595bf;
+}
+
+.markdown-body h6 {
+  font-size: .85rem;
+  color: #0595bf;
+}
+
+.markdown-body ol,
+.markdown-body ul {
+  padding-left: 2rem;
+}
+
+.markdown-body ol ol,
+.markdown-body ol ul,
+.markdown-body ul ol,
+.markdown-body ul ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body li {
+  word-wrap: break-all;
+}
+
+.markdown-body li>p {
+  margin-top: 1rem;
+}
+
+.markdown-body li+li {
+  margin-top: .25rem;
+}
+
+.markdown-body dl {
+  padding: 0;
+}
+
+.markdown-body dl dt {
+  padding: 0;
+  margin-top: 1rem;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.markdown-body dl dd {
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+}
+
+.markdown-body table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+}
+
+.markdown-body table th {
+  font-weight: 600;
+}
+
+.markdown-body table td,
+.markdown-body table th {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #b9baba;
+}
+
+.markdown-body table tr {
+  background-color: #feffff;
+  border-top: 1px solid #b9baba;
+}
+
+.markdown-body table th {
+  background-color: #e7e8e8;
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background-color: #f8f9f9;
+}
+
+.markdown-body img,.markdown-body video {
+  max-width: 100%;
+  box-sizing: initial;
+}
+
+.markdown-body img[align=right] {
+  padding-left: 1.25rem;
+}
+
+.markdown-body img[align=left] {
+  padding-right: 1.25rem;
+}
+
+.markdown-body code {
+  padding: .2rem .4rem;
+  margin: 0;
+  font-size: 85%;
+  background-color: #f7f8f8;
+  color: #09844f;
+  border-radius: 0.1875rem;
+}
+
+.markdown-body pre {
+  word-wrap: normal;
+}
+
+.markdown-body pre>code {
+  padding: 0;
+  margin: 0;
+   font-size: 100%;
+  word-break: normal;
+  white-space: pre;
+  background: transparent;
+  border: 0;
+}
+
+.markdown-body .highlight {
+  margin-bottom: 1rem;
+}
+
+.markdown-body .highlight pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+
+.markdown-body .highlight pre,
+.markdown-body pre {
+  padding: 1rem;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f8f8;
+  border-radius: 0.1875rem;
+}
+
+.markdown-body pre code {
+  display: inline;
+  max-width: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: initial;
+  border: 0;
+  color: #09844f;
+}
+
+.markdown-body .task-list-item {
+  list-style-type: none;
+}
+
+.markdown-body .task-list-item+.task-list-item {
+  margin-top: 0.1875rem;
+}
+
+.markdown-body .task-list-item input {
+  margin: 0 .2rem .25rem -1.6rem;
+  vertical-align: middle;
+}
+
+.markdown-body .task-list-item input[type="checkbox"]{
+-webkit-appearance: none;-moz-appearance: none;appearance: none;
+width: 0.875rem; height: 0.875rem;outline: none;
+border: 1px solid #0366dd;border-radius: 2px; 
+}
+.markdown-body .task-list-item input[type="checkbox"]:checked {
+  background:no-repeat center/80% url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Cpath%20fill%3D%22%230366dd%22%20d%3D%22M173.898%20439.404l-166.4-166.4c-9.997-9.997-9.997-26.206%200-36.204l36.203-36.204c9.997-9.998%2026.207-9.998%2036.204%200L192%20312.69%20432.095%2072.596c9.997-9.997%2026.207-9.997%2036.204%200l36.203%2036.204c9.997%209.997%209.997%2026.206%200%2036.204l-294.4%20294.401c-9.998%209.997-26.207%209.997-36.204-.001z%22%2F%3E%3C%2Fsvg%3E") ;
+}
+
+.markdown-body section.footnotes{
+    margin-top:3rem;
+    border-top:solid 1px #e1e2e2;
+    padding-top:0px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .markdown-body mark{color: #111;}
+}
+
+/* PrismJS 1.23.0
+https://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1rem;
+    margin: .5rem 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background-color: #f7f8f8;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1rem;
+    border-radius: .3rem;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #8e9c92;
+}
+
+.token.punctuation {
+    color: #2834ce;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #2834ce;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #d32d26;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #$$codeBlockColor$$;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #bc319c;
+}
+
+.token.function,
+.token.class-name {
+    color: #967d41;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #784830;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+  position: relative;
+  padding-left: 3.8rem;
+  counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+  position: relative;
+  white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  font-size: 100%;
+  left: -3.8rem;
+  width: 3rem; /* works for line-numbers below 1000 lines */
+  letter-spacing: -1px;
+  border-right: 1px solid #bfc0c0;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+}
+
+  .line-numbers-rows > span {
+    display: block;
+    counter-increment: linenumber;
+  }
+
+    .line-numbers-rows > span:before {
+      content: counter(linenumber);
+      color: #bfc0c0;
+      display: block;
+      padding-right: 0.8rem;
+      text-align: right;
+    }
+
+
+</style><script>(n=>{"use strict";let s,r,e;const l=["cdn.jsdelivr.net","fastly.jsdelivr.net","gcore.jsdelivr.net","cdn.zenless.top","testingcf.jsdelivr.net"],t="//",i=l[0],o=Date.now(),a=2e3,c="jsdelivr-auto-fallback",f="/gh/PipecraftNet/jsdelivr-auto-fallback@main/empty.css?",d=e=>e&&e.includes(t+i),m=e=>e.replace(t+i,t+s),u=window.setTimeout,v=n.querySelectorAll.bind(n),b=()=>{let e,t;for(e of v('link[rel="stylesheet"]'))t=e.href,d(t)&&!t.includes(f)&&(e.href=m(t));for(e of v("script"))if(t=e.src,d(t)){const s=n.createElement("script");s.src=m(t),e.defer=!0,e.src="",e.before(s),e.remove()}for(e of v("img"))t=e.src,d(t)&&(e.src="",e.src=m(t));for(e of v("*[style]"))t=e.getAttribute("style"),d(t)&&e.setAttribute("style",m(t));for(e of v("style"))t=e.innerHTML,d(t)&&(e.innerHTML=m(t))},h=()=>{!e&&r&&s&&(console.warn(i+" is not available. Use "+s),e=!0,u(b,0),u(b,20),setInterval(b,500))},g=(()=>{try{return Object.assign({},JSON.parse(localStorage.getItem(c)||"{}"))}catch{return{}}})(),y=()=>{g.time=o,g.failed=!1,g.fastNode=null;for(const t of l)((e,t)=>{let s;const r=n.createElement("link"),l=e=>{s&&(clearTimeout(s),s=0,e||(r.href="data:text/css;base64,"),r.remove(),t(e))};s=u(l,a),r.addEventListener("error",()=>l(!1)),r.addEventListener("load",()=>l(!0)),r.rel="stylesheet",r.text="text/css",r.href=e+f+o,n.head.insertAdjacentElement("afterbegin",r)})("https://"+t,e=>{e||t!==i||(r=!0,g.failed=!0),e&&!s&&(s=t),e&&!g.fastNode&&(g.fastNode=t),h()});u(()=>{r&&!s&&(s=l[1],h()),localStorage.setItem(c,JSON.stringify(g))},a+100)};if(g.time&&o-g.time<36e5&&g.failed&&g.fastNode)r=!0,s=g.fastNode,h(),u(y,1e3);else if(n.head)y();else{const j=new MutationObserver(()=>{n.head&&(j.disconnect(),y())});j.observe(n,{childList:!0,subtree:!0})}})(document);</script>
+<style>.mweb-charts{background:#fff;}
+body{ box-sizing: border-box;
+    margin: 0 auto;}
+@media print{
+    pre, code, pre code {
+     overflow: visible !important;
+     white-space: pre-wrap !important;       /* css-3 */
+     white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+     white-space: -pre-wrap !important;      /* Opera 4-6 */
+     white-space: -o-pre-wrap !important;    /* Opera 7 */
+     word-wrap: break-word !important;       /* Internet Explorer 5.5+ */
+    }
+    html,body{margin:0;padding:4px;}
+}
+
+
+
+div.code-toolbar {
+  position: relative;
+}
+
+div.code-toolbar > .toolbar {
+  position: absolute;
+  z-index: 10;
+  top: .3em;
+  right: .2em;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+}
+
+div.code-toolbar:hover > .toolbar {
+  opacity: 1;
+}
+
+/* Separate line b/c rules are thrown out if selector is invalid.
+   IE11 and old Edge versions don't support :focus-within. */
+div.code-toolbar:focus-within > .toolbar {
+  opacity: 1;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item {
+  display: inline-block;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item > a {
+  cursor: pointer;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item > button {
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  line-height: normal;
+  overflow: visible;
+  padding: 0;
+  -webkit-user-select: none; /* for button */
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item > a,
+div.code-toolbar > .toolbar > .toolbar-item > button,
+div.code-toolbar > .toolbar > .toolbar-item > span {
+  color: inherit;
+  font-size: .8em;
+  padding: 4px .5em;
+  background: #f5f2f0;
+  background: rgba(224, 224, 224, 0.4);
+  box-shadow: 0 2px 0 0 rgba(0,0,0,0.2);
+  border-radius: .5em;
+}
+
+div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+div.code-toolbar > .toolbar > .toolbar-item > a:focus,
+div.code-toolbar > .toolbar > .toolbar-item > button:hover,
+div.code-toolbar > .toolbar > .toolbar-item > button:focus,
+div.code-toolbar > .toolbar > .toolbar-item > span:hover,
+div.code-toolbar > .toolbar > .toolbar-item > span:focus {
+  color: inherit;
+  text-decoration: none;
+}
+</style><script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script><script>!function(){if("undefined"!=typeof Prism&&"undefined"!=typeof document){var e=[],t={},n=function(){};Prism.plugins.toolbar={};var a=Prism.plugins.toolbar.registerButton=function(n,a){var r;r="function"==typeof a?a:function(e){var t;return"function"==typeof a.onClick?((t=document.createElement("button")).type="button",t.addEventListener("click",(function(){a.onClick.call(this,e)}))):"string"==typeof a.url?(t=document.createElement("a")).href=a.url:t=document.createElement("span"),a.className&&t.classList.add(a.className),t.textContent=a.text,t},n in t?console.warn('There is a button with the key "'+n+'" registered already.'):e.push(t[n]=r)},r=Prism.plugins.toolbar.hook=function(a){var r=a.element.parentNode;var l=a.element.classList;if(l.contains('language-mermaid') || l.contains('language-echarts') || l.contains('language-plantuml')){return;} if(r&&/pre/i.test(r.nodeName)&&!r.parentNode.classList.contains("code-toolbar")){var o=document.createElement("div");o.classList.add("code-toolbar"),r.parentNode.insertBefore(o,r),o.appendChild(r);var i=document.createElement("div");i.classList.add("toolbar");var l=e,d=function(e){for(;e;){var t=e.getAttribute("data-toolbar-order");if(null!=t)return(t=t.trim()).length?t.split(/\s*,\s*/g):[];e=e.parentElement}}(a.element);d&&(l=d.map((function(e){return t[e]||n}))),l.forEach((function(e){var t=e(a);if(t){var n=document.createElement("div");n.classList.add("toolbar-item"),n.appendChild(t),i.appendChild(n)}})),o.appendChild(i)}};a("label",(function(e){var t=e.element.parentNode;if(t&&/pre/i.test(t.nodeName)&&t.hasAttribute("data-label")){var n,a,r=t.getAttribute("data-label");try{a=document.querySelector("template#"+r)}catch(e){}return a?n=a.content:(t.hasAttribute("data-url")?(n=document.createElement("a")).href=t.getAttribute("data-url"):n=document.createElement("span"),n.textContent=r),n}})),Prism.hooks.add("complete",r)}}();</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/toolbar/prism-toolbar.min.css"><script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script><style>div.code-toolbar > .toolbar > .toolbar-item > a, div.code-toolbar > .toolbar > .toolbar-item > button, div.code-toolbar > .toolbar > .toolbar-item > span {padding: 4px .5em; background: #f5f2f0; background: rgba(224, 224, 224, 0.4);}</style><script>window.MathJax = {     tex: { tags: 'ams', displayMath: [ ['\\[', '\\]'] ] } ,     startup: {     pageReady() {       return MathJax.startup.defaultPageReady().then(function () {          window.mweb_mathjax_ready_val = 'yes';          if(window.mweb_mathjax_ready !== undefined){ mweb_mathjax_ready(); }       });     }   }};document.addEventListener('DOMContentLoaded', function(event) {    if (typeof Prism != 'undefined') {         Prism.highlightAll();     }});window.mweb_mathjax_ready_val = '';function theMWebMathJaxRenderIsReady(key){ return window.mweb_mathjax_ready_val; }</script><script>window.MathJax = { tex: { tags: 'ams', displayMath: [ ['\\[', '\\]'] ] } }; </script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script> <style>body{max-width:808px; padding:24px;}</style></head><body><div id='markdown_content' class='markdown-body'><h1><a id="mci-execution-questions%E2%80%94-comprehensive-resolution-document" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>MCI Execution Questions — Comprehensive Resolution Document</h1>
+<p><strong>Document Purpose:</strong> This document provides definitive answers to six critical questions raised before beginning MCI development execution. Each question is explained in full context, with implications analyzed and clear recommendations provided.</p>
+<p><strong>Prepared For:</strong> MCI Development Execution Team<br />
+<strong>Date:</strong> January 27, 2026<br />
+<strong>Context:</strong> These questions arose from analysis of the MCI documentation corpus, including the v2.0 Development Briefing, Supplementary Delta, and Execution Directive.</p>
+<hr />
+<h2><a id="table-of-contents" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Table of Contents</h2>
+<ol>
+<li><a href="#question-1-cr-discrepancy-resolution">Question 1: CR Discrepancy Resolution</a></li>
+<li><a href="#question-2-phase-i-execution-approach">Question 2: Phase I Execution Approach</a></li>
+<li><a href="#question-3-immediate-priority">Question 3: Immediate Priority</a></li>
+<li><a href="#question-4-gold-standard-folder-ingestion">Question 4: Gold Standard Folder Ingestion</a></li>
+<li><a href="#question-5-code-changes-timing">Question 5: Code Changes Timing</a></li>
+<li><a href="#question-6-output-location-for-phase-artifacts">Question 6: Output Location for Phase Artifacts</a></li>
+<li><a href="#summary-of-resolutions">Summary of Resolutions</a></li>
+<li><a href="#recommended-execution-sequence">Recommended Execution Sequence</a></li>
+</ol>
+<hr />
+<h2><a id="question-1-cr-discrepancy-resolution" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Question 1: CR Discrepancy Resolution</h2>
+<h3><a id="the-question" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Question</h3>
+<p>The Supplementary Delta document revealed two different Constitutional Requirement (CR) definitions existing within the MCI documentation:</p>
+<p><strong>Philosophical Definitions (from Use Case Specification):</strong></p>
+<ul>
+<li>CR-001: Decision-Support NOT Decision-Making — MCI guides, never decides</li>
+<li>CR-002: Expose Contradictions — Surface conflicts, never hide them</li>
+<li>CR-003: Descriptive AI — Explain clearly, never prescribe</li>
+</ul>
+<p><strong>Technical Definitions (from v2.0 Briefing):</strong></p>
+<ul>
+<li>CR-001: Token Validity Check — Verify token before ANY operation</li>
+<li>CR-002: Graceful Shutdown — 6-step mandatory shutdown sequence</li>
+<li>CR-003: WHAT/WHY/HOW Errors — All errors must include these three elements</li>
+<li>CR-004: 6 AM IST Token Expiry — Daily token expiration handling</li>
+<li>CR-005: UXMI 7-States — Every UI component handles all 7 interaction states</li>
+</ul>
+<p><strong>The Question Asked:</strong><br />
+Should these be treated as:</p>
+<ul>
+<li><strong>(A)</strong> Two separate sets (philosophical principles + technical requirements), OR</li>
+<li><strong>(B)</strong> Reconciled into a unified set (e.g., CR-001 encompasses both concepts)?</li>
+</ul>
+<h3><a id="what-this-question-means" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>What This Question Means</h3>
+<p>This question addresses a fundamental ambiguity in the MCI governance framework. Constitutional Requirements are described as &quot;SACRED&quot; and &quot;INVIOLABLE&quot; — yet they appear to have conflicting definitions depending on which document is referenced. Before any development proceeds, there must be absolute clarity on what the CRs actually are.</p>
+<h3><a id="implications-of-each-option" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implications of Each Option</h3>
+<p><strong>Option A — Two Separate Sets:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Implication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clarity</td>
+<td>Clean separation between &quot;why&quot; (philosophy) and &quot;how&quot; (implementation)</td>
+</tr>
+<tr>
+<td>Complexity</td>
+<td>Two frameworks to track and reference</td>
+</tr>
+<tr>
+<td>Traceability</td>
+<td>Each technical CR maps to a philosophical principle</td>
+</tr>
+<tr>
+<td>Risk</td>
+<td>Potential for citing wrong framework in wrong context</td>
+</tr>
+<tr>
+<td>Benefit</td>
+<td>Preserves original intent of both document authors</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Option B — Unified Set:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Implication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clarity</td>
+<td>Single authoritative CR list</td>
+</tr>
+<tr>
+<td>Complexity</td>
+<td>Requires reconciliation work to merge concepts</td>
+</tr>
+<tr>
+<td>Traceability</td>
+<td>Simpler — one CR, one definition</td>
+</tr>
+<tr>
+<td>Risk</td>
+<td>May lose nuance from original philosophical intent</td>
+</tr>
+<tr>
+<td>Benefit</td>
+<td>No ambiguity about what each CR means</td>
+</tr>
+</tbody>
+</table>
+<h3><a id="resolution-option-a%E2%80%94-maintain-two-separate-sets" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resolution: Option A — Maintain Two Separate Sets</h3>
+<p><strong>Rationale:</strong></p>
+<p>Upon careful analysis, these two sets are not in conflict — they operate at different levels of abstraction:</p>
+<ol>
+<li>
+<p><strong>The Philosophical Definitions</strong> define MCI's <em>identity</em> and <em>behavioral boundaries</em>. They answer: &quot;What kind of system is MCI? What should it NEVER do?&quot; These are <em>design principles</em> that guide decision-making.</p>
+</li>
+<li>
+<p><strong>The Technical Definitions</strong> define MCI's <em>implementation requirements</em>. They answer: &quot;What must the code do? What are the non-negotiable technical behaviors?&quot; These are <em>engineering mandates</em> that guide coding.</p>
+</li>
+</ol>
+<p><strong>Example of How They Complement:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Philosophical Principle</th>
+<th>Technical Requirement</th>
+<th>Relationship</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;Decision-Support NOT Decision-Making&quot;</td>
+<td>Token Validity Check (CR-001)</td>
+<td>MCI validates tokens to SUPPORT the operator's ability to trade — it doesn't make trading decisions</td>
+</tr>
+<tr>
+<td>&quot;Expose Contradictions&quot;</td>
+<td>WHAT/WHY/HOW Errors (CR-003)</td>
+<td>Errors are surfaced with full context so contradictions between expected and actual behavior are exposed</td>
+</tr>
+<tr>
+<td>&quot;Descriptive AI&quot;</td>
+<td>UXMI 7-States (CR-005)</td>
+<td>UI states DESCRIBE system status clearly; they don't prescribe user actions</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommended Structure:</strong></p>
+<pre><code class="language-plain_text">MCI CONSTITUTIONAL FRAMEWORK
+│
+├── PHILOSOPHICAL PRINCIPLES (PP)
+│   ├── PP-001: Decision-Support NOT Decision-Making
+│   ├── PP-002: Expose Contradictions
+│   └── PP-003: Descriptive AI
+│
+└── TECHNICAL REQUIREMENTS (CR)
+    ├── CR-001: Token Validity Check
+    ├── CR-002: Graceful Shutdown (6-step)
+    ├── CR-003: WHAT/WHY/HOW Error Format
+    ├── CR-004: 6 AM IST Token Expiry
+    └── CR-005: UXMI 7×7 Matrix
+</code></pre>
+<p><strong>Documentation Action Required:</strong></p>
+<p>Update <code>00_GOVERNANCE/CONSTITUTIONAL_CONSTRAINTS.md</code> to include both tiers with explicit explanation that:</p>
+<ul>
+<li>Philosophical Principles govern <em>design decisions</em></li>
+<li>Technical Requirements govern <em>implementation</em></li>
+<li>Neither supersedes the other; both must be satisfied</li>
+</ul>
+<hr />
+<h2><a id="question-2-phase-i-execution-approach" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Question 2: Phase I Execution Approach</h2>
+<h3><a id="the-question" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Question</h3>
+<p>The Execution Directive specifies that Phase I should produce six new artifacts:</p>
+<ul>
+<li>P1-A01: Mission Statement</li>
+<li>P1-A02: Stakeholder Register</li>
+<li>P1-A03: System Context Diagram</li>
+<li>P1-A04: System Boundary Table</li>
+<li>P1-A05: Constraints &amp; Assumptions</li>
+<li>P1-A06: Phase I Validation Report</li>
+</ul>
+<p>However, the existing MCI knowledge base already contains:</p>
+<ul>
+<li><code>00_GOVERNANCE/CONSTITUTIONAL_CONSTRAINTS.md</code> (5 CRs defined)</li>
+<li><code>02_ARCHITECTURE/SYSTEM_OVERVIEW.md</code> (system architecture exists)</li>
+<li><code>01_DECISIONS/DECISION_REGISTRY.md</code> (decisions documented)</li>
+</ul>
+<p><strong>The Question Asked:</strong><br />
+Should Phase I:</p>
+<ul>
+<li><strong>(A)</strong> Create new artifacts as specified (fresh P1-A01 to P1-A06), OR</li>
+<li><strong>(B)</strong> Validate and formalize existing artifacts as Phase I deliverables (retrofit approach)?</li>
+</ul>
+<h3><a id="what-this-question-means" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>What This Question Means</h3>
+<p>This question addresses a fundamental mismatch between the Execution Directive and MCI's reality. The Directive was written assuming a greenfield project (starting from nothing). MCI is explicitly acknowledged to be in a <strong>RETROFIT</strong> situation — code was written BEFORE specifications were formalized. Creating entirely new Phase I artifacts while ignoring existing documentation would be:</p>
+<ol>
+<li>Wasteful (duplicating work)</li>
+<li>Potentially contradictory (new artifacts might conflict with existing ones)</li>
+<li>Philosophically inconsistent (ignoring the retrofit reality)</li>
+</ol>
+<h3><a id="implications-of-each-option" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implications of Each Option</h3>
+<p><strong>Option A — Create Fresh Artifacts:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Implication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Process Purity</td>
+<td>Follows Execution Directive exactly as written</td>
+</tr>
+<tr>
+<td>Effort</td>
+<td>High — creating documents that largely exist</td>
+</tr>
+<tr>
+<td>Risk</td>
+<td>New artifacts may contradict existing documentation</td>
+</tr>
+<tr>
+<td>Outcome</td>
+<td>Two parallel documentation sets (old and new)</td>
+</tr>
+<tr>
+<td>Alignment</td>
+<td>Poor alignment with RETROFIT acknowledgment</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Option B — Retrofit Existing Artifacts:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Implication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Process Purity</td>
+<td>Adapts Execution Directive to reality</td>
+</tr>
+<tr>
+<td>Effort</td>
+<td>Moderate — validation and gap-filling</td>
+</tr>
+<tr>
+<td>Risk</td>
+<td>Must ensure existing artifacts meet Phase I criteria</td>
+</tr>
+<tr>
+<td>Outcome</td>
+<td>Single unified documentation set</td>
+</tr>
+<tr>
+<td>Alignment</td>
+<td>Strong alignment with RETROFIT acknowledgment</td>
+</tr>
+</tbody>
+</table>
+<h3><a id="resolution-option-b%E2%80%94-retrofit-approach" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resolution: Option B — Retrofit Approach</h3>
+<p><strong>Rationale:</strong></p>
+<p>MCI documentation explicitly states the project is in a RETROFIT situation. The Execution Directive, while well-structured, was written for a hypothetical future project, not the current MCI reality. Applying it rigidly would contradict the project's own acknowledgment of its state.</p>
+<p>The correct approach is to use the Execution Directive's Phase I <em>criteria</em> while satisfying them through <em>existing artifacts</em> where they exist.</p>
+<p><strong>Practical Implementation:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Phase I Artifact</th>
+<th>Existing Source</th>
+<th>Required Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1-A01: Mission Statement</td>
+<td>v2.0 Briefing Executive Summary contains: &quot;MCI is the command cockpit for CIA-SIE-PURE&quot;</td>
+<td><strong>Extract &amp; Formalize</strong> — Pull into standalone document with proper formatting</td>
+</tr>
+<tr>
+<td>P1-A02: Stakeholder Register</td>
+<td>No existing equivalent identified</td>
+<td><strong>Create Fresh</strong> — Document: Operator (primary), Engine (CIA-SIE-PURE), Clock (token expiry), Zerodha Kite API</td>
+</tr>
+<tr>
+<td>P1-A03: System Context Diagram</td>
+<td>Likely exists in <code>02_ARCHITECTURE/</code></td>
+<td><strong>Validate or Create</strong> — Verify existence; if missing, create using MCI-specific actors</td>
+</tr>
+<tr>
+<td>P1-A04: System Boundary Table</td>
+<td>v2.0 contains &quot;MCI is cockpit, engine executes&quot; boundary</td>
+<td><strong>Extract &amp; Formalize</strong> — Create explicit in-scope/out-of-scope matrix</td>
+</tr>
+<tr>
+<td>P1-A05: Constraints &amp; Assumptions</td>
+<td><code>00_GOVERNANCE/CONSTITUTIONAL_CONSTRAINTS.md</code> exists</td>
+<td><strong>Validate &amp; Enhance</strong> — Ensure all constraints documented; add assumptions if missing</td>
+</tr>
+<tr>
+<td>P1-A06: Validation Report</td>
+<td>Does not exist</td>
+<td><strong>Create Fresh</strong> — Validation against Phase I criteria</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Validation Criteria (from Execution Directive) Applied to Retrofit:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>How to Satisfy via Retrofit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Completeness</td>
+<td>All six artifacts exist (some extracted, some new)</td>
+</tr>
+<tr>
+<td>Consistency</td>
+<td>Validation report confirms no contradictions between extracted artifacts</td>
+</tr>
+<tr>
+<td>Traceability</td>
+<td>Each boundary decision maps to a constraint in existing documentation</td>
+</tr>
+<tr>
+<td>Stakeholder Coverage</td>
+<td>Context diagram includes all actors from existing architecture docs</td>
+</tr>
+<tr>
+<td>Version Control</td>
+<td>All artifacts committed with Phase I tag</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2><a id="question-3-immediate-priority" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Question 3: Immediate Priority</h2>
+<h3><a id="the-question" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Question</h3>
+<p>Two execution paths are available:</p>
+<p><strong>Path A:</strong> Begin Phase I expansion (Mission Definition) as per Execution Directive</p>
+<p><strong>Path B:</strong> Create the 13 missing architecture flowcharts (Layer 2) to close the 69% → 100% LTT gap</p>
+<p><strong>The Question Asked:</strong><br />
+Which should be prioritized first?</p>
+<h3><a id="what-this-question-means" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>What This Question Means</h3>
+<p>This question addresses resource allocation and sequencing. Both tasks are valid and necessary. The question is which delivers more value sooner and which creates better conditions for the other.</p>
+<h3><a id="implications-of-each-option" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implications of Each Option</h3>
+<p><strong>Path A — Phase I First:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Implication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Immediate Output</td>
+<td>Governance documents formalized</td>
+</tr>
+<tr>
+<td>Measurable Progress</td>
+<td>Difficult to quantify</td>
+</tr>
+<tr>
+<td>Technical Value</td>
+<td>Low — doesn't produce engineering artifacts</td>
+</tr>
+<tr>
+<td>Dependency Impact</td>
+<td>Flowcharts don't require Phase I to exist</td>
+</tr>
+<tr>
+<td>Risk Mitigation</td>
+<td>Doesn't address the documented Layer 2 gap</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Path B — Flowcharts First:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Implication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Immediate Output</td>
+<td>13 technical diagrams</td>
+</tr>
+<tr>
+<td>Measurable Progress</td>
+<td>LTT: 69% → ~100% (Layer 2 closes)</td>
+</tr>
+<tr>
+<td>Technical Value</td>
+<td>High — enables code maintenance, onboarding</td>
+</tr>
+<tr>
+<td>Dependency Impact</td>
+<td>Phase I validation more meaningful when architecture is documented</td>
+</tr>
+<tr>
+<td>Risk Mitigation</td>
+<td>Directly addresses the single largest documented gap</td>
+</tr>
+</tbody>
+</table>
+<h3><a id="resolution-path-b%E2%80%94-create-the-13-flowcharts-first" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resolution: Path B — Create the 13 Flowcharts First</h3>
+<p><strong>Rationale:</strong></p>
+<ol>
+<li>
+<p><strong>Measurable Impact:</strong> The LTT (Lifecycle Tracking Tree) is documented at 69% completion specifically because Layer 2 (Architecture Documentation) is at 0%. Creating the 13 flowcharts directly addresses this gap with quantifiable progress.</p>
+</li>
+<li>
+<p><strong>Technical Debt Priority:</strong> Architecture documentation is a prerequisite for maintainability. Without flowcharts, developers cannot understand system behavior for maintenance or onboarding.</p>
+</li>
+<li>
+<p><strong>Phase I Enhancement:</strong> Once the 13 flowcharts exist, Phase I validation becomes more meaningful. The Mission Statement and System Boundaries can be validated against actual documented architecture, not just prose descriptions.</p>
+</li>
+<li>
+<p><strong>Practical Value:</strong> Flowcharts are immediately useful engineering artifacts. Phase I documents, while important for governance, don't directly enable development work.</p>
+</li>
+</ol>
+<p><strong>The 13 Flowcharts Required:</strong></p>
+<p><strong>Backend Flowcharts (5):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Document</th>
+<th>Description</th>
+<th>CR Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.1</td>
+<td>Token Flow</td>
+<td>Authentication sequence from user input to Kite validation</td>
+<td>CR-001, CR-004</td>
+</tr>
+<tr>
+<td>2.2</td>
+<td>Scanner Logic</td>
+<td>12-point pre-ignition validation sequence</td>
+<td>Phase 1</td>
+</tr>
+<tr>
+<td>2.3</td>
+<td>Ignition Sequence</td>
+<td>Engine start sequence with safety gates</td>
+<td>Phase 2</td>
+</tr>
+<tr>
+<td>2.4</td>
+<td>Telemetry Pipeline</td>
+<td>Data flow: Engine → WebSocket → Cache → Frontend</td>
+<td>Phase 3</td>
+</tr>
+<tr>
+<td>2.5</td>
+<td>Shutdown Sequence</td>
+<td>6-step CR-002 compliant graceful shutdown</td>
+<td>CR-002 (SACRED)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Frontend Flowcharts (4):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Document</th>
+<th>Description</th>
+<th>CR Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.6</td>
+<td>Component Hierarchy</td>
+<td>Tree: App.tsx → Phase Components → UXMI Library</td>
+<td>CR-005</td>
+</tr>
+<tr>
+<td>2.7</td>
+<td>State Management Flow</td>
+<td>Zustand store interactions and data flow</td>
+<td>All stores</td>
+</tr>
+<tr>
+<td>2.8</td>
+<td>Routing Flow</td>
+<td>Phase 0→1→2→3→4 progression with gates</td>
+<td>Navigation</td>
+</tr>
+<tr>
+<td>2.9</td>
+<td>UXMI States</td>
+<td>7 components × 7 states visualization</td>
+<td>CR-005 (SACRED)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Integration Flowcharts (4):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Document</th>
+<th>Description</th>
+<th>CR Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.10</td>
+<td>API Contract</td>
+<td>Endpoint specs: /auth, /ignition, /telemetry, /shutdown</td>
+<td>Backend↔Frontend</td>
+</tr>
+<tr>
+<td>2.11</td>
+<td>WebSocket Events</td>
+<td>Event schema for real-time telemetry</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td>2.12</td>
+<td>Error Propagation</td>
+<td>WHAT/WHY/HOW flow through all layers</td>
+<td>CR-003 (SACRED)</td>
+</tr>
+<tr>
+<td>2.13</td>
+<td>Data Flow Lifecycle</td>
+<td>Complete DFD: Broker → Engine → MCI → Dashboard</td>
+<td>End-to-End</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommended Tools (from Tool Arsenal):</strong></p>
+<ul>
+<li>Primary: Eraser.io for complex flowcharts (Nodes 2.1, 2.5, 2.10, 2.12, 2.13)</li>
+<li>Secondary: Mermaid for documentation-embedded diagrams (Nodes 2.6, 2.7, 2.8, 2.11)</li>
+<li>Specialized: v0/Vercel for UXMI state visualization (Node 2.9)</li>
+</ul>
+<hr />
+<h2><a id="question-4-gold-standard-folder-ingestion" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Question 4: Gold Standard Folder Ingestion</h2>
+<h3><a id="the-question" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Question</h3>
+<p>The folder <code>01_GOLD_STANDARD</code> exists and is intended to serve as a reference baseline. Its contents have been listed but not fully read.</p>
+<p><strong>The Question Asked:</strong><br />
+Should the Gold Standard folder be read and ingested in full before beginning any execution, to ensure alignment with baseline expectations?</p>
+<h3><a id="what-this-question-means" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>What This Question Means</h3>
+<p>This question addresses the risk of producing artifacts that don't match established patterns. If the Gold Standard folder contains templates, formatting conventions, quality criteria, or reference examples, working without this knowledge could result in:</p>
+<ol>
+<li>Artifacts that require rework to match standards</li>
+<li>Inconsistent documentation across the project</li>
+<li>Wasted effort producing non-compliant outputs</li>
+</ol>
+<h3><a id="implications" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implications</h3>
+<p><strong>If Yes — Read Gold Standard First:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Implication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Time Investment</td>
+<td>Initial delay to read and understand</td>
+</tr>
+<tr>
+<td>Quality Assurance</td>
+<td>All outputs align with established patterns</td>
+</tr>
+<tr>
+<td>Consistency</td>
+<td>Single standard applied across all artifacts</td>
+</tr>
+<tr>
+<td>Rework Risk</td>
+<td>Minimized — standards known before creation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>If No — Proceed Without Reading:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Implication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Time Investment</td>
+<td>Faster initial start</td>
+</tr>
+<tr>
+<td>Quality Assurance</td>
+<td>Unknown — may or may not match standards</td>
+</tr>
+<tr>
+<td>Consistency</td>
+<td>Risk of inconsistent artifacts</td>
+</tr>
+<tr>
+<td>Rework Risk</td>
+<td>High — may need to redo work to match standards</td>
+</tr>
+</tbody>
+</table>
+<h3><a id="resolution-yes%E2%80%94-read-gold-standard-in-full-before-execution" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resolution: YES — Read Gold Standard in Full Before Execution</h3>
+<p><strong>Rationale:</strong></p>
+<p>The Gold Standard folder exists specifically to define baseline expectations. Ignoring it and then producing artifacts that don't match would be inefficient and contrary to the purpose of having a Gold Standard.</p>
+<p><strong>Expected Contents to Look For:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Content Type</th>
+<th>Why It Matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Document Templates</td>
+<td>Defines expected structure and sections</td>
+</tr>
+<tr>
+<td>Naming Conventions</td>
+<td>Ensures consistent file and artifact naming</td>
+</tr>
+<tr>
+<td>Quality Criteria</td>
+<td>Defines &quot;done&quot; for each artifact type</td>
+</tr>
+<tr>
+<td>Reference Examples</td>
+<td>Shows expected output format and depth</td>
+</tr>
+<tr>
+<td>Style Guidelines</td>
+<td>Ensures consistent tone and terminology</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Action Required:</strong></p>
+<p>Before creating any flowcharts or Phase I artifacts:</p>
+<ol>
+<li>Read all files in <code>01_GOLD_STANDARD/</code></li>
+<li>Document any templates found</li>
+<li>Extract naming conventions</li>
+<li>Note quality criteria</li>
+<li>Use reference examples as guides for new artifacts</li>
+</ol>
+<hr />
+<h2><a id="question-5-code-changes-timing" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Question 5: Code Changes Timing</h2>
+<h3><a id="the-question" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Question</h3>
+<p>Three cosmetic code fixes have been identified:</p>
+<table>
+<thead>
+<tr>
+<th>Fix</th>
+<th>File</th>
+<th>Line(s)</th>
+<th>Current</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#1</td>
+<td><code>telemetry.ts</code></td>
+<td>31-32</td>
+<td>AAPL, GOOGL</td>
+<td>RELIANCE, TCS</td>
+</tr>
+<tr>
+<td>#2</td>
+<td><code>TelemetryDashboard.tsx</code></td>
+<td>25</td>
+<td>AAPL, GOOGL</td>
+<td>RELIANCE, TCS</td>
+</tr>
+<tr>
+<td>#3</td>
+<td><code>App.tsx</code></td>
+<td>294</td>
+<td>CIA-SIE-START-STOP</td>
+<td>MCI - Mission Control Interface</td>
+</tr>
+</tbody>
+</table>
+<p>The INTEGRATION_PLAN.md states all code changes happen in <code>12_APPLICATION_CODE/</code>.</p>
+<p><strong>The Question Asked:</strong><br />
+Should these cosmetic fixes be:</p>
+<ul>
+<li><strong>(A)</strong> Executed now (quick wins), OR</li>
+<li><strong>(B)</strong> Deferred until after Phase I/II completion?</li>
+</ul>
+<h3><a id="what-this-question-means" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>What This Question Means</h3>
+<p>This question addresses the tension between process discipline (following phases sequentially) and practical value (fixing known defects quickly). The Execution Directive emphasizes closed-loop validation and phased execution. However, these are explicitly cosmetic (branding/localization) fixes, not architectural changes.</p>
+<h3><a id="implications-of-each-option" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implications of Each Option</h3>
+<p><strong>Option A — Execute Now:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Implication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Process Alignment</td>
+<td>Minor deviation from strict phase sequence</td>
+</tr>
+<tr>
+<td>Time to Value</td>
+<td>Immediate — defects removed</td>
+</tr>
+<tr>
+<td>Risk</td>
+<td>None — changes are cosmetic, not architectural</td>
+</tr>
+<tr>
+<td>Visibility</td>
+<td>Progress demonstrated through tangible fixes</td>
+</tr>
+<tr>
+<td>CR Impact</td>
+<td>None — these don't affect CR compliance</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Option B — Wait for Phase Completion:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Implication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Process Alignment</td>
+<td>Strict adherence to phase sequence</td>
+</tr>
+<tr>
+<td>Time to Value</td>
+<td>Delayed — known defects remain</td>
+</tr>
+<tr>
+<td>Risk</td>
+<td>None technically, but leaves incorrect branding in codebase</td>
+</tr>
+<tr>
+<td>Visibility</td>
+<td>No visible progress until phases complete</td>
+</tr>
+<tr>
+<td>CR Impact</td>
+<td>None — same either way</td>
+</tr>
+</tbody>
+</table>
+<h3><a id="resolution-option-a%E2%80%94-execute-cosmetic-fixes-now" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resolution: Option A — Execute Cosmetic Fixes Now</h3>
+<p><strong>Rationale:</strong></p>
+<ol>
+<li>
+<p><strong>Nature of Changes:</strong> These are cosmetic fixes — symbol names and branding text. They do not affect:</p>
+<ul>
+<li>System architecture</li>
+<li>CR compliance</li>
+<li>Business logic</li>
+<li>Data flow</li>
+<li>API contracts</li>
+</ul>
+</li>
+<li>
+<p><strong>Cost of Delay:</strong> Leaving US stock symbols (AAPL, GOOGL) in an Indian market trading application is incorrect. Leaving &quot;CIA-SIE-START-STOP&quot; instead of &quot;MCI&quot; is branding inconsistency. Neither should persist.</p>
+</li>
+<li>
+<p><strong>Execution Directive Compliance:</strong> The directive states &quot;no silent changes&quot; and &quot;no undocumented decisions.&quot; These fixes are:</p>
+<ul>
+<li>Documented (in v2.0, Delta, and now this document)</li>
+<li>Not silent (explicitly identified with file and line numbers)</li>
+<li>Traceable (mapped to known defects)</li>
+</ul>
+</li>
+<li>
+<p><strong>Quick Wins Matter:</strong> Demonstrating tangible progress early builds momentum and confidence.</p>
+</li>
+</ol>
+<p><strong>Execution Instructions:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Fix</th>
+<th>File Path</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#1</td>
+<td><code>12_APPLICATION_CODE/src/server/routes/telemetry.ts</code></td>
+<td>Lines 31-32: Replace <code>AAPL</code> → <code>RELIANCE</code>, <code>GOOGL</code> → <code>TCS</code></td>
+</tr>
+<tr>
+<td>#2</td>
+<td><code>12_APPLICATION_CODE/src/client/components/phase3/TelemetryDashboard.tsx</code></td>
+<td>Line 25: Replace <code>AAPL</code> → <code>RELIANCE</code>, <code>GOOGL</code> → <code>TCS</code></td>
+</tr>
+<tr>
+<td>#3</td>
+<td><code>12_APPLICATION_CODE/src/client/App.tsx</code></td>
+<td>Line 294: Replace <code>CIA-SIE-START-STOP</code> → <code>MCI - Mission Control Interface</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Post-Fix Actions:</strong></p>
+<ol>
+<li>Commit with message: <code>fix: cosmetic corrections - Indian symbols and MCI branding</code></li>
+<li>Document in Decision Registry that cosmetic fixes were applied pre-Phase I</li>
+<li>Verify application still builds and runs</li>
+</ol>
+<hr />
+<h2><a id="question-6-output-location-for-phase-artifacts" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Question 6: Output Location for Phase Artifacts</h2>
+<h3><a id="the-question" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Question</h3>
+<p>The Execution Directive specifies six Phase I artifacts. The INTEGRATION_PLAN.md indicates planning documents go in <code>09_IMPLEMENTATION_ROADMAP/</code>.</p>
+<p><strong>The Question Asked:</strong><br />
+Should Phase I artifacts be placed in:</p>
+<ul>
+<li>A new subfolder like <code>09_IMPLEMENTATION_ROADMAP/PHASE_I_ARTIFACTS/</code>?</li>
+<li>Directly in <code>00_GOVERNANCE/</code>?</li>
+<li>Directly in <code>09_IMPLEMENTATION_ROADMAP/</code>?</li>
+</ul>
+<h3><a id="what-this-question-means" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>What This Question Means</h3>
+<p>This question addresses documentation organization. Poor organization leads to:</p>
+<ol>
+<li>Difficulty finding documents</li>
+<li>Confusion about document authority</li>
+<li>Version control complexity</li>
+<li>Onboarding friction for new team members</li>
+</ol>
+<h3><a id="analysis-of-options" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Analysis of Options</h3>
+<p><strong>Option: <code>00_GOVERNANCE/</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Assessment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Semantic Fit</td>
+<td>Partial — Phase I artifacts are governance-adjacent but execution-focused</td>
+</tr>
+<tr>
+<td>Existing Contents</td>
+<td>Constitutional Constraints — high-level governance</td>
+</tr>
+<tr>
+<td>Risk</td>
+<td>Mixing execution artifacts with foundational governance documents</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Option: <code>09_IMPLEMENTATION_ROADMAP/</code> (flat)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Assessment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Semantic Fit</td>
+<td>Good — Phase I is part of implementation roadmap</td>
+</tr>
+<tr>
+<td>Existing Contents</td>
+<td>v2.0 Briefing, Delta, potentially other planning docs</td>
+</tr>
+<tr>
+<td>Risk</td>
+<td>Flat structure becomes cluttered as phases progress</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Option: <code>09_IMPLEMENTATION_ROADMAP/PHASE_ARTIFACTS/</code> (nested)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Assessment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Semantic Fit</td>
+<td>Excellent — Phase artifacts organized by phase</td>
+</tr>
+<tr>
+<td>Existing Contents</td>
+<td>New folder — clean structure</td>
+</tr>
+<tr>
+<td>Risk</td>
+<td>Additional folder depth (minimal concern)</td>
+</tr>
+</tbody>
+</table>
+<h3><a id="resolution-create-nested-structure-09-implementation-roadmapphase-artifacts" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resolution: Create Nested Structure <code>09_IMPLEMENTATION_ROADMAP/PHASE_ARTIFACTS/</code></h3>
+<p><strong>Rationale:</strong></p>
+<ol>
+<li>
+<p><strong>Scalability:</strong> As Phases II through VIII produce artifacts, a flat structure in <code>09_IMPLEMENTATION_ROADMAP/</code> would become unwieldy. Nesting by phase keeps artifacts organized.</p>
+</li>
+<li>
+<p><strong>Traceability:</strong> The Execution Directive emphasizes traceability. A folder-per-phase structure makes it immediately clear which artifacts belong to which phase.</p>
+</li>
+<li>
+<p><strong>Separation of Concerns:</strong> Governance documents (<code>00_GOVERNANCE/</code>) should remain foundational and stable. Phase artifacts are execution-focused and will evolve.</p>
+</li>
+</ol>
+<p><strong>Recommended Directory Structure:</strong></p>
+<pre><code class="language-plain_text">09_IMPLEMENTATION_ROADMAP/
+│
+├── MCI_COMPLETE_DEVELOPMENT_BRIEFING_v2.html    (existing - comprehensive reference)
+├── MCI_SUPPLEMENTARY_DELTA.html                  (existing - unique extracted content)
+├── MCI_Execution-directive.html                  (relocate here if not already)
+├── MCI_EXECUTION_QUESTIONS_RESOLVED.md           (this document)
+│
+└── PHASE_ARTIFACTS/
+    │
+    ├── PHASE_I/
+    │   ├── P1-A01_Mission_Statement.md
+    │   ├── P1-A02_Stakeholder_Register.md
+    │   ├── P1-A03_System_Context_Diagram.md      (or .mermaid)
+    │   ├── P1-A04_System_Boundary_Table.md
+    │   ├── P1-A05_Constraints_and_Assumptions.md
+    │   └── P1-A06_Validation_Report.md
+    │
+    ├── PHASE_II/
+    │   └── (Requirements artifacts)
+    │
+    ├── PHASE_III/
+    │   └── (Architecture artifacts — including the 13 flowcharts)
+    │
+    └── ... (Phases IV through VIII)
+</code></pre>
+<p><strong>Note on Flowchart Location:</strong></p>
+<p>The 13 architecture flowcharts (Layer 2) could alternatively reside in <code>02_ARCHITECTURE/FLOWCHARTS/</code> since they are architecture documentation. The decision should be based on:</p>
+<ul>
+<li>If flowcharts are <em>reference documentation</em> → <code>02_ARCHITECTURE/</code></li>
+<li>If flowcharts are <em>phase deliverables</em> → <code>09_IMPLEMENTATION_ROADMAP/PHASE_ARTIFACTS/PHASE_III/</code></li>
+</ul>
+<p>Recommend: <code>02_ARCHITECTURE/FLOWCHARTS/</code> for the 13 flowcharts, as they are permanent architecture reference documents, not transient phase artifacts.</p>
+<hr />
+<h2><a id="summary-of-resolutions" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary of Resolutions</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Question</th>
+<th>Resolution</th>
+<th>Rationale Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>CR Discrepancy</td>
+<td><strong>Two Separate Sets</strong> — Philosophical Principles (PP-001 to PP-003) + Technical Requirements (CR-001 to CR-005)</td>
+<td>They operate at different abstraction levels and complement rather than conflict</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Phase I Approach</td>
+<td><strong>Retrofit</strong> — Validate and formalize existing artifacts</td>
+<td>MCI is explicitly in RETROFIT situation; creating fresh artifacts ignores existing work</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Immediate Priority</td>
+<td><strong>Flowcharts First</strong> — Create 13 Layer 2 architecture diagrams</td>
+<td>Closes measurable gap (69%→100% LTT), provides immediate technical value</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Gold Standard</td>
+<td><strong>Yes, Read First</strong> — Ingest fully before any execution</td>
+<td>Prevents rework by ensuring alignment with established patterns</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Code Fixes</td>
+<td><strong>Execute Now</strong> — Apply 3 cosmetic fixes immediately</td>
+<td>Cosmetic changes with no CR/architecture impact; documented and traceable</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Output Location</td>
+<td><strong>Nested Structure</strong> — <code>09_IMPLEMENTATION_ROADMAP/PHASE_ARTIFACTS/PHASE_X/</code></td>
+<td>Scalable, traceable, separates execution artifacts from foundational governance</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2><a id="recommended-execution-sequence" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Recommended Execution Sequence</h2>
+<p>Based on all resolutions above, the recommended execution order is:</p>
+<h3><a id="step-1-gold-standard-ingestion" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 1: Gold Standard Ingestion</h3>
+<p><strong>Action:</strong> Read <code>01_GOLD_STANDARD/</code> folder in full<br />
+<strong>Output:</strong> Understanding of templates, conventions, quality criteria<br />
+<strong>Dependency:</strong> None<br />
+<strong>Enables:</strong> All subsequent artifact creation</p>
+<h3><a id="step-2-cosmetic-code-fixes" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 2: Cosmetic Code Fixes</h3>
+<p><strong>Action:</strong> Apply the 3 identified fixes<br />
+<strong>Output:</strong> Corrected code files, commit to repository<br />
+<strong>Dependency:</strong> Access to <code>12_APPLICATION_CODE/</code><br />
+<strong>Enables:</strong> Clean codebase for subsequent work</p>
+<h3><a id="step-3-create-folder-structure" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 3: Create Folder Structure</h3>
+<p><strong>Action:</strong> Establish <code>09_IMPLEMENTATION_ROADMAP/PHASE_ARTIFACTS/</code> and <code>02_ARCHITECTURE/FLOWCHARTS/</code><br />
+<strong>Output:</strong> Organized directory structure<br />
+<strong>Dependency:</strong> None<br />
+<strong>Enables:</strong> Proper placement of all subsequent artifacts</p>
+<h3><a id="step-4-create-13-architecture-flowcharts" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 4: Create 13 Architecture Flowcharts</h3>
+<p><strong>Action:</strong> Produce Layer 2 diagrams using Eraser.io/Mermaid<br />
+<strong>Output:</strong> 13 flowchart documents in <code>02_ARCHITECTURE/FLOWCHARTS/</code><br />
+<strong>Dependency:</strong> Gold Standard ingestion (Step 1)<br />
+<strong>Enables:</strong> LTT completion, Phase I validation</p>
+<h3><a id="step-5-phase-i-artifact-retrofit" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 5: Phase I Artifact Retrofit</h3>
+<p><strong>Action:</strong> Extract/create P1-A01 through P1-A06<br />
+<strong>Output:</strong> 6 Phase I artifacts in <code>09_IMPLEMENTATION_ROADMAP/PHASE_ARTIFACTS/PHASE_I/</code><br />
+<strong>Dependency:</strong> Flowcharts complete (Step 4) for meaningful validation<br />
+<strong>Enables:</strong> Phase II execution</p>
+<h3><a id="step-6-cr-framework-update" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Step 6: CR Framework Update</h3>
+<p><strong>Action:</strong> Update <code>00_GOVERNANCE/CONSTITUTIONAL_CONSTRAINTS.md</code> with two-tier structure<br />
+<strong>Output:</strong> Unified constitutional framework document<br />
+<strong>Dependency:</strong> None (can parallel with Steps 4-5)<br />
+<strong>Enables:</strong> Clear CR reference for all future work</p>
+<hr />
+<h2><a id="document-control" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Document Control</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Document ID</td>
+<td>MCI-EXEC-QR-001</td>
+</tr>
+<tr>
+<td>Version</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>APPROVED FOR EXECUTION</td>
+</tr>
+<tr>
+<td>Author</td>
+<td>Claude (AI Assistant)</td>
+</tr>
+<tr>
+<td>Reviewed By</td>
+<td>Neville Mehta</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>January 27, 2026</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>This document provides definitive resolution to all pre-execution questions. Execution may proceed according to the recommended sequence with full clarity and no assumptions.</em></p>
+</div></body></html>

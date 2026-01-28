@@ -1,151 +1,131 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
-import { TelemetryDashboard } from '../TelemetryDashboard';
-import { useTelemetryStore } from '../../../stores/telemetryStore';
-import { useIgnitionStore } from '../../../stores/ignitionStore';
+/**
+ * TelemetryDashboard Tests
+ * Tests for Phase 3 real-time telemetry display
+ * Indian market symbols: RELIANCE, TCS, INFY, HDFCBANK, ICICIBANK
+ */
 
-// Mock the stores
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import { TelemetryDashboard } from '../TelemetryDashboard';
+
+// Mock the telemetry store
+const mockTelemetryStore = {
+  isConnected: true,
+  setConnected: vi.fn(),
+  positions: [],
+  orders: [],
+  accountMetrics: null,
+  systemHealth: null,
+  marketData: {},
+  activityLog: [],
+  lastUpdate: null,
+};
+
 vi.mock('../../../stores/telemetryStore', () => ({
-  useTelemetryStore: vi.fn(),
+  useTelemetryStore: vi.fn(() => mockTelemetryStore),
 }));
 
+// Mock the ignition store
+const mockIgnitionStore = {
+  phase: 'running' as const,
+  selectedBackend: 'zerodha' as const,
+  backendConfigs: [
+    {
+      type: 'zerodha',
+      name: 'Zerodha Kite',
+      broker: 'Zerodha',
+      description: 'Connect via Kite Connect API for NSE/BSE trading.',
+      endpoint: '/api/backend/zerodha',
+      requiresConfirmation: true,
+      icon: '🪁',
+    },
+  ],
+};
+
 vi.mock('../../../stores/ignitionStore', () => ({
-  useIgnitionStore: vi.fn(),
+  useIgnitionStore: vi.fn(() => mockIgnitionStore),
 }));
 
 // Mock child components to simplify testing
 vi.mock('../PositionsPanel', () => ({
-  PositionsPanel: () => <div data-testid="positions-panel">Positions Panel</div>,
+  PositionsPanel: () => <div data-testid="positions-panel">Positions</div>,
 }));
 
 vi.mock('../OrdersPanel', () => ({
-  OrdersPanel: () => <div data-testid="orders-panel">Orders Panel</div>,
+  OrdersPanel: () => <div data-testid="orders-panel">Orders</div>,
 }));
 
 vi.mock('../AccountPanel', () => ({
-  AccountPanel: () => <div data-testid="account-panel">Account Panel</div>,
+  AccountPanel: () => <div data-testid="account-panel">Account</div>,
 }));
 
 vi.mock('../SystemHealthPanel', () => ({
-  SystemHealthPanel: () => <div data-testid="system-health-panel">System Health Panel</div>,
+  SystemHealthPanel: () => <div data-testid="system-health-panel">System Health</div>,
 }));
 
 vi.mock('../MarketDataPanel', () => ({
-  MarketDataPanel: ({ symbols }: { symbols: string[] }) => (
-    <div data-testid="market-data-panel">Market Data Panel: {symbols.join(', ')}</div>
+  MarketDataPanel: ({ symbols }: { symbols?: string[] }) => (
+    <div data-testid="market-data-panel">
+      Market Data: {symbols?.join(', ')}
+    </div>
   ),
 }));
 
 vi.mock('../ActivityLogPanel', () => ({
-  ActivityLogPanel: () => <div data-testid="activity-log-panel">Activity Log Panel</div>,
+  ActivityLogPanel: () => <div data-testid="activity-log-panel">Activity Log</div>,
 }));
 
-describe('TelemetryDashboard component', () => {
-  const mockTelemetryStore = {
-    isConnected: false,
-    setConnected: vi.fn(),
-  };
+// Mock UXMI components
+vi.mock('../../uxmi', () => ({
+  Spinner: ({ label }: { label?: string }) => <div data-testid="spinner">{label}</div>,
+  ToastContainer: () => <div data-testid="toast-container" />,
+  Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
 
-  const mockIgnitionStore = {
-    phase: 'idle',
-    selectedBackend: 'paper',
-  };
+// Mock cockpit components
+vi.mock('../../cockpit', () => ({
+  SimulationBadge: () => <div data-testid="simulation-badge">SIMULATION</div>,
+}));
 
+// Mock useBackendHealth hook (COCKPIT INTEGRITY)
+const mockBackendHealth = {
+  isReachable: true,
+  latency: 10,
+  lastError: null,
+  timeSinceLastCheck: 0,
+  isChecking: false,
+  checkNow: vi.fn(),
+};
+
+vi.mock('../../../hooks', () => ({
+  useBackendHealth: vi.fn(() => mockBackendHealth),
+}));
+
+describe('TelemetryDashboard', () => {
   beforeEach(() => {
-    vi.useFakeTimers();
-    vi.mocked(useTelemetryStore).mockReturnValue(mockTelemetryStore);
-    vi.mocked(useIgnitionStore).mockReturnValue(mockIgnitionStore);
     vi.clearAllMocks();
+    vi.useFakeTimers();
+    // Reset mock values
+    mockTelemetryStore.isConnected = true;
+    mockIgnitionStore.phase = 'running';
+    mockBackendHealth.isReachable = true;
+    mockBackendHealth.latency = 10;
+    mockBackendHealth.lastError = null;
   });
 
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  describe('idle state rendering', () => {
-    it('should show placeholder when phase is not running', () => {
-      render(<TelemetryDashboard />);
-      expect(screen.getByText('Telemetry Dashboard')).toBeInTheDocument();
-      expect(screen.getByText('Start the system to view telemetry data')).toBeInTheDocument();
-    });
-
-    it('should show dashboard icon when idle', () => {
-      render(<TelemetryDashboard />);
-      expect(screen.getByText('📊')).toBeInTheDocument();
-    });
-
-    it('should not render panels when phase is not running', () => {
-      render(<TelemetryDashboard />);
-      expect(screen.queryByTestId('positions-panel')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('orders-panel')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('account-panel')).not.toBeInTheDocument();
-    });
-  });
-
-  describe('running state - disconnected', () => {
-    beforeEach(() => {
-      vi.mocked(useIgnitionStore).mockReturnValue({
-        ...mockIgnitionStore,
-        phase: 'running',
-      });
-    });
-
-    it('should show Mission Control header', () => {
+  describe('rendering when running', () => {
+    it('should render Mission Control header', () => {
       render(<TelemetryDashboard />);
       expect(screen.getByText('Mission Control')).toBeInTheDocument();
     });
 
-    it('should show PAPER badge for paper backend', () => {
-      render(<TelemetryDashboard />);
-      expect(screen.getByText('📋 PAPER')).toBeInTheDocument();
-    });
-
-    it('should show LIVE badge for live backend', () => {
-      vi.mocked(useIgnitionStore).mockReturnValue({
-        ...mockIgnitionStore,
-        phase: 'running',
-        selectedBackend: 'live',
-      });
-      render(<TelemetryDashboard />);
-      expect(screen.getByText('🔴 LIVE')).toBeInTheDocument();
-    });
-
-    it('should show Disconnected status initially', () => {
-      render(<TelemetryDashboard />);
-      expect(screen.getByText('Disconnected')).toBeInTheDocument();
-    });
-
-    it('should show loading spinner when not connected', () => {
-      render(<TelemetryDashboard />);
-      expect(screen.getAllByText('Connecting to telemetry stream...').length).toBeGreaterThan(0);
-    });
-
-    it('should not render panels when disconnected', () => {
-      render(<TelemetryDashboard />);
-      expect(screen.queryByTestId('positions-panel')).not.toBeInTheDocument();
-    });
-  });
-
-  describe('running state - connected', () => {
-    beforeEach(() => {
-      vi.mocked(useIgnitionStore).mockReturnValue({
-        ...mockIgnitionStore,
-        phase: 'running',
-      });
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        ...mockTelemetryStore,
-        isConnected: true,
-      });
-    });
-
-    it('should show Connected status', () => {
-      render(<TelemetryDashboard />);
-      // There may be multiple "Connected" texts (one in status indicator, one in toast)
-      expect(screen.getAllByText('Connected').length).toBeGreaterThan(0);
-    });
-
     it('should render all 6 panels when connected', () => {
       render(<TelemetryDashboard />);
+
       expect(screen.getByTestId('positions-panel')).toBeInTheDocument();
       expect(screen.getByTestId('orders-panel')).toBeInTheDocument();
       expect(screen.getByTestId('account-panel')).toBeInTheDocument();
@@ -154,98 +134,104 @@ describe('TelemetryDashboard component', () => {
       expect(screen.getByTestId('activity-log-panel')).toBeInTheDocument();
     });
 
-    it('should pass default watchlist to MarketDataPanel', () => {
+    it('should display backend name in header', () => {
       render(<TelemetryDashboard />);
-      expect(screen.getByText(/AAPL, GOOGL, MSFT, TSLA, SPY/)).toBeInTheDocument();
+      expect(screen.getByText(/Zerodha Kite/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('connection status (COCKPIT INTEGRITY - uses real backend health)', () => {
+    it('should show API Connected status when backend is reachable', () => {
+      mockBackendHealth.isReachable = true;
+      render(<TelemetryDashboard />);
+      expect(screen.getByText('API Connected')).toBeInTheDocument();
+    });
+
+    it('should show API Disconnected status when backend is not reachable', () => {
+      mockBackendHealth.isReachable = false;
+      render(<TelemetryDashboard />);
+      expect(screen.getByText('API Disconnected')).toBeInTheDocument();
+    });
+
+    it('should show loading spinner when backend is not reachable', () => {
+      mockBackendHealth.isReachable = false;
+      render(<TelemetryDashboard />);
+      expect(screen.getByTestId('spinner')).toBeInTheDocument();
+      expect(screen.getByText('Waiting for backend connection...')).toBeInTheDocument();
+    });
+
+    it('should display latency when backend is reachable', () => {
+      mockBackendHealth.isReachable = true;
+      mockBackendHealth.latency = 15;
+      render(<TelemetryDashboard />);
+      expect(screen.getByText('15ms')).toBeInTheDocument();
+    });
+  });
+
+  describe('phase orchestration pattern (BUG-007 fix)', () => {
+    // NOTE: TelemetryDashboard no longer checks ignitionStore.phase internally.
+    // App.tsx is the AUTHORITATIVE phase controller and only renders TelemetryDashboard
+    // when currentPhase === 'running'. This eliminates race conditions.
+    // See: 02_ARCHITECTURE/SYSTEM_OVERVIEW.md "PHASE ORCHESTRATION PATTERN"
+    // See: 05_PROBLEMS_SOLVED/BUG_REGISTRY.md BUG-007
+    
+    it('should always render full dashboard regardless of ignitionStore.phase', () => {
+      // Even if ignitionStore.phase is 'idle', TelemetryDashboard renders
+      // because App.tsx controls when to render it, not the component itself
+      mockIgnitionStore.phase = 'idle';
+      render(<TelemetryDashboard />);
+      
+      // Should still render Mission Control header and panels
+      expect(screen.getByText('Mission Control')).toBeInTheDocument();
+      expect(screen.getByTestId('positions-panel')).toBeInTheDocument();
+    });
+
+    it('should trust App.tsx as the authoritative phase controller', () => {
+      // TelemetryDashboard is only rendered by App.tsx when currentPhase === 'running'
+      // The component should not have its own phase guard
+      mockIgnitionStore.phase = 'idle';
+      render(<TelemetryDashboard />);
+      
+      // Should NOT show "Start the system" placeholder anymore
+      expect(screen.queryByText('Start the system to view telemetry data')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('watchlist with Indian symbols', () => {
+    it('should pass default Indian symbols to MarketDataPanel', () => {
+      render(<TelemetryDashboard />);
+      expect(screen.getByText(/RELIANCE/)).toBeInTheDocument();
+      expect(screen.getByText(/TCS/)).toBeInTheDocument();
+      expect(screen.getByText(/INFY/)).toBeInTheDocument();
+      expect(screen.getByText(/HDFCBANK/)).toBeInTheDocument();
+      expect(screen.getByText(/ICICIBANK/)).toBeInTheDocument();
     });
 
     it('should pass custom watchlist to MarketDataPanel', () => {
-      render(<TelemetryDashboard watchlist={['NVDA', 'AMD']} />);
-      expect(screen.getByText(/NVDA, AMD/)).toBeInTheDocument();
-    });
-  });
-
-  describe('connection simulation', () => {
-    beforeEach(() => {
-      vi.mocked(useIgnitionStore).mockReturnValue({
-        ...mockIgnitionStore,
-        phase: 'running',
-      });
+      render(<TelemetryDashboard watchlist={['RELIANCE', 'TCS', 'INFY']} />);
+      expect(screen.getByText(/RELIANCE, TCS, INFY/)).toBeInTheDocument();
     });
 
-    it('should call setConnected(true) after timeout when running', () => {
+    it('should not include any US market symbols', () => {
       render(<TelemetryDashboard />);
-
-      act(() => {
-        vi.advanceTimersByTime(500);
-      });
-
-      expect(mockTelemetryStore.setConnected).toHaveBeenCalledWith(true);
-    });
-
-    it('should call setConnected(false) on unmount', () => {
-      const { unmount } = render(<TelemetryDashboard />);
-
-      act(() => {
-        vi.advanceTimersByTime(600);
-      });
-
-      unmount();
-
-      expect(mockTelemetryStore.setConnected).toHaveBeenCalledWith(false);
+      // Verify no US symbols appear
+      expect(screen.queryByText(/AAPL/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/GOOGL/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/MSFT/)).not.toBeInTheDocument();
     });
   });
 
-  describe('backend styling', () => {
-    beforeEach(() => {
-      vi.mocked(useIgnitionStore).mockReturnValue({
-        ...mockIgnitionStore,
-        phase: 'running',
-      });
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        ...mockTelemetryStore,
-        isConnected: true,
-      });
-    });
-
-    it('should have blue styling for paper backend badge', () => {
-      const { container } = render(<TelemetryDashboard />);
-      const badge = screen.getByText('📋 PAPER');
-      expect(badge.className).toContain('bg-blue-600');
-    });
-
-    it('should have red styling for live backend badge', () => {
-      vi.mocked(useIgnitionStore).mockReturnValue({
-        ...mockIgnitionStore,
-        phase: 'running',
-        selectedBackend: 'live',
-      });
-      const { container } = render(<TelemetryDashboard />);
-      const badge = screen.getByText('🔴 LIVE');
-      expect(badge.className).toContain('bg-red-600');
+  describe('backend display', () => {
+    it('should display backend icon', () => {
+      render(<TelemetryDashboard />);
+      expect(screen.getByText(/🪁/)).toBeInTheDocument();
     });
   });
 
-  describe('connection indicator styling', () => {
-    beforeEach(() => {
-      vi.mocked(useIgnitionStore).mockReturnValue({
-        ...mockIgnitionStore,
-        phase: 'running',
-      });
-    });
-
-    it('should have green styling when connected', () => {
-      vi.mocked(useTelemetryStore).mockReturnValue({
-        ...mockTelemetryStore,
-        isConnected: true,
-      });
-      const { container } = render(<TelemetryDashboard />);
-      expect(container.querySelector('.bg-green-900\\/50')).toBeInTheDocument();
-    });
-
-    it('should have red styling when disconnected', () => {
-      const { container } = render(<TelemetryDashboard />);
-      expect(container.querySelector('.bg-red-900\\/50')).toBeInTheDocument();
+  describe('toast container', () => {
+    it('should render toast container', () => {
+      render(<TelemetryDashboard />);
+      expect(screen.getByTestId('toast-container')).toBeInTheDocument();
     });
   });
 });

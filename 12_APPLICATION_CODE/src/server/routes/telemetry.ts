@@ -28,7 +28,7 @@ const generatePosition = (symbol: string) => {
 };
 
 const generateOrder = () => {
-  const symbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'SPY', 'QQQ'];
+  const symbols = ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'ICICIBANK', 'SBIN'];
   const statuses = ['new', 'partially_filled', 'filled', 'canceled'] as const;
   const types = ['market', 'limit', 'stop'] as const;
 
@@ -52,13 +52,13 @@ const generateOrder = () => {
 
 const generateMarketData = (symbol: string) => {
   const basePrice = {
-    AAPL: 175,
-    GOOGL: 140,
-    MSFT: 380,
-    TSLA: 250,
-    SPY: 450,
-    QQQ: 380,
-  }[symbol] || 100;
+    RELIANCE: 2450,
+    TCS: 3800,
+    INFY: 1550,
+    HDFCBANK: 1650,
+    ICICIBANK: 1050,
+    SBIN: 620,
+  }[symbol] || 1000;
 
   const variance = basePrice * 0.02;
   const price = basePrice + (Math.random() - 0.5) * variance;
@@ -79,7 +79,7 @@ const generateMarketData = (symbol: string) => {
 
 // Get positions
 telemetryRoutes.get('/positions', (c) => {
-  const symbols = ['AAPL', 'GOOGL', 'MSFT'];
+  const symbols = ['RELIANCE', 'TCS', 'INFY'];
   const positions = symbols.map(generatePosition);
 
   return c.json({
@@ -139,7 +139,7 @@ telemetryRoutes.get('/market/:symbol', (c) => {
 
 // Get all market data
 telemetryRoutes.get('/market', (c) => {
-  const symbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'SPY', 'QQQ'];
+  const symbols = ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'ICICIBANK', 'SBIN'];
   const data: Record<string, ReturnType<typeof generateMarketData>> = {};
 
   for (const symbol of symbols) {
@@ -154,8 +154,8 @@ telemetryRoutes.get('/market', (c) => {
 
 // Get full telemetry snapshot
 telemetryRoutes.get('/snapshot', async (c) => {
-  const symbols = ['AAPL', 'GOOGL', 'MSFT'];
-  const marketSymbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'SPY'];
+  const symbols = ['RELIANCE', 'TCS', 'INFY'];
+  const marketSymbols = ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'ICICIBANK'];
 
   return c.json({
     positions: symbols.map(generatePosition),

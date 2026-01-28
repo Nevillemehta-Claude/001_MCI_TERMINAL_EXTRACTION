@@ -1375,7 +1375,7 @@ Let me chronologically analyze this conversation:
 
 4. **Critical User Feedback on Document 24**:
    - User explicitly stated this document "caused the entire disruption"
-   - User wanted it "bookmarked" to NOT USE for trading/Alpaca integration
+   - User wanted it "bookmarked" to NOT USE for trading/[Out-of-Scope-Broker] integration
    - User said it "needs to be shitted out of the system"
    - User asked if it could be deleted from memory/JSON/cache/logs
    - I explained my memory limitations honestly
@@ -1562,7 +1562,7 @@ lets discuss this using advanced technologies that may be available to you for u
 
 ```
 there is a reference to TokenExpiry = 24_HOURS      → VIOLATES C1 ❌                   │       │                                 
-  │   │  TradingAPI = ALPACA         → VIOLATES C2 ❌  can these be totally deleted for this report.
+  │   │  TradingAPI = [OUT-OF-SCOPE-BROKER]         → VIOLATES C2 ❌  can these be totally deleted for this report.
 ```
 
 ---
@@ -1617,7 +1617,7 @@ Let me chronologically analyze the conversation to capture all essential details
 4. **CRITICAL USER FEEDBACK - Quarantine**:
    - User explicitly requested Document 24 (COMPLETE_EXECUTION_GUIDE.md) and Document 25 (SECTION_N_SENTRY_OPERATIONS.md) be QUARANTINED
    - User called these documents "cancerous" and "dangerous"
-   - They contain wrong API references (Alpaca instead of Kite Connect)
+   - They contain wrong API references ([Out-of-Scope-Broker] instead of Kite Connect)
    - Created dual quarantine with ASCII art warning
 
 5. **Master Transcripts (Documents 31 & 32)**:
@@ -2103,7 +2103,7 @@ Key context from previous session:
 - 5 Constitutional Requirements (CR-001 to CR-005)
 - CR-004: Token expiry at 6:00 AM IST = setUTCHours(0, 30, 0, 0)
 - Technology Stack: Bun, Hono, React, Zustand, Tailwind, Vite
-- 2 Quarantined documents (Alpaca contamination)
+- 2 Quarantined documents ([Out-of-Scope-Broker] contamination)
 - 44 files previously read, 470 read operations
 
 ## Message 2: User Request - tailwind.config.js
@@ -2366,13 +2366,13 @@ Let me chronologically analyze this conversation to capture all essential detail
 - Project: MCI (Mission Control Interface)
 - Previous session had ingested 44 files with 470 read operations
 - 5 Constitutional Requirements (CR-001 to CR-005) verified
-- 3 quarantined files identified (Alpaca API contamination)
+- 3 quarantined files identified ([Out-of-Scope-Broker] API contamination)
 - Technology stack: Bun, Hono, React, Zustand, Tailwind, Vite, Sentry
 
 ### Message 1: User provides file path for e2e folder
 User asked about `/Users/nevillemehta/Downloads/PROJECTS/01_MCI/e2e`
 I read mci.spec.ts (306 lines) - E2E tests using Playwright
-Found issue: Line 40 has comment referencing "alpaca key" instead of "kite"
+Found issue: Line 40 has comment referencing "[out-of-scope-broker] key" instead of "kite"
 
 ### Message 2: User provides docs folder path
 User asked about `/Users/nevillemehta/Downloads/PROJECTS/01_MCI/docs`
@@ -2382,7 +2382,7 @@ I read:
 - README.md (44 lines) - Clean but references quarantined doc
 - sentry-alert-rules.json (341 lines) - 7 alert rules, clean
 - sentry-dashboard.json (329 lines) - 17 widgets, clean
-- SECTION_N_SENTRY_OPERATIONS.md - QUARANTINED (Alpaca contamination)
+- SECTION_N_SENTRY_OPERATIONS.md - QUARANTINED ([Out-of-Scope-Broker] contamination)
 
 ### Message 3: User asks about node_modules
 I correctly identified: 283 MB, 21,828 files - DO NOT INGEST (generated)

@@ -132,7 +132,7 @@
 - - §4.2: Batch Execution Cycle begins — PHASE 1 (LOAD from THIS TERMINAL'S BACKEND), PHASE 2 (PROCESS with classification per Bifurcation)
 - 2. **PHASE 1: PRE-IGNITION SCANNER** - 12 checks, Kite token check (#4) now GUARANTEED valid, <500ms, ALL GREEN required
 - Based on my review of the index files, Phase 10: Index Generation is complete. Let me present the completion report.
-- - **Phase 1 (2-3 days):** Vercel deployment, GitHub Secrets, .env files, API keys (Alpaca Paper/Live, Polygon)
+- - **Phase 1 (2-3 days):** Vercel deployment, GitHub Secrets, .env files, API keys ([Out-of-Scope-Broker] Paper/Live, [Out-of-Scope-Data-Provider])
 - - **Phase 1 IMMEDIATE (1-2 days):** Sync LTT/Schematics, cosmetic fixes, remove unused CSS, implement JS
 - **GATE 9 CONDITION:** Awaiting explicit authorization before proceeding to Phase 10: Index Generation.
 - Foundation → Phase 3.5 (UXMI) → Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 → Production
@@ -149,12 +149,12 @@
 
 ## PHASE 2 - ALL REFERENCES
 
-- Batch 7 ingested (lines 450-524). Phase 2 WebSocket Integration (4-5 days): Replace simulated data with real Alpaca streams for positions, orders, market data. Step 2.1 Prototype in Replit: Create isolated test before modifying production. Node.js with ws package. Alpaca WebSocket URL: wss://paper-api.alpaca.markets/stream. Authentication flow: connect → send auth action with key/secret → on success, subscribe to trade_updates. Continuing.
+- Batch 7 ingested (lines 450-524). Phase 2 WebSocket Integration (4-5 days): Replace simulated data with real [Out-of-Scope-Broker] streams for positions, orders, market data. Step 2.1 Prototype in Replit: Create isolated test before modifying production. Node.js with ws package. [Out-of-Scope-Broker] WebSocket URL: wss://paper-api.[out-of-scope-broker].markets/stream. Authentication flow: connect → send auth action with key/secret → on success, subscribe to trade_updates. Continuing.
 - Batch 15 ingested (lines 1049-1122). Commit message includes all changes and closes #1. Push, verify CI Pipeline, verify Vercel staging deployment. Phase 2 Complete checklist. Phase 3 CIA-SIE-PURE Backend Integration (5-7 days): Connect to actual trading backend for scanner health checks, ignition sequences, shutdown protocols. Step 3.1 Get API Documentation via email to backend team. Continuing.
 - Batch 7 ingested (lines 451-525). Phase 2 Ignition Sequence wireframe: 4 backend cards (ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite) with selection state, status display, "Selected: 2 of 4 backends" counter. Initiate Ignition button with Ctrl+Enter shortcut. Must select at least 1 backend. Backend Selector Card States starting. Continuing.
 - Batch 2 ingested (lines 76-150). Navigation flow diagram: Phase 0 Token Capture (Kite login, callback URL paste, validate token) → Phase 1 Scanner (12 checks in <500ms) → Phase 2 Ignition (select 1-4 backends) → Phase 3 Dashboard (6 panels: Token Status, Backend Health, Positions, Orders, P&L Summary, AI Observations). Continuing.
 - Phase 2 Ignition mockup: 4 backend cards (ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite). Selected state: 2px #3B82F6 border, #3B82F610 background. Shows 2 of 4 selected. INITIATE IGNITION button (Ctrl+Enter). CR-001 reminder: "monitoring-only session. No trades will be executed."
-- - **Phase 2 (4-5 days):** WebSocket integration with Alpaca (wss://paper-api.alpaca.markets/stream), exponential backoff, telemetryStore integration, 92% test coverage
+- - **Phase 2 (4-5 days):** WebSocket integration with [Out-of-Scope-Broker] (wss://paper-api.[out-of-scope-broker].markets/stream), exponential backoff, telemetryStore integration, 92% test coverage
 - - §4.2: Batch Execution Cycle begins — PHASE 1 (LOAD from THIS TERMINAL'S BACKEND), PHASE 2 (PROCESS with classification per Bifurcation)
 - - **Phase 2 SHORT-TERM (3-5 days):** Create 4 Frontend + 4 Integration Flowcharts, complete 180 files, merge Q&A
 - - §6.6: Phase 2 Execution Sequence — Read → Analyze → Classify → Log → Migrate → Verify → Update → Report
@@ -169,7 +169,7 @@
 - │  ├── Node 4.2: Phase 2 - Architecture Design                                │
 - │   │  3. Phase 2: Backend Selection + Ignition                       │       │
 - │     • Phase 2: Backend Selector + Ignition Screen                           │
-- │   [Phase 2 Ignition] ← depends on ← [Alpaca → Kite Replacement]             │
+- │   [Phase 2 Ignition] ← depends on ← [[Out-of-Scope-Broker] → Kite Replacement]             │
 - │ PHASE 2 COMMENCING                                                          │
 - │   [Phase 2: Ignition] ← depends on ← [Scanner Pass]                         │
 - │   │  6. Phase 2 Ignition update                                     │       │
@@ -280,7 +280,7 @@
 
 ### Zustand
 
-- Batch 8 ingested (lines 525-599). WebSocket test continued: error/close handlers, heartbeat every 30 seconds. Test trading events via paper-api.alpaca.markets. Troubleshooting: connection refused → check keys, auth failed → verify paper keys. Step 2.2 Design WebSocket Manager Architecture: Claude prompt for production-grade manager with exponential backoff (1s→2s→4s→8s→max 30s), multiple streams (trade_updates, account_updates), heartbeat, graceful shutdown, Zustand telemetryStore integration. Continuing.
+- Batch 8 ingested (lines 525-599). WebSocket test continued: error/close handlers, heartbeat every 30 seconds. Test trading events via paper-api.[out-of-scope-broker].markets. Troubleshooting: connection refused → check keys, auth failed → verify paper keys. Step 2.2 Design WebSocket Manager Architecture: Claude prompt for production-grade manager with exponential backoff (1s→2s→4s→8s→max 30s), multiple streams (trade_updates, account_updates), heartbeat, graceful shutdown, Zustand telemetryStore integration. Continuing.
 - │   State Management   Zustand            Latest                                          │
 - │  2.7  State Management Flow        (Zustand Stores)                ✅                   │
 - │  │  │   Receive   │     │   Zustand   │     │    React    │     │    UXMI     │     │  │
@@ -344,7 +344,7 @@
 - Phase 3 Telemetry Dashboard mockup: Token status card (CR-004), Backend health (HDFC Sky 45ms, Zerodha Kite 32ms). POSITIONS table with CR-002 compliance: "Conflicts displayed side-by-side. If same symbol on multiple backends, BOTH entries shown (never auto-merged)." Orders panel, P&L Summary (CR-003).
 - Phase 2 Ignition mockup: 4 backend cards (ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite). Selected state: 2px #3B82F6 border, #3B82F610 background. Shows 2 of 4 selected. INITIATE IGNITION button (Ctrl+Enter). CR-001 reminder: "monitoring-only session. No trades will be executed."
 - - **12 Scanner Checks (SCAN-01 to SCAN-12)**: Kite Token, API Connectivity, Market Status, ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite, Position Sync, Order Queue, Claude AI, Time Sync, WebSocket
-- - **NOTE**: Lines 487-488 reference `alpaca.api.*` and `polygon.api.*` - THIS IS CONTAMINATION from excluded Document 24 pattern. Correct reference should be `kite.api.*` for Zerodha Kite Connect
+- - **NOTE**: Lines 487-488 reference `[out-of-scope-broker].api.*` and `[out-of-scope-data-provider].api.*` - THIS IS CONTAMINATION from excluded Document 24 pattern. Correct reference should be `kite.api.*` for Zerodha Kite Connect
 - **IMPORTANT NOTE:** This document mentions **Kite/Zerodha** as the ORIGINAL broker focus. The later documents show evolution to **4 Indian Brokers** (ICICI, HDFC, Kotak, Zerodha).
 - SCAN-01 to SCAN-12: Kite Token, API Connectivity, Market Status, ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite, Position Sync, Order Queue, Claude AI, Time Sync, WebSocket
 - ║   • 4 Indian Brokers: ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite                              ║
@@ -386,7 +386,7 @@
 - │   │  ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'ICICIBANK', 'SBIN']   │       │
 - │  │   320 lines     │   ICICI, HDFC, Kotak, Zerodha                          │
 - - **4 BACKENDS:** ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite (toggle each)
-- - **4 Backends:** ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite (NOT Alpaca)
+- - **4 Backends:** ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite (NOT [Out-of-Scope-Broker])
 - │  1. ICICI Direct  → https://api.icicidirect.com/apiuser                    │
 
 ### HDFC
@@ -399,11 +399,11 @@
 - - **12 Scanner Checks (SCAN-01 to SCAN-12)**: Kite Token, API Connectivity, Market Status, ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite, Position Sync, Order Queue, Claude AI, Time Sync, WebSocket
 - **IMPORTANT NOTE:** This document mentions **Kite/Zerodha** as the ORIGINAL broker focus. The later documents show evolution to **4 Indian Brokers** (ICICI, HDFC, Kotak, Zerodha).
 - SCAN-01 to SCAN-12: Kite Token, API Connectivity, Market Status, ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite, Position Sync, Order Queue, Claude AI, Time Sync, WebSocket
-- | `telemetry.ts` | 31-32 | US symbols: AAPL, GOOGL, MSFT, TSLA | Change to: RELIANCE, TCS, INFY, HDFC |
+- | `telemetry.ts` | 31-32 | US symbols: RELIANCE, TCS, INFY, TSLA | Change to: RELIANCE, TCS, INFY, HDFC |
 - ║   • 4 Indian Brokers: ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite                              ║
 - - **Purpose:** Unified monitoring dashboard for 4 trading backends (ICICI, HDFC, Kotak, Zerodha)
 - - **4 Indian Brokers confirmed**: ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite
-- | 1 | telemetry.ts | 31-32 | AAPL, GOOGL, MSFT, TSLA | RELIANCE, TCS, INFY, HDFC |
+- | 1 | telemetry.ts | 31-32 | RELIANCE, TCS, INFY, TSLA | RELIANCE, TCS, INFY, HDFC |
 - │   │  ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'ICICIBANK', 'SBIN']   │       │
 - │  │   320 lines     │   ICICI, HDFC, Kotak, Zerodha                          │
 
@@ -421,7 +421,7 @@
 - - **4 Indian Brokers confirmed**: ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite
 - │  │   320 lines     │   ICICI, HDFC, Kotak, Zerodha                          │
 - - **4 BACKENDS:** ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite (toggle each)
-- - **4 Backends:** ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite (NOT Alpaca)
+- - **4 Backends:** ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite (NOT [Out-of-Scope-Broker])
 - │  3. Kotak Neo     → https://tradeapi.kotaksecurities.com/apim              │
 - ║   ✓ 4 Backends: ICICI Direct, HDFC Sky, Kotak Neo, Zerodha Kite            ║
 
@@ -439,7 +439,7 @@
 - - API Call: POST https://api.kite.trade/session/token
 - | Trading API | **Kite Connect** (api.kite.trade) |
 - - API Call: GET https://api.kite.trade/user/profile
-- | api.kite.trade | paper-api.alpaca.markets ❌ |
+- | api.kite.trade | paper-api.[out-of-scope-broker].markets ❌ |
 - - `KITE_BASE_URL = 'https://api.kite.trade'`
 - - `KITE_BASE_URL=https://api.kite.trade`
 

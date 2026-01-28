@@ -52,7 +52,7 @@ describe('PreIgnitionScanner component', () => {
   };
 
   beforeEach(() => {
-    vi.mocked(useScannerStore).mockReturnValue(mockStore);
+    (useScannerStore as any).mockReturnValue(mockStore);
     vi.clearAllMocks();
   });
 
@@ -92,7 +92,7 @@ describe('PreIgnitionScanner component', () => {
 
   describe('scanning state', () => {
     it('should not show scan button when scanning', () => {
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...mockStore,
         isScanning: true,
       });
@@ -102,7 +102,7 @@ describe('PreIgnitionScanner component', () => {
     });
 
     it('should show progress bar when scanning', () => {
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...mockStore,
         isScanning: true,
       });
@@ -112,7 +112,7 @@ describe('PreIgnitionScanner component', () => {
     });
 
     it('should show "Scanning..." label on progress bar', () => {
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...mockStore,
         isScanning: true,
       });
@@ -124,7 +124,7 @@ describe('PreIgnitionScanner component', () => {
 
   describe('progress calculation', () => {
     it('should show 0% when no checks are completed', () => {
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...mockStore,
         isScanning: true,
         checks: mockChecks,
@@ -136,7 +136,7 @@ describe('PreIgnitionScanner component', () => {
     });
 
     it('should calculate progress based on completed checks', () => {
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...mockStore,
         isScanning: true,
         checks: [
@@ -172,7 +172,7 @@ describe('PreIgnitionScanner component', () => {
     };
 
     it('should show summary stats when scan is complete', () => {
-      vi.mocked(useScannerStore).mockReturnValue(completedStore);
+      (useScannerStore as any).mockReturnValue(completedStore);
 
       render(<PreIgnitionScanner />);
       expect(screen.getByText('2')).toBeInTheDocument(); // passed
@@ -181,28 +181,28 @@ describe('PreIgnitionScanner component', () => {
     });
 
     it('should show duration when scan is complete', () => {
-      vi.mocked(useScannerStore).mockReturnValue(completedStore);
+      (useScannerStore as any).mockReturnValue(completedStore);
 
       render(<PreIgnitionScanner />);
       expect(screen.getByText('500ms')).toBeInTheDocument();
     });
 
     it('should show Rescan button when complete', () => {
-      vi.mocked(useScannerStore).mockReturnValue(completedStore);
+      (useScannerStore as any).mockReturnValue(completedStore);
 
       render(<PreIgnitionScanner />);
       expect(screen.getByRole('button', { name: /Rescan/i })).toBeInTheDocument();
     });
 
     it('should show GO FOR IGNITION when canProceed is true', () => {
-      vi.mocked(useScannerStore).mockReturnValue(completedStore);
+      (useScannerStore as any).mockReturnValue(completedStore);
 
       render(<PreIgnitionScanner />);
       expect(screen.getByText(/GO FOR IGNITION/)).toBeInTheDocument();
     });
 
     it('should show NO-GO when canProceed is false', () => {
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...completedStore,
         canProceed: false,
       });
@@ -214,7 +214,7 @@ describe('PreIgnitionScanner component', () => {
 
   describe('critical failures', () => {
     it('should show error display for critical failures', () => {
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...mockStore,
         isScanning: false,
         scanCompletedAt: 1500,
@@ -231,7 +231,7 @@ describe('PreIgnitionScanner component', () => {
     });
 
     it('should show count of critical failures', () => {
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...mockStore,
         isScanning: false,
         scanCompletedAt: 1500,
@@ -276,7 +276,7 @@ describe('PreIgnitionScanner component', () => {
     });
 
     it('should call reset and restart on Rescan button click', () => {
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...mockStore,
         isScanning: false,
         scanCompletedAt: 1500,
@@ -302,7 +302,7 @@ describe('PreIgnitionScanner component', () => {
       expect(onComplete).not.toHaveBeenCalled();
 
       // Update to completed scan
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...mockStore,
         isScanning: false,
         scanCompletedAt: 1500,
@@ -317,7 +317,7 @@ describe('PreIgnitionScanner component', () => {
     it('should call onComplete with false when scan fails', async () => {
       const onComplete = vi.fn();
 
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...mockStore,
         isScanning: false,
         scanCompletedAt: 1500,
@@ -332,7 +332,7 @@ describe('PreIgnitionScanner component', () => {
 
   describe('styling', () => {
     it('should apply green styling for GO status', () => {
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...mockStore,
         isScanning: false,
         scanCompletedAt: 1500,
@@ -344,7 +344,7 @@ describe('PreIgnitionScanner component', () => {
     });
 
     it('should apply red styling for NO-GO status', () => {
-      vi.mocked(useScannerStore).mockReturnValue({
+      (useScannerStore as any).mockReturnValue({
         ...mockStore,
         isScanning: false,
         scanCompletedAt: 1500,

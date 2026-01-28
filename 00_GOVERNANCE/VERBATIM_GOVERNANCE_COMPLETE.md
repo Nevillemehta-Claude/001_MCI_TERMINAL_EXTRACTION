@@ -185,9 +185,9 @@
 - Batch 3 ingested (lines 151-225). Phase 4 Shutdown sequence (confirm, close connections, save state, return to Phase 0). Token Expiry Interrupt Flow - modal appears at 6:00 AM IST (CR-004) from any phase with Re-Authenticate or End Session options. Phase 0 Token Capture wireframe starting. Continuing.
 - Token Capture mockup continued: Step 2 (callback URL instruction), Step 3 (input field - JetBrains Mono, 48px height), Validate Token button (DISABLED until URL entered). CR-004 info banner. Color palette: Background #0F172A, Surface #1E293B, Border #334155, Text #F8FAFC. Phase 1 Scanner begins.
 - **Why This Matters**: Ontologies enable REASONING - inferring new facts from existing facts. A reasoner could automatically deduce: "If CR-004 is COMPLIANT AND all CRs are COMPLIANT, THEN system is RELEASE_READY."
-- **CONTAMINATION FLAG**: Lines 487-488 reference `alpaca.api.*` and `polygon.api.*` - this appears to be cross-contamination from the excluded Document 24. Correct reference should be `kite.api.*` per CR-004.
+- **CONTAMINATION FLAG**: Lines 487-488 reference `[out-of-scope-broker].api.*` and `[out-of-scope-data-provider].api.*` - this appears to be cross-contamination from the excluded Document 24. Correct reference should be `kite.api.*` per CR-004.
 - **Why This Matters**: Ontologies enable REASONING - inferring new facts from existing facts. A reasoner could automatically deduce: "If CR-004 is violated AND CR-004 is INVIOLABLE, THEN release is BLOCKED."
-- **Master transcripts ingestion complete. The transcripts CONFIRM the Alpaca contamination and CR-004 violation that requires surgical correction.**
+- **Master transcripts ingestion complete. The transcripts CONFIRM the [Out-of-Scope-Broker] contamination and CR-004 violation that requires surgical correction.**
 - Then I'll guide you through creating the first flowchart: **Authentication Sequence (CR-001, CR-004 compliant)**.
 - ║   CORRECT REFERENCE (CR-004 SACRED):                                                               ║
 - ║           correct backend (Kite Connect / Indian Brokers per CR-004)                               ║

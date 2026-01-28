@@ -1088,7 +1088,7 @@ Batch 7 ingested (lines 451-525). Phase 2 Ignition Sequence wireframe: 4 backend
 
 ### REF 27
 
-Batch 7 ingested (lines 450-524). Phase 2 WebSocket Integration (4-5 days): Replace simulated data with real Alpaca streams for positions, orders, market data. Step 2.1 Prototype in Replit: Create isolated test before modifying production. Node.js with ws package. Alpaca WebSocket URL: wss://paper-api.alpaca.markets/stream. Authentication flow: connect → send auth action with key/secret → on success, subscribe to trade_updates. Continuing.
+Batch 7 ingested (lines 450-524). Phase 2 WebSocket Integration (4-5 days): Replace simulated data with real [Out-of-Scope-Broker] streams for positions, orders, market data. Step 2.1 Prototype in Replit: Create isolated test before modifying production. Node.js with ws package. [Out-of-Scope-Broker] WebSocket URL: wss://[out-of-scope-broker-api]/stream. Authentication flow: connect → send auth action with key/secret → on success, subscribe to trade_updates. Continuing.
 
 ---
 
@@ -1103,8 +1103,8 @@ Batch 15 ingested (lines 1049-1122). Commit message includes all changes and clo
 Key captures:
 - **95% Complete** status, 7 phases to reach 100%
 - **Tools:** Claude, Claude Code, Cursor, GitHub, Vercel, Replit, Sentry
-- **Phase 1 (2-3 days):** Vercel deployment, GitHub Secrets, .env files, API keys (Alpaca Paper/Live, Polygon)
-- **Phase 2 (4-5 days):** WebSocket integration with Alpaca (wss://paper-api.alpaca.markets/stream), exponential backoff, telemetryStore integration, 92% test coverage
+- **Phase 1 (2-3 days):** Vercel deployment, GitHub Secrets, .env files, API keys ([Out-of-Scope-Broker] Paper/Live, [Out-of-Scope-Data-Provider])
+- **Phase 2 (4-5 days):** WebSocket integration with [Out-of-Scope-Broker] (wss://[out-of-scope-broker-api]/stream), exponential backoff, telemetryStore integration, 92% test coverage
 - **Phase 3 (5-7 days):** CIA-SIE-PURE backend integration (CiaSieClient class), scanner/ignition/shutdown real API calls, 87% coverage
 - **Phase 4 (3-4 days):** JWT Authentication & Session Management (outlined)
 - **Phase 5 (2-3 days):** Real Data Testing (outlined)
@@ -1815,8 +1815,8 @@ Batch 25 ingested (lines 1798-1861). Push to GitHub, add Vercel environment vari
 Key captures:
 - **95% Complete** status, 7 phases to reach 100%
 - **Tools:** Claude, Claude Code, Cursor, GitHub, Vercel, Replit, Sentry
-- **Phase 1 (2-3 days):** Vercel deployment, GitHub Secrets, .env files, API keys (Alpaca Paper/Live, Polygon)
-- **Phase 2 (4-5 days):** WebSocket integration with Alpaca (wss://paper-api.alpaca.markets/stream), exponential backoff, telemetryStore integration, 92% test coverage
+- **Phase 1 (2-3 days):** Vercel deployment, GitHub Secrets, .env files, API keys ([Out-of-Scope-Broker] Paper/Live, [Out-of-Scope-Data-Provider])
+- **Phase 2 (4-5 days):** WebSocket integration with [Out-of-Scope-Broker] (wss://[out-of-scope-broker-api]/stream), exponential backoff, telemetryStore integration, 92% test coverage
 - **Phase 3 (5-7 days):** CIA-SIE-PURE backend integration (CiaSieClient class), scanner/ignition/shutdown real API calls, 87% coverage
 - **Phase 4 (3-4 days):** JWT Authentication & Session Management (outlined)
 - **Phase 5 (2-3 days):** Real Data Testing (outlined)

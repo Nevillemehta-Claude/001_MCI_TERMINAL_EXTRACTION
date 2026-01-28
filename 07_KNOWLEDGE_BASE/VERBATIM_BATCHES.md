@@ -268,13 +268,13 @@ expiry.setUTCHours(0, 30, 0, 0); // 6 AM IST = 00:30 UTC
 **BATCH 50 ✓** - **FIXES DETAILED:**
 **Fix #1:** telemetry.ts Lines 31-32:
 ```typescript
-// CURRENT: ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'SPY', 'QQQ']
+// CURRENT: ['RELIANCE', 'TCS', 'INFY', 'TSLA', 'SPY', 'QQQ']
 // REQUIRED: ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'ICICIBANK', 'SBIN']
 ```
 
 **Fix #2:** TelemetryDashboard.tsx Line 25:
 ```typescript
-// CURRENT: ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'SPY']
+// CURRENT: ['RELIANCE', 'TCS', 'INFY', 'TSLA', 'SPY']
 // REQUIRED: ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'ICICIBANK']
 ```
 

@@ -68,10 +68,10 @@
 
 ### telemetryStore
 
-- Batch 8 ingested (lines 525-599). WebSocket test continued: error/close handlers, heartbeat every 30 seconds. Test trading events via paper-api.alpaca.markets. Troubleshooting: connection refused → check keys, auth failed → verify paper keys. Step 2.2 Design WebSocket Manager Architecture: Claude prompt for production-grade manager with exponential backoff (1s→2s→4s→8s→max 30s), multiple streams (trade_updates, account_updates), heartbeat, graceful shutdown, Zustand telemetryStore integration. Continuing.
+- Batch 8 ingested (lines 525-599). WebSocket test continued: error/close handlers, heartbeat every 30 seconds. Test trading events via paper-api.[out-of-scope-broker].markets. Troubleshooting: connection refused → check keys, auth failed → verify paper keys. Step 2.2 Design WebSocket Manager Architecture: Claude prompt for production-grade manager with exponential backoff (1s→2s→4s→8s→max 30s), multiple streams (trade_updates, account_updates), heartbeat, graceful shutdown, Zustand telemetryStore integration. Continuing.
 - Batch 10 ingested (lines 675-749). Step 2.3 continued: Test compilation with bun run typecheck. Step 2.4 Integrate WebSocket with telemetryStore: Import WebSocketManager, add wsManager instance to store state, add methods (connectWebSocket, disconnectWebSocket, subscribeToStreams), add message handlers (handleTradeUpdate, handleAccountUpdate), register handlers with wsManager.on('message'). Cursor Cmd+K inline edit instructions. Continuing.
 - Batch 14 ingested (lines 975-1048). Run tests: 10 tests expected, 92.5% coverage. Coverage targets: Statements >90%, Branches >85%, Functions >90%. Step 2.8 Commit WebSocket Integration: git status shows 4 files changed (websocketManager.ts, test file, telemetryStore.ts, TelemetryDashboard.tsx). Run full test suite, commit with detailed message. Continuing.
-- - **Phase 2 (4-5 days):** WebSocket integration with Alpaca (wss://paper-api.alpaca.markets/stream), exponential backoff, telemetryStore integration, 92% test coverage
+- - **Phase 2 (4-5 days):** WebSocket integration with [Out-of-Scope-Broker] (wss://paper-api.[out-of-scope-broker].markets/stream), exponential backoff, telemetryStore integration, 92% test coverage
 - | `src/client/stores/` | telemetryStore.ts, shutdownStore.ts, scannerStore.ts, tokenStore.ts, ignitionStore.ts |
 - └── Zustand Stores: tokenStore, scannerStore, ignitionStore, telemetryStore, shutdownStore
 - │       │  │ tokenStore │  │scannerStore│  │ignitionStore│  │telemetryStore│      │      │

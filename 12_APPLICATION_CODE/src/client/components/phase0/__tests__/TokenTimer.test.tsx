@@ -1,3 +1,10 @@
+/**
+ * TokenTimer Tests
+ * Tests for token expiration countdown display
+ * CR-004: Token Expiry at 6:00 AM IST
+ * India-market-only compliant
+ */
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { TokenTimer } from '../TokenTimer';
@@ -17,7 +24,7 @@ describe('TokenTimer component', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    vi.mocked(useTokenStore).mockReturnValue(mockStore);
+    (useTokenStore as any).mockReturnValue(mockStore);
     vi.clearAllMocks();
   });
 
@@ -29,7 +36,7 @@ describe('TokenTimer component', () => {
     it('should render in compact mode', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 60 * 60 * 1000, // 1 hour
         isTokenValid: true,
@@ -42,7 +49,7 @@ describe('TokenTimer component', () => {
     it('should render in full mode by default', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 60 * 60 * 1000,
         isTokenValid: true,
@@ -62,7 +69,7 @@ describe('TokenTimer component', () => {
     it('should format time with hours, minutes, seconds', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 2 * 60 * 60 * 1000 + 30 * 60 * 1000 + 45 * 1000, // 2:30:45
         isTokenValid: true,
@@ -75,7 +82,7 @@ describe('TokenTimer component', () => {
     it('should pad single digits with zeros', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 5 * 60 * 1000 + 9 * 1000, // 0:05:09
         isTokenValid: true,
@@ -90,7 +97,7 @@ describe('TokenTimer component', () => {
     it('should update time every second', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 5 * 1000, // 5 seconds
         isTokenValid: true,
@@ -113,7 +120,7 @@ describe('TokenTimer component', () => {
     it('should not go below zero', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 1000, // 1 second
         isTokenValid: true,
@@ -132,7 +139,7 @@ describe('TokenTimer component', () => {
     it('should show healthy status for > 1 hour', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 2 * 60 * 60 * 1000, // 2 hours
         isTokenValid: true,
@@ -145,7 +152,7 @@ describe('TokenTimer component', () => {
     it('should show caution status for 30-60 minutes', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 45 * 60 * 1000, // 45 minutes
         isTokenValid: true,
@@ -158,7 +165,7 @@ describe('TokenTimer component', () => {
     it('should show warning status for 5-30 minutes', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 20 * 60 * 1000, // 20 minutes
         isTokenValid: true,
@@ -171,7 +178,7 @@ describe('TokenTimer component', () => {
     it('should show critical status for < 5 minutes', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 3 * 60 * 1000, // 3 minutes
         isTokenValid: true,
@@ -184,7 +191,7 @@ describe('TokenTimer component', () => {
     it('should show expired status when time is 0', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now, // Expired
         isTokenValid: true,
@@ -197,7 +204,7 @@ describe('TokenTimer component', () => {
     it('should show invalid status when isTokenValid is false', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 60 * 60 * 1000,
         isTokenValid: false,
@@ -208,7 +215,7 @@ describe('TokenTimer component', () => {
     });
 
     it('should show invalid status when tokenExpiresAt is null', () => {
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: null,
         isTokenValid: false,
@@ -223,7 +230,7 @@ describe('TokenTimer component', () => {
     it('should apply green styling for healthy status', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 2 * 60 * 60 * 1000,
         isTokenValid: true,
@@ -236,7 +243,7 @@ describe('TokenTimer component', () => {
     it('should apply blue styling for caution status', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 45 * 60 * 1000,
         isTokenValid: true,
@@ -249,7 +256,7 @@ describe('TokenTimer component', () => {
     it('should apply yellow styling for warning status', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 20 * 60 * 1000,
         isTokenValid: true,
@@ -262,7 +269,7 @@ describe('TokenTimer component', () => {
     it('should apply red styling and pulse animation for critical status', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 2 * 60 * 1000,
         isTokenValid: true,
@@ -279,7 +286,7 @@ describe('TokenTimer component', () => {
     it('should not show refresh button for healthy status', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 2 * 60 * 60 * 1000,
         isTokenValid: true,
@@ -292,7 +299,7 @@ describe('TokenTimer component', () => {
     it('should not show refresh button for caution status', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 45 * 60 * 1000,
         isTokenValid: true,
@@ -305,7 +312,7 @@ describe('TokenTimer component', () => {
     it('should show refresh button for warning status', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 20 * 60 * 1000,
         isTokenValid: true,
@@ -318,7 +325,7 @@ describe('TokenTimer component', () => {
     it('should show refresh button for critical status', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 2 * 60 * 1000,
         isTokenValid: true,
@@ -331,7 +338,7 @@ describe('TokenTimer component', () => {
     it('should show Re-authenticate button for expired status', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now,
         isTokenValid: true,
@@ -344,7 +351,7 @@ describe('TokenTimer component', () => {
     it('should not show refresh button when showRefreshButton is false', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 2 * 60 * 1000,
         isTokenValid: true,
@@ -357,7 +364,7 @@ describe('TokenTimer component', () => {
     it('should call onRefresh when refresh button is clicked', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 2 * 60 * 1000,
         isTokenValid: true,
@@ -373,7 +380,7 @@ describe('TokenTimer component', () => {
     it('should clear tokens and call onRefresh when expired and button clicked', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now,
         isTokenValid: true,
@@ -393,7 +400,7 @@ describe('TokenTimer component', () => {
       const now = Date.now();
       vi.setSystemTime(now);
       const onExpired = vi.fn();
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 2000, // 2 seconds
         isTokenValid: true,
@@ -416,7 +423,7 @@ describe('TokenTimer component', () => {
     it('should show progress bar for valid tokens', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 12 * 60 * 60 * 1000, // 12 hours
         isTokenValid: true,
@@ -428,28 +435,30 @@ describe('TokenTimer component', () => {
     });
 
     it('should not show progress bar for invalid status', () => {
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: null,
         isTokenValid: false,
       });
 
       const { container } = render(<TokenTimer />);
-      // Progress bar shouldn't exist
-      expect(container.querySelector('.bg-gray-200.rounded-full')).not.toBeInTheDocument();
+      // Progress bar shouldn't exist with green/yellow/red/blue colors
+      expect(container.querySelector('.bg-green-500')).not.toBeInTheDocument();
+      expect(container.querySelector('.bg-yellow-500')).not.toBeInTheDocument();
+      expect(container.querySelector('.bg-red-500')).not.toBeInTheDocument();
     });
 
     it('should not show progress bar for expired status', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now,
         isTokenValid: true,
       });
 
       const { container } = render(<TokenTimer />);
-      // No green/yellow/red progress bar colors
+      // No colored progress bar should be present
       expect(container.querySelector('.h-1\\.5.bg-gray-200')).not.toBeInTheDocument();
     });
   });
@@ -458,7 +467,7 @@ describe('TokenTimer component', () => {
     it('should render with tooltip in compact mode', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 60 * 60 * 1000,
         isTokenValid: true,
@@ -472,7 +481,7 @@ describe('TokenTimer component', () => {
     it('should show icon in compact mode', () => {
       const now = Date.now();
       vi.setSystemTime(now);
-      vi.mocked(useTokenStore).mockReturnValue({
+      (useTokenStore as any).mockReturnValue({
         ...mockStore,
         tokenExpiresAt: now + 2 * 60 * 60 * 1000,
         isTokenValid: true,

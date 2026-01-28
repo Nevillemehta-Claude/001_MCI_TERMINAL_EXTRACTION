@@ -493,7 +493,7 @@ Key content:
 - **13 Use Cases:** UC-001 to UC-013 across 4 groups (Token, Ignition, Telemetry, Alerts)
 - **5 Operational Phases:** Token Capture → Pre-Ignition → Ignition → Telemetry → Shutdown
 - **FMEA (Failure Mode Analysis):** 13 failure modes identified with mitigations
-- **CLEAN SLATE PROTOCOL:** Eradicate all previous implementations including Alpaca code
+- **CLEAN SLATE PROTOCOL:** Eradicate all previous implementations including [Out-of-Scope-Broker] code
 - **MANDATORY BUILD ORDER:** UXMI FIRST → Token → Scanner → Ignition → Telemetry → Shutdown
 - **5 Constitutional Requirements:** CR-001 to CR-005 (NON-NEGOTIABLE)
 - **6 Quality Gates:** QG-1 to QG-6, must PASS each before proceeding
@@ -1575,7 +1575,7 @@ Batch 20 ingested (lines 1426-1500). CheckResult interface: id, name, status (pa
 
 ### ERROR REF 133
 
-Batch 8 ingested (lines 525-599). WebSocket test continued: error/close handlers, heartbeat every 30 seconds. Test trading events via paper-api.alpaca.markets. Troubleshooting: connection refused → check keys, auth failed → verify paper keys. Step 2.2 Design WebSocket Manager Architecture: Claude prompt for production-grade manager with exponential backoff (1s→2s→4s→8s→max 30s), multiple streams (trade_updates, account_updates), heartbeat, graceful shutdown, Zustand telemetryStore integration. Continuing.
+Batch 8 ingested (lines 525-599). WebSocket test continued: error/close handlers, heartbeat every 30 seconds. Test trading events via paper-api.[out-of-scope-broker].markets. Troubleshooting: connection refused → check keys, auth failed → verify paper keys. Step 2.2 Design WebSocket Manager Architecture: Claude prompt for production-grade manager with exponential backoff (1s→2s→4s→8s→max 30s), multiple streams (trade_updates, account_updates), heartbeat, graceful shutdown, Zustand telemetryStore integration. Continuing.
 
 ---
 
@@ -1743,6 +1743,6 @@ Memory block:
 - **ErrorDisplay.tsx**: WHAT/WHY/HOW format with exact ASCII layout
 - **Section 3: Phase 0 - Token Capture Module** - 6-Module Architecture
 - **MOD-TC-1 TokenCaptureForm.tsx**: Large text input, "Validate Token" button
-- **CRITICAL Line 372**: `kiteAccessToken: string;  // NOT alpacaKey/alpacaSecret` - explicit rejection of Alpaca pattern
+- **CRITICAL Line 372**: `kiteAccessToken: string;  // NOT [out-of-scope-broker]Key/[out-of-scope-broker]Secret` - explicit rejection of [Out-of-Scope-Broker] pattern
 
 ---

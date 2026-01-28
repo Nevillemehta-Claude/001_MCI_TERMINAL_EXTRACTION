@@ -1,124 +1,215 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+/**
+ * Ignition Routes Tests
+ * Tests for Phase 2 ignition sequence
+ * Supports 4 Indian brokers: Zerodha, ICICI, HDFC, Kotak
+ */
+
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Hono } from 'hono';
 import { ignitionRoutes, resetSystemState } from '../ignition';
 
-describe('Ignition Routes', () => {
+// Mock the sentry module
+vi.mock('../../lib/sentry', () => ({
+  captureTradeOperationError: vi.fn(),
+  logBackendBreadcrumb: vi.fn(),
+  Sentry: {
+    startSpan: vi.fn((_, fn) => fn()),
+    setTag: vi.fn(),
+  },
+}));
+
+describe('ignition routes', () => {
   let app: Hono;
 
   beforeEach(() => {
-    // Reset system state before each test
+    // Reset system state before each test to avoid test pollution
     resetSystemState();
     app = new Hono();
     app.route('/api/ignition', ignitionRoutes);
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   describe('POST /api/ignition/start', () => {
-    describe('paper backend', () => {
-      it('should start system in paper mode', async () => {
-        const res = await app.request('/api/ignition/start', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ backend: 'paper' }),
-        });
-
-        expect(res.status).toBe(200);
-        const data = await res.json();
-        expect(data.success).toBe(true);
-        expect(data.message).toContain('paper');
-        expect(data.state.backend).toBe('paper');
-        expect(data.state.isRunning).toBe(true);
+    it('should accept zerodha backend', async () => {
+      const res = await app.request('/api/ignition/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backend: 'zerodha' }),
       });
 
-      it('should include timestamp in start response', async () => {
-        const timestamp = Date.now();
-        const res = await app.request('/api/ignition/start', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ backend: 'paper', timestamp }),
-        });
-
-        expect(res.status).toBe(200);
-        const data = await res.json();
-        expect(data.state.startedAt).toBe(timestamp);
-      });
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.success).toBe(true);
+      expect(data.state.backend).toBe('zerodha');
+      expect(data.state.isRunning).toBe(true);
+      expect(data.message).toContain('zerodha');
     });
 
-    describe('live backend', () => {
-      it('should start system in live mode', async () => {
-        const res = await app.request('/api/ignition/start', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ backend: 'live' }),
-        });
-
-        expect(res.status).toBe(200);
-        const data = await res.json();
-        expect(data.success).toBe(true);
-        expect(data.message).toContain('live');
-        expect(data.state.backend).toBe('live');
+    it('should accept icici backend', async () => {
+      const res = await app.request('/api/ignition/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backend: 'icici' }),
       });
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.success).toBe(true);
+      expect(data.state.backend).toBe('icici');
     });
 
-    describe('error handling', () => {
-      it('should return 400 for missing backend', async () => {
-        const res = await app.request('/api/ignition/start', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({}),
-        });
-
-        expect(res.status).toBe(400);
-        const data = await res.json();
-        expect(data.success).toBe(false);
-        expect(data.message).toContain('Invalid backend');
+    it('should accept hdfc backend', async () => {
+      const res = await app.request('/api/ignition/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backend: 'hdfc' }),
       });
 
-      it('should return 400 for invalid backend type', async () => {
-        const res = await app.request('/api/ignition/start', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ backend: 'demo' }),
-        });
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.success).toBe(true);
+      expect(data.state.backend).toBe('hdfc');
+    });
 
-        expect(res.status).toBe(400);
-        const data = await res.json();
-        expect(data.success).toBe(false);
+    it('should accept kotak backend', async () => {
+      const res = await app.request('/api/ignition/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backend: 'kotak' }),
       });
 
-      it('should return 409 when system is already running', async () => {
-        // Start first
-        await app.request('/api/ignition/start', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ backend: 'paper' }),
-        });
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.success).toBe(true);
+      expect(data.state.backend).toBe('kotak');
+    });
 
-        // Try to start again
-        const res = await app.request('/api/ignition/start', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ backend: 'paper' }),
-        });
-
-        expect(res.status).toBe(409);
-        const data = await res.json();
-        expect(data.success).toBe(false);
-        expect(data.message).toContain('already running');
+    it('should return state with startedAt timestamp on success', async () => {
+      const beforeTime = Date.now();
+      
+      const res = await app.request('/api/ignition/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backend: 'zerodha' }),
       });
+
+      const data = await res.json();
+      expect(data.state.startedAt).toBeDefined();
+      expect(typeof data.state.startedAt).toBe('number');
+      expect(data.state.startedAt).toBeGreaterThanOrEqual(beforeTime);
+    });
+
+    it('should accept optional timestamp in request', async () => {
+      const customTimestamp = 1700000000000;
+      
+      const res = await app.request('/api/ignition/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backend: 'zerodha', timestamp: customTimestamp }),
+      });
+
+      const data = await res.json();
+      expect(data.state.startedAt).toBe(customTimestamp);
+    });
+
+    it('should reject invalid backend', async () => {
+      const res = await app.request('/api/ignition/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backend: 'invalid' }),
+      });
+
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.success).toBe(false);
+      expect(data.message).toContain('Invalid backend type');
+      expect(data.message).toContain('icici');
+      expect(data.message).toContain('hdfc');
+      expect(data.message).toContain('kotak');
+      expect(data.message).toContain('zerodha');
+    });
+
+    it('should reject missing backend', async () => {
+      const res = await app.request('/api/ignition/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.success).toBe(false);
+    });
+
+    it('should return 409 if system is already running', async () => {
+      // First start
+      await app.request('/api/ignition/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backend: 'zerodha' }),
+      });
+
+      // Second start should conflict
+      const res = await app.request('/api/ignition/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backend: 'icici' }),
+      });
+
+      expect(res.status).toBe(409);
+      const data = await res.json();
+      expect(data.success).toBe(false);
+      expect(data.message).toBe('System is already running');
+    });
+  });
+
+  describe('GET /api/ignition/status', () => {
+    it('should return current ignition status when not running', async () => {
+      const res = await app.request('/api/ignition/status', {
+        method: 'GET',
+      });
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.isRunning).toBe(false);
+      expect(data.backend).toBeNull();
+      expect(data.startedAt).toBeNull();
+      expect(data.uptime).toBe(0);
+    });
+
+    it('should include backend and uptime when running', async () => {
+      // First start ignition
+      await app.request('/api/ignition/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backend: 'zerodha' }),
+      });
+
+      const res = await app.request('/api/ignition/status', {
+        method: 'GET',
+      });
+
+      const data = await res.json();
+      expect(data.isRunning).toBe(true);
+      expect(data.backend).toBe('zerodha');
+      expect(data.startedAt).toBeDefined();
+      expect(typeof data.uptime).toBe('number');
     });
   });
 
   describe('POST /api/ignition/abort', () => {
-    it('should abort running system', async () => {
-      // Start first
+    it('should abort running ignition', async () => {
+      // First start ignition
       await app.request('/api/ignition/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ backend: 'paper' }),
+        body: JSON.stringify({ backend: 'zerodha' }),
       });
 
-      // Then abort
       const res = await app.request('/api/ignition/abort', {
         method: 'POST',
       });
@@ -126,12 +217,12 @@ describe('Ignition Routes', () => {
       expect(res.status).toBe(200);
       const data = await res.json();
       expect(data.success).toBe(true);
-      expect(data.message).toContain('aborted');
+      expect(data.message).toBe('System aborted successfully');
       expect(data.previousState).toBeDefined();
-      expect(data.previousState.isRunning).toBe(true);
+      expect(data.previousState.backend).toBe('zerodha');
     });
 
-    it('should return success even when not running', async () => {
+    it('should return success even if not running', async () => {
       const res = await app.request('/api/ignition/abort', {
         method: 'POST',
       });
@@ -139,15 +230,15 @@ describe('Ignition Routes', () => {
       expect(res.status).toBe(200);
       const data = await res.json();
       expect(data.success).toBe(true);
-      expect(data.message).toContain('not running');
+      expect(data.message).toBe('System was not running');
     });
 
     it('should reset system state after abort', async () => {
-      // Start
+      // Start ignition
       await app.request('/api/ignition/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ backend: 'paper' }),
+        body: JSON.stringify({ backend: 'hdfc' }),
       });
 
       // Abort
@@ -156,136 +247,73 @@ describe('Ignition Routes', () => {
       });
 
       // Check status
-      const statusRes = await app.request('/api/ignition/status');
-      const statusData = await statusRes.json();
+      const res = await app.request('/api/ignition/status', {
+        method: 'GET',
+      });
 
-      expect(statusData.isRunning).toBe(false);
-      expect(statusData.backend).toBeNull();
-    });
-  });
-
-  describe('GET /api/ignition/status', () => {
-    it('should return idle status initially', async () => {
-      const res = await app.request('/api/ignition/status');
-
-      expect(res.status).toBe(200);
       const data = await res.json();
       expect(data.isRunning).toBe(false);
       expect(data.backend).toBeNull();
-      expect(data.uptime).toBe(0);
-    });
-
-    it('should return running status after start', async () => {
-      await app.request('/api/ignition/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ backend: 'paper' }),
-      });
-
-      const res = await app.request('/api/ignition/status');
-
-      expect(res.status).toBe(200);
-      const data = await res.json();
-      expect(data.isRunning).toBe(true);
-      expect(data.backend).toBe('paper');
-      // Uptime may be 0 if checked immediately after start
-      expect(data.uptime).toBeGreaterThanOrEqual(0);
-    });
-
-    it('should calculate uptime correctly', async () => {
-      const timestamp = Date.now() - 1000; // 1 second ago
-      await app.request('/api/ignition/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ backend: 'paper', timestamp }),
-      });
-
-      const res = await app.request('/api/ignition/status');
-      const data = await res.json();
-
-      expect(data.uptime).toBeGreaterThanOrEqual(1000);
     });
   });
 
   describe('GET /api/ignition/backend/:type', () => {
-    it('should return paper backend info', async () => {
-      const res = await app.request('/api/ignition/backend/paper');
+    it('should return info for zerodha backend', async () => {
+      const res = await app.request('/api/ignition/backend/zerodha', {
+        method: 'GET',
+      });
 
       expect(res.status).toBe(200);
       const data = await res.json();
-      expect(data.type).toBe('paper');
+      expect(data.type).toBe('zerodha');
+      expect(data.endpoint).toBe('https://api.kite.trade');
       expect(data.available).toBe(true);
-      expect(data.endpoint).toContain('paper-api');
     });
 
-    it('should return live backend info', async () => {
-      const res = await app.request('/api/ignition/backend/live');
+    it('should return info for icici backend', async () => {
+      const res = await app.request('/api/ignition/backend/icici', {
+        method: 'GET',
+      });
 
       expect(res.status).toBe(200);
       const data = await res.json();
-      expect(data.type).toBe('live');
+      expect(data.type).toBe('icici');
+      expect(data.endpoint).toBe('https://api.icicidirect.com/apiuser');
       expect(data.available).toBe(true);
-      expect(data.endpoint).toContain('api.alpaca');
+    });
+
+    it('should return info for hdfc backend', async () => {
+      const res = await app.request('/api/ignition/backend/hdfc', {
+        method: 'GET',
+      });
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.type).toBe('hdfc');
+      expect(data.endpoint).toBe('https://api.hdfcsec.com/openapi');
+      expect(data.available).toBe(true);
+    });
+
+    it('should return info for kotak backend', async () => {
+      const res = await app.request('/api/ignition/backend/kotak', {
+        method: 'GET',
+      });
+
+      expect(res.status).toBe(200);
+      const data = await res.json();
+      expect(data.type).toBe('kotak');
+      expect(data.endpoint).toBe('https://tradeapi.kotaksecurities.com/apim');
+      expect(data.available).toBe(true);
     });
 
     it('should return 400 for invalid backend type', async () => {
-      const res = await app.request('/api/ignition/backend/invalid');
+      const res = await app.request('/api/ignition/backend/invalid', {
+        method: 'GET',
+      });
 
       expect(res.status).toBe(400);
       const data = await res.json();
-      expect(data.error).toContain('Invalid backend');
-    });
-  });
-
-  describe('State transitions', () => {
-    it('should allow start after abort', async () => {
-      // Start
-      await app.request('/api/ignition/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ backend: 'paper' }),
-      });
-
-      // Abort
-      await app.request('/api/ignition/abort', {
-        method: 'POST',
-      });
-
-      // Start again
-      const res = await app.request('/api/ignition/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ backend: 'live' }),
-      });
-
-      expect(res.status).toBe(200);
-      const data = await res.json();
-      expect(data.success).toBe(true);
-      expect(data.state.backend).toBe('live');
-    });
-
-    it('should allow switching backends after abort', async () => {
-      // Start paper
-      await app.request('/api/ignition/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ backend: 'paper' }),
-      });
-
-      // Abort
-      await app.request('/api/ignition/abort', {
-        method: 'POST',
-      });
-
-      // Start live
-      const res = await app.request('/api/ignition/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ backend: 'live' }),
-      });
-
-      const data = await res.json();
-      expect(data.state.backend).toBe('live');
+      expect(data.error).toContain('Invalid backend type');
     });
   });
 });

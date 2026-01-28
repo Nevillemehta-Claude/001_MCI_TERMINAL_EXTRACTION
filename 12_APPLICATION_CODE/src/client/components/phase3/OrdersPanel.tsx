@@ -33,9 +33,9 @@ export const OrdersPanel: React.FC<OrdersPanelProps> = ({
 
   const formatCurrency = (value?: number) => {
     if (value === undefined) return 'MKT';
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'INR',
       minimumFractionDigits: 2,
     }).format(value);
   };

@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MCI Claude Code Analysis Scope",
+  "description": "Defines which files are in scope for Claude's static analysis",
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-28",
+  "analysisScope": {
+    "inScope": {
+      "description": "Files that MUST be analyzed",
+      "coreApplication": [
+        "12_APPLICATION_CODE/src/client/App.tsx",
+        "12_APPLICATION_CODE/src/client/main.tsx"
+      ],
+      "stateManagement": [
+        "12_APPLICATION_CODE/src/client/stores/tokenStore.ts",
+        "12_APPLICATION_CODE/src/client/stores/ignitionStore.ts",
+        "12_APPLICATION_CODE/src/client/stores/scannerStore.ts",
+        "12_APPLICATION_CODE/src/client/stores/shutdownStore.ts",
+        "12_APPLICATION_CODE/src/client/stores/telemetryStore.ts"
+      ],
+      "validation": [
+        "12_APPLICATION_CODE/src/shared/validation/sanitize.ts",
+        "12_APPLICATION_CODE/src/shared/validation/index.ts"
+      ],
+      "serverRoutes": [
+        "12_APPLICATION_CODE/src/server/index.ts",
+        "12_APPLICATION_CODE/src/server/routes/auth.ts",
+        "12_APPLICATION_CODE/src/server/routes/scan.ts",
+        "12_APPLICATION_CODE/src/server/routes/ignition.ts",
+        "12_APPLICATION_CODE/src/server/routes/shutdown.ts",
+        "12_APPLICATION_CODE/src/server/routes/telemetry.ts"
+      ],
+      "services": [
+        "12_APPLICATION_CODE/src/server/services/kite.ts",
+        "12_APPLICATION_CODE/src/server/services/cia-sie.ts"
+      ],
+      "hooks": [
+        "12_APPLICATION_CODE/src/client/hooks/useBackendHealth.ts",
+        "12_APPLICATION_CODE/src/client/hooks/useNetworkStatus.ts",
+        "12_APPLICATION_CODE/src/client/hooks/useErrorAggregator.ts"
+      ],
+      "phase0Components": [
+        "12_APPLICATION_CODE/src/client/components/phase0/TokenCaptureForm.tsx",
+        "12_APPLICATION_CODE/src/client/components/phase0/TokenTimer.tsx"
+      ],
+      "phase1Components": [
+        "12_APPLICATION_CODE/src/client/components/phase1/PreIgnitionScanner.tsx",
+        "12_APPLICATION_CODE/src/client/components/phase1/ScanCheckItem.tsx"
+      ],
+      "phase2Components": [
+        "12_APPLICATION_CODE/src/client/components/phase2/IgnitionButton.tsx",
+        "12_APPLICATION_CODE/src/client/components/phase2/BackendSelector.tsx"
+      ],
+      "phase3Components": [
+        "12_APPLICATION_CODE/src/client/components/phase3/TelemetryDashboard.tsx",
+        "12_APPLICATION_CODE/src/client/components/phase3/MarketDataPanel.tsx",
+        "12_APPLICATION_CODE/src/client/components/phase3/PositionsPanel.tsx",
+        "12_APPLICATION_CODE/src/client/components/phase3/OrdersPanel.tsx",
+        "12_APPLICATION_CODE/src/client/components/phase3/AccountPanel.tsx",
+        "12_APPLICATION_CODE/src/client/components/phase3/SystemHealthPanel.tsx",
+        "12_APPLICATION_CODE/src/client/components/phase3/ActivityLogPanel.tsx"
+      ],
+      "phase4Components": [
+        "12_APPLICATION_CODE/src/client/components/phase4/ShutdownPanel.tsx"
+      ],
+      "cockpitComponents": [
+        "12_APPLICATION_CODE/src/client/components/cockpit/StatusBar.tsx",
+        "12_APPLICATION_CODE/src/client/components/cockpit/SimulationBadge.tsx"
+      ],
+      "lifecycleScripts": [
+        "12_APPLICATION_CODE/scripts/start.sh",
+        "12_APPLICATION_CODE/scripts/stop.sh",
+        "12_APPLICATION_CODE/scripts/status.sh"
+      ],
+      "sharedTypes": [
+        "12_APPLICATION_CODE/src/shared/types.ts"
+      ]
+    },
+    "outOfScope": {
+      "description": "Files that should NOT be analyzed (test files, configs, etc.)",
+      "testFiles": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/test/**",
+        "**/__tests__/**"
+      ],
+      "configFiles": [
+        "vite.config.ts",
+        "vitest.config.ts",
+        "tailwind.config.js",
+        "postcss.config.js",
+        "tsconfig*.json",
+        "package.json",
+        "package-lock.json"
+      ],
+      "buildArtifacts": [
+        "dist/**",
+        "node_modules/**"
+      ],
+      "documentation": [
+        "**/*.md",
+        "**/*.html"
+      ],
+      "uxmiComponents": {
+        "reason": "Generic UI components, not business logic",
+        "files": [
+          "12_APPLICATION_CODE/src/client/components/uxmi/**"
+        ]
+      }
+    }
+  },
+  "analysisChecklist": {
+    "invariants": {
+      "INV-001": {
+        "name": "Daily Credential Continuity",
+        "checkPoints": [
+          "tokenStore.ts: localStorage persistence logic",
+          "tokenStore.ts: 6:00 AM IST expiry check",
+          "tokenStore.ts: rehydration sanitization"
+        ]
+      },
+      "INV-002": {
+        "name": "System Lifecycle Discipline",
+        "checkPoints": [
+          "scripts/start.sh: both processes launched",
+          "scripts/stop.sh: both processes terminated",
+          "scripts/status.sh: accurate state reporting"
+        ]
+      },
+      "INV-004": {
+        "name": "State Legality & Transition Control",
+        "checkPoints": [
+          "App.tsx: phase determination logic",
+          "App.tsx: phase rendering",
+          "All phase components: no internal phase guards"
+        ]
+      },
+      "INV-006": {
+        "name": "Input Sanitization",
+        "checkPoints": [
+          "sanitize.ts: all sanitization functions",
+          "TokenCaptureForm.tsx: handleSubmit sanitization call",
+          "auth.ts: sanitizeCredentialsFromRequest call",
+          "auth.ts: buildKiteAuthHeader usage",
+          "tokenStore.ts: rehydration sanitization"
+        ]
+      }
+    },
+    "securityCritical": {
+      "authorizationHeader": {
+        "file": "auth.ts",
+        "line": "~61",
+        "check": "buildKiteAuthHeader() uses sanitized values"
+      },
+      "localStorageRead": {
+        "file": "tokenStore.ts",
+        "line": "merge function",
+        "check": "Persisted values are sanitized before use"
+      },
+      "userInput": {
+        "file": "TokenCaptureForm.tsx",
+        "line": "handleSubmit",
+        "check": "All form values sanitized before storage"
+      }
+    }
+  },
+  "expectedFindings": {
+    "description": "Known items that should be found and confirmed as correct",
+    "items": [
+      {
+        "location": "tokenStore.ts:merge",
+        "description": "GAP-08 fix: null check for corrupted localStorage"
+      },
+      {
+        "location": "tokenStore.ts:merge",
+        "description": "GAP-09 fix: full sanitizer usage on rehydration"
+      },
+      {
+        "location": "TelemetryDashboard.tsx",
+        "description": "BUG-007 fix: no internal phase guard (App.tsx controls)"
+      }
+    ]
+  }
+}
