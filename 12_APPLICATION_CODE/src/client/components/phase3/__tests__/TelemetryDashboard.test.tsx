@@ -4,8 +4,8 @@
  * Indian market symbols: RELIANCE, TCS, INFY, HDFCBANK, ICICIBANK
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import { TelemetryDashboard } from '../TelemetryDashboard';
 
 // Mock the telemetry store
@@ -26,9 +26,21 @@ vi.mock('../../../stores/telemetryStore', () => ({
 }));
 
 // Mock the ignition store
-const mockIgnitionStore = {
-  phase: 'running' as const,
-  selectedBackend: 'zerodha' as const,
+const mockIgnitionStore: {
+  phase: string;
+  selectedBackend: string;
+  backendConfigs: Array<{
+    type: string;
+    name: string;
+    broker: string;
+    description: string;
+    endpoint: string;
+    requiresConfirmation: boolean;
+    icon: string;
+  }>;
+} = {
+  phase: 'running',
+  selectedBackend: 'zerodha',
   backendConfigs: [
     {
       type: 'zerodha',

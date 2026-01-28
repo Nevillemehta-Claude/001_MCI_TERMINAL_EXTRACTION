@@ -7,7 +7,6 @@ import {
   captureTradeError,
 } from '../lib/sentry';
 import { 
-  sanitizeString,
   sanitizeApiKey,
   sanitizeAccessToken,
   sanitizeUserId,

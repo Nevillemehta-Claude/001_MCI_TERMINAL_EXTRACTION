@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useTelemetryStore } from '../../stores/telemetryStore';
-import { useIgnitionStore, type BackendType } from '../../stores/ignitionStore';
+import { useIgnitionStore } from '../../stores/ignitionStore';
 import { PositionsPanel } from './PositionsPanel';
 import { OrdersPanel } from './OrdersPanel';
 import { AccountPanel } from './AccountPanel';

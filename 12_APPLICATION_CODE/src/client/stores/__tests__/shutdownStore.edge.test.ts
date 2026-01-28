@@ -10,7 +10,11 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { useShutdownStore, ShutdownPhase } from '../shutdownStore';
+import { useShutdownStore } from '../shutdownStore';
+
+// Helper to mock fetch with proper typing for tests
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockGlobal = global as any;
 
 // Mock Sentry
 vi.mock('../lib/sentry', () => ({
@@ -25,7 +29,7 @@ vi.mock('../lib/sentry', () => ({
 }));
 
 describe('IRONCLAD: shutdownStore Edge Cases', () => {
-  const originalFetch = global.fetch;
+  const originalFetch = mockGlobal.fetch;
 
   // Helper to run async operations with timer advancement
   const runWithTimers = async <T>(operation: () => Promise<T>): Promise<T> => {
@@ -48,7 +52,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    global.fetch = originalFetch;
+    mockGlobal.fetch = originalFetch;
   });
 
   describe('Emergency Shutdown Guarantees', () => {
@@ -60,7 +64,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
         saveState: false,
       });
 
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -80,7 +84,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
 
     it('should continue emergency shutdown even when steps fail', async () => {
       let callCount = 0;
-      global.fetch = vi.fn().mockImplementation(() => {
+      mockGlobal.fetch = vi.fn().mockImplementation(() => {
         callCount++;
         // Fail every other step
         if (callCount % 2 === 0) {
@@ -111,7 +115,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     });
 
     it('should complete emergency shutdown even with network failures', async () => {
-      global.fetch = vi.fn().mockRejectedValue(new Error('Network down'));
+      mockGlobal.fetch = vi.fn().mockRejectedValue(new Error('Network down'));
 
       await runWithTimers(() => useShutdownStore.getState().initiateShutdown(true));
 
@@ -127,7 +131,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     });
 
     it('should set isEmergency flag correctly', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -149,7 +153,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     });
 
     it('should skip visual delays in emergency mode', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -171,7 +175,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     it('should execute steps in correct order', async () => {
       const executionOrder: string[] = [];
 
-      global.fetch = vi.fn().mockImplementation((url: string) => {
+      mockGlobal.fetch = vi.fn().mockImplementation((url: string) => {
         const stepId = url.replace('/api/shutdown/', '');
         executionOrder.push(stepId);
         return Promise.resolve({
@@ -202,7 +206,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
         saveState: false,
       });
 
-      global.fetch = vi.fn().mockImplementation((url: string) => {
+      mockGlobal.fetch = vi.fn().mockImplementation((url: string) => {
         const stepId = url.replace('/api/shutdown/', '');
         executionOrder.push(stepId);
         return Promise.resolve({
@@ -233,7 +237,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
         closePositions: true,
       });
 
-      global.fetch = vi.fn().mockImplementation((url: string) => {
+      mockGlobal.fetch = vi.fn().mockImplementation((url: string) => {
         const stepId = url.replace('/api/shutdown/', '');
         executionOrder.push(stepId);
         return Promise.resolve({
@@ -257,7 +261,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     it('should stop normal shutdown on first failure', async () => {
       let callCount = 0;
 
-      global.fetch = vi.fn().mockImplementation(() => {
+      mockGlobal.fetch = vi.fn().mockImplementation(() => {
         callCount++;
         if (callCount === 2) {
           return Promise.resolve({
@@ -289,7 +293,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     });
 
     it('should record step duration even on failure', async () => {
-      global.fetch = vi.fn().mockImplementation(() => {
+      mockGlobal.fetch = vi.fn().mockImplementation(() => {
         return new Promise((resolve) => {
           setTimeout(() => {
             resolve({
@@ -314,7 +318,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     it('should preserve completed steps status on later failure', async () => {
       let callCount = 0;
 
-      global.fetch = vi.fn().mockImplementation(() => {
+      mockGlobal.fetch = vi.fn().mockImplementation(() => {
         callCount++;
         if (callCount === 3) {
           return Promise.resolve({
@@ -350,7 +354,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
       const now = 1700000000000;
       vi.setSystemTime(now);
 
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -364,7 +368,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
       const startTime = 1700000000000;
       vi.setSystemTime(startTime);
 
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -384,7 +388,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     });
 
     it('should not set shutdownCompletedAt on failure', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: false,
         json: () => Promise.resolve({ message: 'Failed' }),
       });
@@ -399,7 +403,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
 
   describe('Options Mutation Safety', () => {
     it('should not affect in-progress shutdown when options change', async () => {
-      global.fetch = vi.fn().mockImplementation(
+      mockGlobal.fetch = vi.fn().mockImplementation(
         () =>
           new Promise((resolve) => {
             // Change options mid-shutdown
@@ -423,7 +427,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     });
 
     it('should preserve options isolation between shutdowns', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -456,7 +460,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
 
   describe('Step Update Integrity', () => {
     it('should update only the specified step', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -485,7 +489,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     });
 
     it('should handle update for non-existent step ID', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -509,7 +513,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
 
   describe('Reset Completeness', () => {
     it('should reset ALL state properties', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -549,7 +553,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
 
   describe('Step Definition Integrity', () => {
     it('should have all 6 required steps', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -577,7 +581,7 @@ describe('IRONCLAD: shutdownStore Edge Cases', () => {
     });
 
     it('should have unique step IDs', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });

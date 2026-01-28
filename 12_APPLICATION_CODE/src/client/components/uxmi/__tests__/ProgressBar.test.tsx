@@ -149,7 +149,7 @@ describe('ProgressBar component', () => {
     });
 
     it('should not have transition classes when animated is false', () => {
-      const { container } = render(<ProgressBar value={50} animated={false} />);
+      render(<ProgressBar value={50} animated={false} />);
       const progressbar = screen.getByRole('progressbar');
       const bars = progressbar.querySelectorAll('div');
       // The inner bar should not have transition classes
@@ -178,7 +178,7 @@ describe('ProgressBar component', () => {
 
   describe('indeterminate mode', () => {
     it('should have indeterminate animation class', () => {
-      const { container } = render(<ProgressBar value={50} indeterminate />);
+      render(<ProgressBar value={50} indeterminate />);
       const progressbar = screen.getByRole('progressbar');
       const bars = progressbar.querySelectorAll('div');
       const innerBar = bars[0];
@@ -186,7 +186,7 @@ describe('ProgressBar component', () => {
     });
 
     it('should set width to 30% in indeterminate mode', () => {
-      const { container } = render(<ProgressBar value={80} indeterminate />);
+      render(<ProgressBar value={80} indeterminate />);
       const progressbar = screen.getByRole('progressbar');
       const bars = progressbar.querySelectorAll('div');
       const innerBar = bars[0];
@@ -206,7 +206,7 @@ describe('ProgressBar component', () => {
 
   describe('width calculation', () => {
     it('should set width to 0% for value 0', () => {
-      const { container } = render(<ProgressBar value={0} />);
+      render(<ProgressBar value={0} />);
       const progressbar = screen.getByRole('progressbar');
       const bars = progressbar.querySelectorAll('div');
       const innerBar = bars[0];
@@ -214,7 +214,7 @@ describe('ProgressBar component', () => {
     });
 
     it('should set width to 100% for value 100', () => {
-      const { container } = render(<ProgressBar value={100} />);
+      render(<ProgressBar value={100} />);
       const progressbar = screen.getByRole('progressbar');
       const bars = progressbar.querySelectorAll('div');
       const innerBar = bars[0];

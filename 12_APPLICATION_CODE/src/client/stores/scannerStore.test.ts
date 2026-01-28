@@ -7,8 +7,10 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { useScannerStore } from './scannerStore';
 
-// Mock fetch for API calls
-global.fetch = vi.fn();
+// Mock fetch for API calls with preconnect for Bun compatibility
+const mockFetch = vi.fn() as unknown as typeof fetch;
+(mockFetch as typeof fetch & { preconnect: ReturnType<typeof vi.fn> }).preconnect = vi.fn();
+global.fetch = mockFetch;
 
 describe('scannerStore', () => {
   beforeEach(() => {

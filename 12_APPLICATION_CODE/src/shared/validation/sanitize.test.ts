@@ -9,7 +9,6 @@ import { describe, it, expect } from 'vitest';
 import {
   sanitizeString,
   sanitizeRequiredString,
-  validateNoControlChars,
   validateHeaderSafe,
   sanitizeApiKey,
   sanitizeAccessToken,

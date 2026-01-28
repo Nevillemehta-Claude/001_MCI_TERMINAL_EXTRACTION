@@ -19,9 +19,12 @@ vi.mock('../../lib/sentry', () => ({
   },
 }));
 
-// Mock global fetch
-const mockFetch = vi.fn();
-global.fetch = mockFetch;
+// Mock global fetch with preconnect for Bun compatibility
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockFetch = vi.fn() as any;
+mockFetch.preconnect = vi.fn();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(global as any).fetch = mockFetch;
 
 // Valid test credentials (INV-006 compliant: alphanumeric only)
 const VALID_API_KEY = 'testApiKey12345';

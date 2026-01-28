@@ -29,12 +29,6 @@ export const SimulationBadge: React.FC<SimulationBadgeProps> = ({
   size = 'sm',
   floating = false,
 }) => {
-  const typeLabels = {
-    data: 'Mock Data',
-    connection: 'Simulated Connection',
-    telemetry: 'Demo Telemetry',
-  };
-
   const typeDescriptions = {
     data: 'This data is simulated for demonstration purposes. Real data will be available after CIA-SIE-PURE integration.',
     connection: 'The connection status shown is simulated. Real WebSocket connectivity is pending integration.',

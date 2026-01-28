@@ -328,7 +328,7 @@ describe('Shutdown Routes', () => {
 
         const data = await res.json();
         const sumDuration = Object.values(data.results).reduce(
-          (sum, r: { duration: number }) => sum + r.duration,
+          (sum: number, r) => sum + (r as { duration: number }).duration,
           0
         );
         expect(data.totalDuration).toBe(sumDuration);

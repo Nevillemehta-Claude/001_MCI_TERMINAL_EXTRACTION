@@ -29,6 +29,11 @@ declare global {
       toHaveErrorMessage(message?: string | RegExp): void;
     }
   }
+
+  // Allow reassigning global.fetch with vi.fn() mocks in tests
+  // eslint-disable-next-line no-var
+  var fetch: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any;
 }
 
 export {};

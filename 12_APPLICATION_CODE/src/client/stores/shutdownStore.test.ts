@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useShutdownStore } from './shutdownStore';
 
+// Helper to mock fetch with proper typing for tests
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockGlobal = global as any;
+
 describe('shutdownStore', () => {
   beforeEach(() => {
     useShutdownStore.getState().reset();
@@ -67,7 +71,7 @@ describe('shutdownStore', () => {
   describe('updateStep', () => {
     it('should update a specific step', async () => {
       // Initialize shutdown to get steps
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -116,7 +120,7 @@ describe('shutdownStore', () => {
 
   describe('initiateShutdown', () => {
     it('should initialize 6 shutdown steps', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -135,7 +139,7 @@ describe('shutdownStore', () => {
     it('should skip close-positions step when option is false', async () => {
       useShutdownStore.getState().setOptions({ closePositions: false });
 
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -151,7 +155,7 @@ describe('shutdownStore', () => {
     it('should skip cancel-orders step when option is false', async () => {
       useShutdownStore.getState().setOptions({ cancelOrders: false });
 
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -167,7 +171,7 @@ describe('shutdownStore', () => {
     it('should skip save-state step when option is false', async () => {
       useShutdownStore.getState().setOptions({ saveState: false });
 
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -187,7 +191,7 @@ describe('shutdownStore', () => {
         saveState: false,
       });
 
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -207,7 +211,7 @@ describe('shutdownStore', () => {
     });
 
     it('should complete successfully when all API calls succeed', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'Step completed' }),
       });
@@ -221,7 +225,7 @@ describe('shutdownStore', () => {
     });
 
     it('should set error phase on API failure', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: false,
         json: () => Promise.resolve({ message: 'Step failed' }),
       });
@@ -235,7 +239,7 @@ describe('shutdownStore', () => {
 
     it('should continue on error in emergency mode', async () => {
       let callCount = 0;
-      global.fetch = vi.fn().mockImplementation(() => {
+      mockGlobal.fetch = vi.fn().mockImplementation(() => {
         callCount++;
         if (callCount === 2) {
           return Promise.resolve({
@@ -262,7 +266,7 @@ describe('shutdownStore', () => {
     });
 
     it('should track step durations', async () => {
-      global.fetch = vi.fn().mockImplementation(
+      mockGlobal.fetch = vi.fn().mockImplementation(
         () =>
           new Promise((resolve) =>
             setTimeout(
@@ -288,7 +292,7 @@ describe('shutdownStore', () => {
     });
 
     it('should call correct API endpoints for each step', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ message: 'OK' }),
       });
@@ -305,7 +309,7 @@ describe('shutdownStore', () => {
       ];
 
       expectedEndpoints.forEach((endpoint) => {
-        expect(global.fetch).toHaveBeenCalledWith(
+        expect(mockGlobal.fetch).toHaveBeenCalledWith(
           endpoint,
           expect.objectContaining({ method: 'POST' })
         );
@@ -315,7 +319,7 @@ describe('shutdownStore', () => {
 
   describe('step definitions', () => {
     it('should have unique step IDs', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({}),
       });
@@ -329,7 +333,7 @@ describe('shutdownStore', () => {
     });
 
     it('should have descriptive names and descriptions', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      mockGlobal.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({}),
       });

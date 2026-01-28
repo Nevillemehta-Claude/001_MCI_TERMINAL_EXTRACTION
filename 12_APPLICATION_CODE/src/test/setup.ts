@@ -25,9 +25,11 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
 
 // Mock fetch with preconnect for Bun compatibility
-const fetchMock = vi.fn() as typeof fetch & { preconnect: typeof vi.fn };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const fetchMock = vi.fn() as any;
 fetchMock.preconnect = vi.fn();
-global.fetch = fetchMock;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(global as any).fetch = fetchMock;
 
 // Reset mocks between tests
 beforeEach(() => {

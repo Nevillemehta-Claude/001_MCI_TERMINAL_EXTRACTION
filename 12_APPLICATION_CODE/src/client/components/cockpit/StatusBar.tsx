@@ -28,7 +28,7 @@ interface StatusBarProps {
  * Truthful status bar - always visible, never lies.
  */
 export const StatusBar: React.FC<StatusBarProps> = ({ compact = false }) => {
-  const { tokenExpiresAt, isTokenValid, kiteAccessToken } = useTokenStore();
+  const { tokenExpiresAt, kiteAccessToken } = useTokenStore();
   const backendHealth = useBackendHealth({ pollInterval: 5000, enabled: true });
   const networkStatus = useNetworkStatus();
   const errorAggregator = useErrorAggregator();

@@ -132,7 +132,7 @@ export class CIASIEService {
 
           return result;
         } catch (error) {
-          captureTradeOperationError(error as Error, 'engine-start', { broker: config.broker });
+          captureTradeOperationError(error as Error, 'ignition', { broker: config.broker });
           throw error;
         }
       }
@@ -166,7 +166,7 @@ export class CIASIEService {
 
           return result;
         } catch (error) {
-          captureTradeOperationError(error as Error, 'engine-stop', { emergency });
+          captureTradeOperationError(error as Error, 'shutdown', { emergency });
           throw error;
         }
       }
