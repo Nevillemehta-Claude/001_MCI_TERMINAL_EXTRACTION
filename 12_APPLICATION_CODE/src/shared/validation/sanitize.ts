@@ -234,6 +234,113 @@ export function buildKiteAuthHeader(apiKey: string, accessToken: string): string
 }
 
 // ============================================================================
+// CIA-SIE-PURE RESPONSE SANITIZATION (BLOCK-001)
+// ============================================================================
+
+/**
+ * Control character pattern for CIA-SIE-PURE responses.
+ * Matches ASCII 0-8, 11, 12, 14-31, and 127 (excludes tab, LF, CR).
+ */
+const CIA_SIE_CONTROL_CHAR_REGEX = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g;
+
+/**
+ * NULL byte pattern - these MUST cause rejection, not just stripping.
+ */
+const NULL_BYTE_REGEX = /\x00/;
+
+/**
+ * Sanitize a string received from CIA-SIE-PURE.
+ * This is the primary boundary sanitization for external data.
+ * 
+ * BLOCK-001 Resolution: INV-006 compliance at MCI boundary.
+ * 
+ * @param value - The string value from CIA-SIE-PURE
+ * @param fieldName - Name of the field for error context
+ * @returns Sanitized string
+ * @throws Error if value contains NULL bytes (security violation)
+ */
+export function sanitizeCiaSieString(value: unknown, fieldName: string): string {
+  if (value === null || value === undefined) {
+    return '';
+  }
+  
+  if (typeof value !== 'string') {
+    // Convert to string for non-string types (numbers, booleans)
+    const stringValue = String(value);
+    return sanitizeCiaSieString(stringValue, fieldName);
+  }
+  
+  // CRITICAL: Reject NULL bytes - these are never valid in text data
+  if (NULL_BYTE_REGEX.test(value)) {
+    throw new Error(`${fieldName} contains NULL bytes - potential security violation`);
+  }
+  
+  // Strip other control characters (except tab, LF, CR)
+  let sanitized = value.replace(CIA_SIE_CONTROL_CHAR_REGEX, '');
+  
+  // Normalize CRLF to LF
+  sanitized = sanitized.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  
+  // Trim whitespace
+  sanitized = sanitized.trim();
+  
+  return sanitized;
+}
+
+/**
+ * Sanitize an object received from CIA-SIE-PURE by recursively
+ * sanitizing all string values.
+ * 
+ * @param obj - The object to sanitize
+ * @param context - Context path for error messages
+ * @returns Sanitized object with same structure
+ */
+export function sanitizeCiaSieResponse<T>(obj: T, context = 'response'): T {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  
+  if (typeof obj === 'string') {
+    return sanitizeCiaSieString(obj, context) as T;
+  }
+  
+  if (Array.isArray(obj)) {
+    return obj.map((item, index) => 
+      sanitizeCiaSieResponse(item, `${context}[${index}]`)
+    ) as T;
+  }
+  
+  if (typeof obj === 'object') {
+    const sanitized: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+      sanitized[key] = sanitizeCiaSieResponse(value, `${context}.${key}`);
+    }
+    return sanitized as T;
+  }
+  
+  // Numbers, booleans, etc. pass through unchanged
+  return obj;
+}
+
+/**
+ * Validate that a CIA-SIE-PURE response contains no control characters.
+ * Use this for validation-only scenarios where you don't want to modify data.
+ * 
+ * @param value - The string to validate
+ * @param fieldName - Name of the field for error messages
+ * @throws Error if control characters are found
+ */
+export function validateCiaSieString(value: string, fieldName: string): void {
+  if (NULL_BYTE_REGEX.test(value)) {
+    throw new Error(`${fieldName} contains NULL bytes`);
+  }
+  
+  if (CIA_SIE_CONTROL_CHAR_REGEX.test(value)) {
+    throw new Error(`${fieldName} contains invalid control characters`);
+  }
+}
+
+// ============================================================================
 // DEFENSIVE WRAPPERS FOR API BOUNDARIES
 // ============================================================================
 

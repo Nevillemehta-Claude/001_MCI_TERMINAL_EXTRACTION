@@ -3,6 +3,8 @@
  *
  * These tests verify the centralized sanitization module behavior.
  * They are MANDATORY per CONSTITUTIONAL_CONSTRAINTS.md
+ * 
+ * BLOCK-001: CIA-SIE-PURE boundary sanitization tests added.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -16,6 +18,9 @@ import {
   sanitizeKiteCredentials,
   buildKiteAuthHeader,
   sanitizeCredentialsFromRequest,
+  sanitizeCiaSieString,
+  sanitizeCiaSieResponse,
+  validateCiaSieString,
 } from './sanitize';
 
 describe('INV-006: Input Sanitization & Boundary Cleanliness', () => {
@@ -278,6 +283,196 @@ describe('INV-006: Input Sanitization & Boundary Cleanliness', () => {
 
     it('throws for missing credentials', () => {
       expect(() => sanitizeCredentialsFromRequest({})).toThrow('API Key is required');
+    });
+  });
+
+  // ==========================================================================
+  // BLOCK-001: CIA-SIE-PURE Boundary Sanitization Tests
+  // ==========================================================================
+
+  describe('BLOCK-001: CIA-SIE-PURE Boundary Sanitization', () => {
+    describe('sanitizeCiaSieString', () => {
+      it('returns empty string for null', () => {
+        expect(sanitizeCiaSieString(null, 'field')).toBe('');
+      });
+
+      it('returns empty string for undefined', () => {
+        expect(sanitizeCiaSieString(undefined, 'field')).toBe('');
+      });
+
+      it('converts numbers to string', () => {
+        expect(sanitizeCiaSieString(123, 'field')).toBe('123');
+      });
+
+      it('converts booleans to string', () => {
+        expect(sanitizeCiaSieString(true, 'field')).toBe('true');
+      });
+
+      it('trims whitespace', () => {
+        expect(sanitizeCiaSieString('  hello  ', 'field')).toBe('hello');
+      });
+
+      it('throws on NULL byte', () => {
+        expect(() => sanitizeCiaSieString('hello\x00world', 'field')).toThrow('NULL bytes');
+      });
+
+      it('strips control characters (0x01)', () => {
+        expect(sanitizeCiaSieString('hello\x01world', 'field')).toBe('helloworld');
+      });
+
+      it('strips control characters (0x08 - backspace)', () => {
+        expect(sanitizeCiaSieString('hello\x08world', 'field')).toBe('helloworld');
+      });
+
+      it('strips control characters (0x0B - vertical tab)', () => {
+        expect(sanitizeCiaSieString('hello\x0Bworld', 'field')).toBe('helloworld');
+      });
+
+      it('strips control characters (0x0C - form feed)', () => {
+        expect(sanitizeCiaSieString('hello\x0Cworld', 'field')).toBe('helloworld');
+      });
+
+      it('strips control characters (0x1F)', () => {
+        expect(sanitizeCiaSieString('hello\x1Fworld', 'field')).toBe('helloworld');
+      });
+
+      it('strips DEL character (0x7F)', () => {
+        expect(sanitizeCiaSieString('hello\x7Fworld', 'field')).toBe('helloworld');
+      });
+
+      it('preserves tab character (0x09)', () => {
+        const result = sanitizeCiaSieString('hello\tworld', 'field');
+        expect(result).toContain('\t');
+      });
+
+      it('preserves newline (0x0A)', () => {
+        const result = sanitizeCiaSieString('hello\nworld', 'field');
+        expect(result).toContain('\n');
+      });
+
+      it('normalizes CRLF to LF', () => {
+        expect(sanitizeCiaSieString('hello\r\nworld', 'field')).toBe('hello\nworld');
+      });
+
+      it('normalizes standalone CR to LF', () => {
+        expect(sanitizeCiaSieString('hello\rworld', 'field')).toBe('hello\nworld');
+      });
+
+      it('strips multiple control characters', () => {
+        expect(sanitizeCiaSieString('a\x01b\x02c\x03d', 'field')).toBe('abcd');
+      });
+    });
+
+    describe('sanitizeCiaSieResponse', () => {
+      it('sanitizes simple string', () => {
+        expect(sanitizeCiaSieResponse('  hello\x01  ', 'ctx')).toBe('hello');
+      });
+
+      it('returns null for null input', () => {
+        expect(sanitizeCiaSieResponse(null, 'ctx')).toBe(null);
+      });
+
+      it('returns undefined for undefined input', () => {
+        expect(sanitizeCiaSieResponse(undefined, 'ctx')).toBe(undefined);
+      });
+
+      it('passes through numbers unchanged', () => {
+        expect(sanitizeCiaSieResponse(42, 'ctx')).toBe(42);
+      });
+
+      it('passes through booleans unchanged', () => {
+        expect(sanitizeCiaSieResponse(true, 'ctx')).toBe(true);
+      });
+
+      it('sanitizes string values in object', () => {
+        const input = {
+          name: '  test\x01  ',
+          value: 'clean',
+        };
+        const result = sanitizeCiaSieResponse(input, 'ctx');
+        expect(result.name).toBe('test');
+        expect(result.value).toBe('clean');
+      });
+
+      it('sanitizes nested objects', () => {
+        const input = {
+          outer: {
+            inner: '  nested\x02  ',
+          },
+        };
+        const result = sanitizeCiaSieResponse(input, 'ctx');
+        expect(result.outer.inner).toBe('nested');
+      });
+
+      it('sanitizes arrays', () => {
+        const input = ['  first\x01  ', '  second\x02  '];
+        const result = sanitizeCiaSieResponse(input, 'ctx');
+        expect(result[0]).toBe('first');
+        expect(result[1]).toBe('second');
+      });
+
+      it('sanitizes arrays in objects', () => {
+        const input = {
+          items: ['  a\x01  ', '  b\x02  '],
+        };
+        const result = sanitizeCiaSieResponse(input, 'ctx');
+        expect(result.items[0]).toBe('a');
+        expect(result.items[1]).toBe('b');
+      });
+
+      it('sanitizes complex nested structure', () => {
+        const input = {
+          level1: {
+            level2: {
+              level3: '  deep\x03  ',
+            },
+            array: ['  item1\x04  ', { nested: '  item2\x05  ' }],
+          },
+          number: 42,
+          bool: false,
+        };
+        const result = sanitizeCiaSieResponse(input, 'ctx');
+        expect(result.level1.level2.level3).toBe('deep');
+        expect(result.level1.array[0]).toBe('item1');
+        expect((result.level1.array[1] as { nested: string }).nested).toBe('item2');
+        expect(result.number).toBe(42);
+        expect(result.bool).toBe(false);
+      });
+
+      it('throws on NULL byte in nested field', () => {
+        const input = {
+          outer: {
+            inner: 'contains\x00null',
+          },
+        };
+        expect(() => sanitizeCiaSieResponse(input, 'ctx')).toThrow('NULL bytes');
+      });
+    });
+
+    describe('validateCiaSieString', () => {
+      it('passes for clean string', () => {
+        expect(() => validateCiaSieString('hello world', 'field')).not.toThrow();
+      });
+
+      it('throws for NULL byte', () => {
+        expect(() => validateCiaSieString('hello\x00world', 'field')).toThrow('NULL bytes');
+      });
+
+      it('throws for control character', () => {
+        expect(() => validateCiaSieString('hello\x01world', 'field')).toThrow('control characters');
+      });
+
+      it('allows tab character', () => {
+        expect(() => validateCiaSieString('hello\tworld', 'field')).not.toThrow();
+      });
+
+      it('allows newline', () => {
+        expect(() => validateCiaSieString('hello\nworld', 'field')).not.toThrow();
+      });
+
+      it('allows carriage return', () => {
+        expect(() => validateCiaSieString('hello\rworld', 'field')).not.toThrow();
+      });
     });
   });
 });

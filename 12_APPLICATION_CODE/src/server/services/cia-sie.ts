@@ -5,9 +5,13 @@
  * CIA-SIE-PURE is the ENGINE — it executes trades
  * 
  * This service provides the communication layer between them.
+ * 
+ * BLOCK-001 Resolution: All responses from CIA-SIE-PURE are sanitized
+ * at the MCI boundary before being used in stores, UI, or logging.
  */
 
 import { Sentry, logBackendBreadcrumb, captureTradeOperationError } from '../lib/sentry';
+import { sanitizeCiaSieResponse } from '../../shared/validation';
 
 // Configuration
 const CIA_SIE_BASE_URL = process.env.CIA_SIE_URL || 'http://localhost:8000';
@@ -68,6 +72,9 @@ export interface EngineTelemetry {
 
 /**
  * Make HTTP request to CIA-SIE-PURE engine
+ * 
+ * BLOCK-001: All responses are sanitized at the boundary before returning.
+ * This ensures INV-006 compliance even though CIA-SIE-PURE lacks input sanitization.
  */
 const engineRequest = async <T>(
   endpoint: string,
@@ -85,10 +92,19 @@ const engineRequest = async <T>(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
-    throw new Error(error.detail || `Engine error: ${response.status}`);
+    // Sanitize error message before throwing
+    const sanitizedDetail = sanitizeCiaSieResponse(
+      error.detail || `Engine error: ${response.status}`,
+      'error.detail'
+    );
+    throw new Error(sanitizedDetail);
   }
 
-  return response.json();
+  // BLOCK-001: Sanitize all response data at the MCI boundary
+  const rawData = await response.json();
+  const sanitizedData = sanitizeCiaSieResponse<T>(rawData, `cia-sie${endpoint}`);
+  
+  return sanitizedData;
 };
 
 /**
@@ -306,11 +322,14 @@ export class CIASIEService {
 
   /**
    * Health check
+   * 
+   * Note: CIA-SIE-PURE exposes /health at root, not /api/health
    */
   async healthCheck(): Promise<{ healthy: boolean; latency: number }> {
     const start = Date.now();
     try {
-      await engineRequest('/api/health');
+      // CIA-SIE-PURE health endpoint is at /health (root level)
+      await engineRequest('/health');
       return {
         healthy: true,
         latency: Date.now() - start,

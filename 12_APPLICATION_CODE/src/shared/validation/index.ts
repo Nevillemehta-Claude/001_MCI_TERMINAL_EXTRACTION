@@ -21,4 +21,9 @@ export {
 
   // API boundary helpers
   sanitizeCredentialsFromRequest,
+
+  // CIA-SIE-PURE boundary sanitization (BLOCK-001)
+  sanitizeCiaSieString,
+  sanitizeCiaSieResponse,
+  validateCiaSieString,
 } from './sanitize';

@@ -9,6 +9,7 @@
  * - GAP-03: Backend health indicator
  * - GAP-05: Error aggregation indicator
  * - GAP-06: Network connectivity indicator
+ * - MINIMAL INTEGRATION: CIA-SIE-PURE engine health visibility
  * 
  * PRINCIPLE: No indicator may imply readiness, connectivity, or health 
  * unless it is verifiably true.
@@ -18,6 +19,7 @@ import React from 'react';
 import { useTokenStore } from '../../stores/tokenStore';
 import { useBackendHealth, useNetworkStatus, useErrorAggregator } from '../../hooks';
 import { Tooltip } from '../uxmi';
+import { EngineStatusIndicator } from './EngineStatusIndicator';
 
 interface StatusBarProps {
   /** Whether to show the compact version */
@@ -99,6 +101,9 @@ export const StatusBar: React.FC<StatusBarProps> = ({ compact = false }) => {
             <span className="text-red-500 font-bold">⚠ {errorAggregator.recentCount}</span>
           </Tooltip>
         )}
+
+        {/* CIA-SIE-PURE Engine Status - MINIMAL INTEGRATION */}
+        <EngineStatusIndicator compact pollInterval={10000} />
       </div>
     );
   }
@@ -199,6 +204,11 @@ export const StatusBar: React.FC<StatusBarProps> = ({ compact = false }) => {
       {backendHealth.isChecking && (
         <span className="text-gray-500 text-xs animate-pulse">checking...</span>
       )}
+
+      <div className="w-px h-4 bg-gray-600" />
+
+      {/* CIA-SIE-PURE Engine Status - MINIMAL INTEGRATION */}
+      <EngineStatusIndicator pollInterval={10000} />
     </div>
   );
 };

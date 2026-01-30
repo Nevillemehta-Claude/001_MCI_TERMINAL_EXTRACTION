@@ -12,3 +12,7 @@ export type { NetworkStatus } from './useNetworkStatus';
 
 export { useErrorAggregator } from './useErrorAggregator';
 export type { ErrorAggregation, ErrorEntry } from './useErrorAggregator';
+
+// CIA-SIE-PURE Health - MINIMAL INTEGRATION (health visibility only)
+export { useCiaSieHealth } from './useCiaSieHealth';
+export type { CiaSieHealthState, EngineConnectionStatus, UseCiaSieHealthOptions } from './useCiaSieHealth';
