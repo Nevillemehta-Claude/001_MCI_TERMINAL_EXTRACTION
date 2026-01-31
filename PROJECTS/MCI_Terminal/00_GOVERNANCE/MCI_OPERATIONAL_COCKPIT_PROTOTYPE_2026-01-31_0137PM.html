@@ -1,0 +1,3330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCI Operational Cockpit - Forensic Prototype</title>
+    <style>
+        /* ============================================================================
+           DESIGN SYSTEM - Grounded in verified MCI/UXMI specifications
+           ============================================================================ */
+        
+        :root {
+            /* Neutral Palette */
+            --bg-primary: #0F172A;
+            --bg-surface: #1E293B;
+            --bg-elevated: #334155;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            
+            /* Status Colors */
+            --status-nominal: #238636;
+            --status-warning: #d29922;
+            --status-error: #f85149;
+            --status-info: #58a6ff;
+            --status-inactive: #484f58;
+            
+            /* Token Lifecycle (CR-004) */
+            --token-fresh: #22C55E;
+            --token-warning: #EAB308;
+            --token-critical: #DC2626;
+            
+            /* UXMI */
+            --focus-ring: #06B6D4;
+            --tooltip-bg: rgba(26, 35, 50, 0.95);
+            
+            /* Timing (CR-005 SACRED) */
+            --timing-hover: 150ms;
+            --timing-active: 100ms;
+            --timing-tooltip: 300ms;
+            --timing-toast: 5000ms;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* ============================================================================
+           STATUS BAR - Always Visible, Always Truthful
+           ============================================================================ */
+        
+        .status-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 48px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+        }
+        
+        .status-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .status-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+        
+        .logo span {
+            color: var(--status-info);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            cursor: help;
+            transition: background var(--timing-hover) ease;
+        }
+        
+        .status-indicator:hover {
+            background: #3D4A5C;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .status-dot.healthy { background: var(--status-nominal); }
+        .status-dot.warning { background: var(--status-warning); }
+        .status-dot.error { background: var(--status-error); animation: pulse 1s infinite; }
+        .status-dot.unknown { background: var(--status-inactive); }
+        .status-dot.checking { background: var(--status-info); animation: pulse 2s infinite; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .token-timer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            padding: 6px 12px;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .token-timer.fresh { border-left: 3px solid var(--token-fresh); }
+        .token-timer.warning { border-left: 3px solid var(--token-warning); }
+        .token-timer.critical { border-left: 3px solid var(--token-critical); animation: pulse 1s infinite; }
+        
+        .phase-badge {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+        
+        .phase-badge.token { background: rgba(99, 102, 241, 0.2); color: #818CF8; }
+        .phase-badge.scan { background: rgba(234, 179, 8, 0.2); color: #EAB308; }
+        .phase-badge.ignition { background: rgba(249, 115, 22, 0.2); color: #FB923C; }
+        .phase-badge.running { background: rgba(34, 197, 94, 0.2); color: #22C55E; }
+        .phase-badge.debrief { background: rgba(139, 92, 246, 0.2); color: #A78BFA; }
+        .phase-badge.shutdown { background: rgba(220, 38, 38, 0.2); color: #DC2626; }
+        
+        /* ============================================================================
+           MAIN CONTENT AREA
+           ============================================================================ */
+        
+        .main-content {
+            margin-top: 48px;
+            min-height: calc(100vh - 48px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .phase-container {
+            display: none;
+            flex: 1;
+            padding: 32px;
+            animation: fadeIn 300ms ease;
+        }
+        
+        .phase-container.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .phase-header {
+            margin-bottom: 32px;
+        }
+        
+        .phase-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .phase-number {
+            font-size: 14px;
+            color: var(--text-muted);
+            background: var(--bg-elevated);
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+        
+        .phase-description {
+            color: var(--text-secondary);
+            font-size: 15px;
+            max-width: 600px;
+        }
+        
+        /* ============================================================================
+           PHASE 0: TOKEN CAPTURE
+           ============================================================================ */
+        
+        .token-form {
+            max-width: 480px;
+            background: var(--bg-surface);
+            border-radius: 12px;
+            padding: 32px;
+            border: 1px solid var(--bg-elevated);
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            border: 2px solid var(--bg-elevated);
+            border-radius: 8px;
+            color: var(--text-primary);
+            transition: border-color var(--timing-hover) ease, box-shadow var(--timing-hover) ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--focus-ring);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+        }
+        
+        .form-input.error {
+            border-color: var(--status-error);
+        }
+        
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+        
+        .expiry-notice {
+            background: rgba(234, 179, 8, 0.1);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .expiry-notice-icon {
+            font-size: 20px;
+        }
+        
+        .expiry-notice-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .expiry-notice-text strong {
+            color: var(--status-warning);
+        }
+        
+        /* ============================================================================
+           BUTTONS - UXMI 7-State Implementation
+           ============================================================================ */
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all var(--timing-hover) ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--focus-ring);
+        }
+        
+        .btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #60A5FA, #3B82F6);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #22C55E, #16A34A);
+            color: white;
+        }
+        
+        .btn-success:hover:not(:disabled) {
+            background: linear-gradient(135deg, #4ADE80, #22C55E);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #DC2626, #B91C1C);
+            color: white;
+        }
+        
+        .btn-danger:hover:not(:disabled) {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #1a1a2e;
+        }
+        
+        .btn-warning:hover:not(:disabled) {
+            background: linear-gradient(135deg, #FBBF24, #F59E0B);
+        }
+        
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--bg-elevated);
+        }
+        
+        .btn-ghost:hover:not(:disabled) {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+        
+        .btn-loading .btn-text { opacity: 0; }
+        .btn-loading .spinner { display: block; }
+        
+        .spinner {
+            display: none;
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ============================================================================
+           PHASE 1: PRE-IGNITION SCANNER
+           ============================================================================ */
+        
+        .scanner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .scan-check {
+            background: var(--bg-surface);
+            border: 1px solid var(--bg-elevated);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transition: border-color var(--timing-hover) ease;
+        }
+        
+        .scan-check:hover {
+            border-color: #475569;
+        }
+        
+        .scan-check-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        
+        .scan-check-icon.pending { background: rgba(100, 116, 139, 0.2); color: var(--text-muted); }
+        .scan-check-icon.running { background: rgba(59, 130, 246, 0.2); color: var(--status-info); animation: pulse 1.5s infinite; }
+        .scan-check-icon.pass { background: rgba(34, 197, 94, 0.2); color: var(--status-nominal); }
+        .scan-check-icon.warn { background: rgba(234, 179, 8, 0.2); color: var(--status-warning); }
+        .scan-check-icon.fail { background: rgba(220, 38, 38, 0.2); color: var(--status-error); }
+        
+        .scan-check-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .scan-check-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .scan-check-detail {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .scan-check-latency {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        
+        .scanner-summary {
+            background: var(--bg-surface);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--bg-elevated);
+        }
+        
+        .scanner-stats {
+            display: flex;
+            gap: 32px;
+        }
+        
+        .scanner-stat {
+            text-align: center;
+        }
+        
+        .scanner-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .scanner-stat-value.pass { color: var(--status-nominal); }
+        .scanner-stat-value.warn { color: var(--status-warning); }
+        .scanner-stat-value.fail { color: var(--status-error); }
+        
+        .scanner-stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .go-nogo {
+            font-size: 24px;
+            font-weight: 700;
+            padding: 12px 32px;
+            border-radius: 8px;
+        }
+        
+        .go-nogo.go {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--status-nominal);
+            border: 2px solid var(--status-nominal);
+        }
+        
+        .go-nogo.nogo {
+            background: rgba(220, 38, 38, 0.15);
+            color: var(--status-error);
+            border: 2px solid var(--status-error);
+        }
+        
+        /* Failed Check Expander */
+        .scan-check.failed {
+            cursor: pointer;
+            border-color: rgba(220, 38, 38, 0.5);
+        }
+        
+        .scan-check.failed:hover {
+            border-color: var(--status-error);
+        }
+        
+        .scan-check-expand-hint {
+            font-size: 10px;
+            color: var(--status-error);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .scan-check-blocking-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            background: rgba(220, 38, 38, 0.15);
+            color: var(--status-error);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        
+        .scan-check-failure-panel {
+            display: none;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--bg-elevated);
+        }
+        
+        .scan-check-failure-panel.expanded {
+            display: block;
+            animation: fadeIn 200ms ease;
+        }
+        
+        .failure-section {
+            margin-bottom: 16px;
+        }
+        
+        .failure-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .failure-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .failure-label.what { color: var(--status-error); }
+        .failure-label.why { color: var(--status-warning); }
+        .failure-label.how { color: var(--status-info); }
+        
+        .failure-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+            border-left: 3px solid currentColor;
+        }
+        
+        .failure-text.what { border-color: var(--status-error); }
+        .failure-text.why { border-color: var(--status-warning); }
+        .failure-text.how { border-color: var(--status-info); }
+        
+        .failure-governance-notice {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 12px;
+            padding: 10px 12px;
+            background: rgba(100, 116, 139, 0.1);
+            border-radius: 6px;
+        }
+        
+        /* Next Operator Action Section */
+        .next-action-section {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+        }
+        
+        .next-action-section.visible {
+            display: block;
+        }
+        
+        .next-action-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--status-info);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .next-action-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Simulation Mode Toggle (Prototype Only) */
+        .prototype-simulation-section {
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--bg-surface);
+            border: 2px dashed rgba(139, 92, 246, 0.4);
+            border-radius: 12px;
+            display: none;
+        }
+        
+        .prototype-simulation-section.visible {
+            display: block;
+        }
+        
+        .prototype-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            background: rgba(139, 92, 246, 0.15);
+            color: #A78BFA;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+        
+        .prototype-simulation-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        
+        .prototype-simulation-btn {
+            padding: 10px 20px;
+            font-size: 13px;
+            background: transparent;
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            color: #A78BFA;
+        }
+        
+        .prototype-simulation-btn:hover:not(:disabled) {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: #A78BFA;
+        }
+        
+        .prototype-disclaimer {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            font-style: italic;
+        }
+        
+        /* ============================================================================
+           PHASE 2: IGNITION SEQUENCE
+           ============================================================================ */
+        
+        .ignition-container {
+            max-width: 600px;
+        }
+        
+        .backend-selector {
+            background: var(--bg-surface);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--bg-elevated);
+        }
+        
+        .backend-selector-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        
+        .backend-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .backend-option {
+            padding: 16px;
+            background: var(--bg-primary);
+            border: 2px solid var(--bg-elevated);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all var(--timing-hover) ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .backend-option:hover {
+            border-color: #475569;
+        }
+        
+        .backend-option.selected {
+            border-color: var(--status-info);
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .backend-option input {
+            display: none;
+        }
+        
+        .backend-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .backend-info {
+            flex: 1;
+        }
+        
+        .backend-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .backend-status {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .ignition-safety {
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .ignition-safety-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--status-error);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .ignition-safety-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        
+        .confirm-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            background: var(--bg-primary);
+            border: 2px solid var(--bg-elevated);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        
+        .confirm-input:focus {
+            outline: none;
+            border-color: var(--focus-ring);
+        }
+        
+        .ignition-button-container {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .ignition-button {
+            flex: 1;
+            padding: 20px;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .ignition-button.arm {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #1a1a2e;
+        }
+        
+        .ignition-button.arm:hover:not(:disabled) {
+            background: linear-gradient(135deg, #FBBF24, #F59E0B);
+        }
+        
+        .ignition-button.ignite {
+            background: linear-gradient(135deg, #22C55E, #16A34A);
+            color: white;
+        }
+        
+        .ignition-button.ignite:hover:not(:disabled) {
+            background: linear-gradient(135deg, #4ADE80, #22C55E);
+        }
+        
+        .ignition-button.armed {
+            animation: armPulse 1.5s infinite;
+        }
+        
+        @keyframes armPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 0 0 12px rgba(245, 158, 11, 0); }
+        }
+        
+        /* ============================================================================
+           PHASE 3: TELEMETRY DASHBOARD
+           ============================================================================ */
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 16px;
+        }
+        
+        .dashboard-panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--bg-elevated);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .panel-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .panel-badge.live {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--status-nominal);
+        }
+        
+        .panel-badge.sim {
+            background: rgba(234, 179, 8, 0.2);
+            color: var(--status-warning);
+        }
+        
+        .panel-content {
+            padding: 16px;
+        }
+        
+        /* Engine Status Panel */
+        .engine-panel { grid-column: span 4; }
+        
+        .engine-status {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .engine-status-indicator {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .engine-status-indicator.connected {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid var(--status-nominal);
+        }
+        
+        .engine-status-indicator.disconnected {
+            background: rgba(220, 38, 38, 0.2);
+            border: 2px solid var(--status-error);
+        }
+        
+        .engine-status-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .engine-status-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .subsystem-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        
+        .subsystem {
+            padding: 12px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .subsystem-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .subsystem-name {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        /* Health Panel */
+        .health-panel { grid-column: span 4; }
+        
+        .health-metrics {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .health-metric {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+        }
+        
+        .health-metric-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .health-metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .health-metric-value.good { color: var(--status-nominal); }
+        .health-metric-value.warn { color: var(--status-warning); }
+        .health-metric-value.bad { color: var(--status-error); }
+        
+        /* Determinism Panel */
+        .determinism-panel { grid-column: span 4; }
+        
+        .determinism-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--status-nominal);
+            margin-bottom: 16px;
+        }
+        
+        .determinism-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        .determinism-stat {
+            text-align: center;
+            padding: 12px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+        }
+        
+        .determinism-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .determinism-stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        /* Positions Panel */
+        .positions-panel { grid-column: span 6; }
+        
+        .positions-table {
+            width: 100%;
+            font-size: 13px;
+        }
+        
+        .positions-table th {
+            text-align: left;
+            padding: 8px 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .positions-table td {
+            padding: 12px;
+            border-top: 1px solid var(--bg-elevated);
+        }
+        
+        .positions-table .symbol {
+            font-weight: 500;
+        }
+        
+        .positions-table .profit { color: var(--status-nominal); }
+        .positions-table .loss { color: var(--status-error); }
+        
+        /* Activity Log Panel */
+        .activity-panel { grid-column: span 6; }
+        
+        .activity-log {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--bg-elevated);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        
+        .activity-message {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .activity-message.info { color: var(--status-info); }
+        .activity-message.success { color: var(--status-nominal); }
+        .activity-message.warning { color: var(--status-warning); }
+        .activity-message.error { color: var(--status-error); }
+        
+        /* Governance Panel */
+        .governance-panel { grid-column: span 12; }
+        
+        .governance-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+        
+        .governance-item {
+            padding: 16px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .governance-item.active {
+            border: 1px solid var(--status-nominal);
+            background: rgba(34, 197, 94, 0.05);
+        }
+        
+        .governance-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--status-nominal);
+            margin-bottom: 4px;
+        }
+        
+        .governance-name {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        /* ============================================================================
+           PHASE 4: SHUTDOWN
+           ============================================================================ */
+        
+        .shutdown-container {
+            max-width: 600px;
+        }
+        
+        .shutdown-warning {
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .shutdown-warning-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--status-error);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .shutdown-warning-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .shutdown-steps {
+            background: var(--bg-surface);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--bg-elevated);
+        }
+        
+        .shutdown-step {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--bg-elevated);
+        }
+        
+        .shutdown-step:last-child {
+            border-bottom: none;
+        }
+        
+        .shutdown-step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        
+        .shutdown-step-number.complete {
+            background: var(--status-nominal);
+            color: white;
+        }
+        
+        .shutdown-step-number.active {
+            background: var(--status-warning);
+            color: #1a1a2e;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .shutdown-step-name {
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .shutdown-step-status {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .shutdown-options {
+            background: var(--bg-surface);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--bg-elevated);
+        }
+        
+        .shutdown-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+        }
+        
+        .shutdown-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--status-info);
+        }
+        
+        .shutdown-option label {
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .shutdown-actions {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .shutdown-actions .btn {
+            flex: 1;
+        }
+        
+        /* ============================================================================
+           SESSION DEBRIEF
+           ============================================================================ */
+        
+        .debrief-container {
+            max-width: 800px;
+        }
+        
+        .debrief-header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 8px;
+        }
+        
+        .debrief-header-badge.factual {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--status-info);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .debrief-header-badge.observational {
+            background: rgba(139, 92, 246, 0.15);
+            color: #A78BFA;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .debrief-header-badge.governance {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--status-nominal);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        
+        .debrief-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--bg-elevated);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .debrief-section-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .debrief-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .debrief-section-content {
+            padding: 20px;
+        }
+        
+        .debrief-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        
+        .debrief-grid.four-col {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        
+        .debrief-item {
+            padding: 16px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+        }
+        
+        .debrief-item-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        
+        .debrief-item-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .debrief-item-value.healthy { color: var(--status-nominal); }
+        .debrief-item-value.warning { color: var(--status-warning); }
+        .debrief-item-value.error { color: var(--status-error); }
+        
+        .debrief-subsystem-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--bg-elevated);
+        }
+        
+        .debrief-subsystem-row:last-child {
+            border-bottom: none;
+        }
+        
+        .debrief-subsystem-name {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .debrief-subsystem-status {
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+        
+        .debrief-subsystem-status.healthy {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--status-nominal);
+        }
+        
+        .debrief-subsystem-status.warning {
+            background: rgba(234, 179, 8, 0.15);
+            color: var(--status-warning);
+        }
+        
+        .debrief-observation-notice {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .debrief-observation-notice-icon {
+            font-size: 18px;
+            color: #A78BFA;
+        }
+        
+        .debrief-observation-notice-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .debrief-governance-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+        
+        .debrief-governance-item {
+            padding: 12px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+        
+        .debrief-governance-item.verified {
+            border-color: var(--status-nominal);
+            background: rgba(34, 197, 94, 0.05);
+        }
+        
+        .debrief-governance-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--status-nominal);
+            margin-bottom: 4px;
+        }
+        
+        .debrief-governance-status {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        
+        .debrief-no-execution {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            text-align: center;
+        }
+        
+        .debrief-no-execution-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--status-info);
+        }
+        
+        .debrief-attestation {
+            background: var(--bg-surface);
+            border: 2px solid var(--bg-elevated);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .debrief-attestation-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .debrief-attestation-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .debrief-attestation-checkbox input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--status-nominal);
+            margin-top: 2px;
+        }
+        
+        .debrief-attestation-checkbox label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            line-height: 1.5;
+        }
+        
+        .debrief-attestation-checkbox label strong {
+            color: var(--text-primary);
+        }
+        
+        .debrief-proceed-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 15px;
+        }
+        
+        /* ============================================================================
+           ERROR DISPLAY - CR-003 WHAT/WHY/HOW
+           ============================================================================ */
+        
+        .error-display {
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 16px 0;
+        }
+        
+        .error-section {
+            margin-bottom: 16px;
+        }
+        
+        .error-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .error-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .error-label.what { color: var(--status-error); }
+        .error-label.why { color: var(--status-warning); }
+        .error-label.how { color: var(--status-nominal); }
+        
+        .error-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* ============================================================================
+           TOOLTIPS - 300ms delay per CR-005
+           ============================================================================ */
+        
+        .tooltip-container {
+            position: relative;
+        }
+        
+        .tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--tooltip-bg);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 150ms ease, visibility 150ms ease;
+            pointer-events: none;
+            z-index: 1000;
+            max-width: 280px;
+            text-align: center;
+        }
+        
+        .tooltip-container:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            transition-delay: var(--timing-tooltip);
+        }
+        
+        /* ============================================================================
+           PROGRESS BAR
+           ============================================================================ */
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--status-info), var(--status-nominal));
+            border-radius: 4px;
+            transition: width 300ms linear;
+        }
+        
+        /* ============================================================================
+           TOAST NOTIFICATIONS
+           ============================================================================ */
+        
+        .toast-container {
+            position: fixed;
+            top: 64px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 2000;
+        }
+        
+        .toast {
+            padding: 12px 16px;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            border: 1px solid var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            animation: toastIn 200ms ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes toastIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .toast-icon {
+            font-size: 18px;
+        }
+        
+        .toast-message {
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            font-size: 16px;
+        }
+        
+        .toast.success { border-left: 3px solid var(--status-nominal); }
+        .toast.error { border-left: 3px solid var(--status-error); }
+        .toast.warning { border-left: 3px solid var(--status-warning); }
+        .toast.info { border-left: 3px solid var(--status-info); }
+        
+        /* ============================================================================
+           ABORT BUTTON - Always Visible During Operations
+           ============================================================================ */
+        
+        .abort-button {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #DC2626, #B91C1C);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 40px rgba(220, 38, 38, 0.4);
+            transition: all var(--timing-hover) ease;
+            z-index: 1000;
+        }
+        
+        .abort-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 50px rgba(220, 38, 38, 0.5);
+        }
+        
+        .abort-button.visible {
+            display: flex;
+        }
+        
+        /* ============================================================================
+           PHASE NAVIGATION
+           ============================================================================ */
+        
+        .phase-nav {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+            padding-top: 32px;
+        }
+        
+        /* ============================================================================
+           RESPONSIVE
+           ============================================================================ */
+        
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+            
+            .engine-panel,
+            .health-panel,
+            .determinism-panel { grid-column: span 6; }
+            
+            .positions-panel,
+            .activity-panel { grid-column: span 6; }
+            
+            .governance-panel { grid-column: span 6; }
+            
+            .governance-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .status-bar {
+                padding: 0 16px;
+            }
+            
+            .status-bar-left {
+                gap: 12px;
+            }
+            
+            .phase-container {
+                padding: 16px;
+            }
+            
+            .scanner-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .backend-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .engine-panel,
+            .health-panel,
+            .determinism-panel,
+            .positions-panel,
+            .activity-panel,
+            .governance-panel { grid-column: span 1; }
+            
+            .governance-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ========================================================================
+         STATUS BAR - Always Visible, Always Truthful
+         ======================================================================== -->
+    <div class="status-bar">
+        <div class="status-bar-left">
+            <div class="logo">MCI <span>Cockpit</span></div>
+            <span class="phase-badge token" id="phaseBadge">PHASE 0</span>
+            
+            <div class="tooltip-container">
+                <div class="status-indicator" id="networkStatus">
+                    <span class="status-dot healthy"></span>
+                    <span>NETWORK</span>
+                </div>
+                <div class="tooltip">Network connection active</div>
+            </div>
+            
+            <div class="tooltip-container">
+                <div class="status-indicator" id="backendStatus">
+                    <span class="status-dot checking"></span>
+                    <span>MCI BACKEND</span>
+                </div>
+                <div class="tooltip">Checking backend health...</div>
+            </div>
+            
+            <div class="tooltip-container">
+                <div class="status-indicator" id="engineStatus">
+                    <span class="status-dot unknown"></span>
+                    <span>CIA-SIE</span>
+                </div>
+                <div class="tooltip">Engine status: Not checked</div>
+            </div>
+        </div>
+        
+        <div class="status-bar-right">
+            <div class="tooltip-container">
+                <div class="token-timer fresh" id="tokenTimer">
+                    <span>TOKEN</span>
+                    <span id="tokenCountdown">05:42:31</span>
+                </div>
+                <div class="tooltip">Token expires at 6:00 AM IST (CR-004)</div>
+            </div>
+            
+            <button class="btn btn-ghost" onclick="resetSystem()">Reset</button>
+        </div>
+    </div>
+    
+    <!-- ========================================================================
+         TOAST NOTIFICATIONS
+         ======================================================================== -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- ========================================================================
+         ABORT BUTTON - Kill Switch Supremacy
+         ======================================================================== -->
+    <button class="abort-button" id="abortButton" onclick="executeAbort()">
+        <span>⚠️</span>
+        <span>ABORT</span>
+    </button>
+    
+    <!-- ========================================================================
+         PHASE 0: TOKEN CAPTURE
+         ======================================================================== -->
+    <div class="phase-container active" id="phase0">
+        <div class="phase-header">
+            <h1 class="phase-title">
+                <span class="phase-number">PHASE 0</span>
+                Token Capture
+            </h1>
+            <p class="phase-description">
+                Secure authentication with Kite Connect. Your token expires daily at 6:00 AM IST (CR-004).
+            </p>
+        </div>
+        
+        <div class="token-form">
+            <div class="expiry-notice">
+                <span class="expiry-notice-icon">⏰</span>
+                <div class="expiry-notice-text">
+                    <strong>Daily Token Requirement:</strong> Kite tokens are valid until 6:00 AM IST each day.
+                    You must re-authenticate after expiry.
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">API Key</label>
+                <input type="text" class="form-input" id="apiKey" placeholder="Enter your Kite API key" value="ji12bxmns06gyvnk">
+                <p class="form-hint">Your Kite Connect API key from developer console</p>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Access Token</label>
+                <input type="password" class="form-input" id="accessToken" placeholder="Paste access token from callback URL">
+                <p class="form-hint">Token received after Kite OAuth login</p>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">User ID</label>
+                <input type="text" class="form-input" id="userId" placeholder="Your Kite user ID">
+            </div>
+            
+            <button class="btn btn-primary" onclick="validateToken()" style="width: 100%;">
+                <span class="btn-text">Validate & Proceed</span>
+                <div class="spinner"></div>
+            </button>
+        </div>
+        
+        <div class="phase-nav">
+            <button class="btn btn-ghost" disabled>← Back</button>
+        </div>
+    </div>
+    
+    <!-- ========================================================================
+         PHASE 1: PRE-IGNITION SCANNER
+         ======================================================================== -->
+    <div class="phase-container" id="phase1">
+        <div class="phase-header">
+            <h1 class="phase-title">
+                <span class="phase-number">PHASE 1</span>
+                Pre-Ignition Scanner
+            </h1>
+            <p class="phase-description">
+                12-point system verification. All checks must pass before ignition is authorized.
+            </p>
+        </div>
+        
+        <div class="scanner-grid" id="scannerGrid">
+            <!-- Populated by JavaScript -->
+        </div>
+        
+        <div class="scanner-summary" id="scannerSummary">
+            <div class="scanner-stats">
+                <div class="scanner-stat">
+                    <div class="scanner-stat-value pass" id="passCount">0</div>
+                    <div class="scanner-stat-label">Passed</div>
+                </div>
+                <div class="scanner-stat">
+                    <div class="scanner-stat-value warn" id="warnCount">0</div>
+                    <div class="scanner-stat-label">Warnings</div>
+                </div>
+                <div class="scanner-stat">
+                    <div class="scanner-stat-value fail" id="failCount">0</div>
+                    <div class="scanner-stat-label">Failed</div>
+                </div>
+            </div>
+            <div class="go-nogo nogo" id="goNogo">NO-GO</div>
+        </div>
+        
+        <!-- Next Operator Action (shown on failure) -->
+        <div class="next-action-section" id="nextActionSection">
+            <div class="next-action-title">
+                <span>➡️</span>
+                Next Operator Action
+            </div>
+            <div class="next-action-text">
+                Resolve the failed condition(s) externally, then re-run the Pre-Ignition Scan by clicking the button below.
+            </div>
+            <button class="btn btn-ghost" style="margin-top: 16px;" onclick="runScanner()">
+                🔄 Re-run Pre-Ignition Scan
+            </button>
+        </div>
+        
+        <!-- Prototype Simulation Mode (clearly labeled, for walkthrough only) -->
+        <div class="prototype-simulation-section" id="prototypeSimSection">
+            <div class="prototype-badge">
+                <span>🧪</span>
+                SIMULATION — NOT LIVE
+            </div>
+            <div class="prototype-simulation-title">
+                Prototype Mode: Simulate resolution to continue walkthrough
+            </div>
+            <button class="btn prototype-simulation-btn" onclick="simulateResolution()">
+                Simulate Resolution (Prototype Mode)
+            </button>
+            <div class="prototype-disclaimer">
+                This button exists only for prototype demonstration purposes. In production, 
+                failures must be resolved externally before re-scanning.
+            </div>
+        </div>
+        
+        <div class="phase-nav">
+            <button class="btn btn-ghost" onclick="goToPhase(0)">← Back</button>
+            <button class="btn btn-primary" id="scannerProceed" disabled onclick="goToPhase(2)">
+                Proceed to Ignition →
+            </button>
+        </div>
+    </div>
+    
+    <!-- ========================================================================
+         PHASE 2: IGNITION SEQUENCE
+         ======================================================================== -->
+    <div class="phase-container" id="phase2">
+        <div class="phase-header">
+            <h1 class="phase-title">
+                <span class="phase-number">PHASE 2</span>
+                Ignition Sequence
+            </h1>
+            <p class="phase-description">
+                Two-stage safety activation: ARM then IGNITE. Backend selection required.
+            </p>
+        </div>
+        
+        <div class="ignition-container">
+            <div class="backend-selector">
+                <div class="backend-selector-title">Select Trading Backend</div>
+                <div class="backend-grid">
+                    <label class="backend-option" onclick="selectBackend('zerodha')">
+                        <input type="radio" name="backend" value="zerodha">
+                        <div class="backend-logo">🪁</div>
+                        <div class="backend-info">
+                            <div class="backend-name">Zerodha Kite</div>
+                            <div class="backend-status">Ready</div>
+                        </div>
+                    </label>
+                    <label class="backend-option" onclick="selectBackend('icici')">
+                        <input type="radio" name="backend" value="icici">
+                        <div class="backend-logo">🏦</div>
+                        <div class="backend-info">
+                            <div class="backend-name">ICICI Direct</div>
+                            <div class="backend-status">Ready</div>
+                        </div>
+                    </label>
+                    <label class="backend-option" onclick="selectBackend('hdfc')">
+                        <input type="radio" name="backend" value="hdfc">
+                        <div class="backend-logo">🏛️</div>
+                        <div class="backend-info">
+                            <div class="backend-name">HDFC Sky</div>
+                            <div class="backend-status">Ready</div>
+                        </div>
+                    </label>
+                    <label class="backend-option" onclick="selectBackend('kotak')">
+                        <input type="radio" name="backend" value="kotak">
+                        <div class="backend-logo">🦁</div>
+                        <div class="backend-info">
+                            <div class="backend-name">Kotak Neo</div>
+                            <div class="backend-status">Ready</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="ignition-safety">
+                <div class="ignition-safety-title">
+                    <span>⚠️</span>
+                    Live Trading Confirmation
+                </div>
+                <p class="ignition-safety-text">
+                    This will initiate monitoring of live trading operations. Type <strong>CONFIRM TRADE</strong> to acknowledge.
+                </p>
+                <input type="text" class="confirm-input" id="confirmInput" placeholder="Type CONFIRM TRADE" oninput="checkConfirmation()">
+            </div>
+            
+            <div class="ignition-button-container">
+                <button class="btn ignition-button arm" id="armButton" disabled onclick="armSystem()">
+                    <span class="btn-text">ARM SYSTEM</span>
+                    <div class="spinner"></div>
+                </button>
+                <button class="btn ignition-button ignite" id="igniteButton" disabled onclick="igniteSystem()">
+                    <span class="btn-text">IGNITE</span>
+                    <div class="spinner"></div>
+                </button>
+            </div>
+        </div>
+        
+        <div class="phase-nav">
+            <button class="btn btn-ghost" onclick="goToPhase(1)">← Back to Scanner</button>
+        </div>
+    </div>
+    
+    <!-- ========================================================================
+         PHASE 3: TELEMETRY DASHBOARD
+         ======================================================================== -->
+    <div class="phase-container" id="phase3">
+        <div class="phase-header">
+            <h1 class="phase-title">
+                <span class="phase-number">PHASE 3</span>
+                Telemetry Dashboard
+            </h1>
+            <p class="phase-description">
+                Real-time monitoring. MCI observes only — all trading is executed by CIA-SIE-PURE.
+            </p>
+        </div>
+        
+        <div class="dashboard-grid">
+            <!-- Engine Status Panel -->
+            <div class="dashboard-panel engine-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span>🔌</span>
+                        CIA-SIE-PURE Engine
+                    </div>
+                    <span class="panel-badge live">LIVE</span>
+                </div>
+                <div class="panel-content">
+                    <div class="engine-status">
+                        <div class="engine-status-indicator connected">✓</div>
+                        <div class="engine-status-info">
+                            <h4>CONNECTED</h4>
+                            <p>Latency: 42ms (OK)</p>
+                        </div>
+                    </div>
+                    <div class="subsystem-grid">
+                        <div class="subsystem">
+                            <span class="subsystem-dot status-dot healthy"></span>
+                            <span class="subsystem-name">Process</span>
+                        </div>
+                        <div class="subsystem">
+                            <span class="subsystem-dot status-dot healthy"></span>
+                            <span class="subsystem-name">Database</span>
+                        </div>
+                        <div class="subsystem">
+                            <span class="subsystem-dot status-dot healthy"></span>
+                            <span class="subsystem-name">AI Service</span>
+                        </div>
+                        <div class="subsystem">
+                            <span class="subsystem-dot status-dot healthy"></span>
+                            <span class="subsystem-name">Webhooks</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Health Metrics Panel -->
+            <div class="dashboard-panel health-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span>💓</span>
+                        System Health
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="health-metrics">
+                        <div class="health-metric">
+                            <span class="health-metric-label">MCI Backend</span>
+                            <span class="health-metric-value good">HEALTHY</span>
+                        </div>
+                        <div class="health-metric">
+                            <span class="health-metric-label">Token TTL</span>
+                            <span class="health-metric-value good" id="healthTokenTTL">05:42:31</span>
+                        </div>
+                        <div class="health-metric">
+                            <span class="health-metric-label">Last Check</span>
+                            <span class="health-metric-value">2s ago</span>
+                        </div>
+                        <div class="health-metric">
+                            <span class="health-metric-label">Uptime</span>
+                            <span class="health-metric-value">00:14:22</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Determinism Panel -->
+            <div class="dashboard-panel determinism-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span>🎯</span>
+                        Determinism
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="determinism-badge">
+                        <span>✓</span>
+                        AUTOPILOT-GRADE CERTIFIED
+                    </div>
+                    <div class="determinism-stats">
+                        <div class="determinism-stat">
+                            <div class="determinism-stat-value">100%</div>
+                            <div class="determinism-stat-label">Pass Rate</div>
+                        </div>
+                        <div class="determinism-stat">
+                            <div class="determinism-stat-value">4.2%</div>
+                            <div class="determinism-stat-label">CV</div>
+                        </div>
+                        <div class="determinism-stat">
+                            <div class="determinism-stat-value">781</div>
+                            <div class="determinism-stat-label">Tests</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Positions Panel -->
+            <div class="dashboard-panel positions-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span>📊</span>
+                        Positions
+                    </div>
+                    <span class="panel-badge sim">OBSERVATION ONLY</span>
+                </div>
+                <div class="panel-content">
+                    <table class="positions-table">
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Qty</th>
+                                <th>Avg Price</th>
+                                <th>LTP</th>
+                                <th>P&L</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="symbol">RELIANCE</td>
+                                <td>50</td>
+                                <td>2,450.25</td>
+                                <td>2,478.50</td>
+                                <td class="profit">+1,412.50</td>
+                            </tr>
+                            <tr>
+                                <td class="symbol">TCS</td>
+                                <td>25</td>
+                                <td>3,890.00</td>
+                                <td>3,845.20</td>
+                                <td class="loss">-1,120.00</td>
+                            </tr>
+                            <tr>
+                                <td class="symbol">INFY</td>
+                                <td>100</td>
+                                <td>1,520.50</td>
+                                <td>1,542.75</td>
+                                <td class="profit">+2,225.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Activity Log Panel -->
+            <div class="dashboard-panel activity-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span>📝</span>
+                        Activity Log
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="activity-log" id="activityLog">
+                        <div class="activity-item">
+                            <span class="activity-time">09:32:15</span>
+                            <span class="activity-message success">System ignited successfully</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">09:32:14</span>
+                            <span class="activity-message info">CIA-SIE-PURE connected (42ms)</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">09:32:12</span>
+                            <span class="activity-message info">Backend health verified</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">09:32:10</span>
+                            <span class="activity-message">Ignition sequence started</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">09:32:05</span>
+                            <span class="activity-message">System armed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Governance Panel -->
+            <div class="dashboard-panel governance-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span>⚖️</span>
+                        Constitutional Constraints (SACRED)
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="governance-grid">
+                        <div class="governance-item active">
+                            <div class="governance-code">CR-001</div>
+                            <div class="governance-name">Decision-Support Only</div>
+                        </div>
+                        <div class="governance-item active">
+                            <div class="governance-code">CR-002</div>
+                            <div class="governance-name">Graceful Shutdown</div>
+                        </div>
+                        <div class="governance-item active">
+                            <div class="governance-code">CR-003</div>
+                            <div class="governance-name">WHAT/WHY/HOW</div>
+                        </div>
+                        <div class="governance-item active">
+                            <div class="governance-code">CR-004</div>
+                            <div class="governance-name">6:00 AM IST Expiry</div>
+                        </div>
+                        <div class="governance-item active">
+                            <div class="governance-code">CR-005</div>
+                            <div class="governance-name">UXMI 7-States</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="phase-nav">
+            <button class="btn btn-primary" onclick="goToPhase('debrief')">End Session →</button>
+        </div>
+    </div>
+    
+    <!-- ========================================================================
+         SESSION DEBRIEF - Operator Closure Layer
+         ======================================================================== -->
+    <div class="phase-container" id="phaseDebrief">
+        <div class="phase-header">
+            <h1 class="phase-title">
+                <span class="phase-number">SESSION DEBRIEF</span>
+                Factual Session Record
+            </h1>
+            <p class="phase-description">
+                Review your session's factual record before proceeding to shutdown.
+                <span class="debrief-header-badge factual">Factual</span>
+                <span class="debrief-header-badge observational">Observational</span>
+                <span class="debrief-header-badge governance">Governance-Verified</span>
+            </p>
+        </div>
+        
+        <div class="debrief-container">
+            <!-- Section 1: Session Metadata -->
+            <div class="debrief-section">
+                <div class="debrief-section-header">
+                    <div class="debrief-section-title">
+                        <span>🕐</span>
+                        Session Metadata
+                    </div>
+                    <span class="debrief-header-badge factual">Factual</span>
+                </div>
+                <div class="debrief-section-content">
+                    <div class="debrief-grid four-col">
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Session Start</div>
+                            <div class="debrief-item-value" id="debriefSessionStart">09:15:42 IST</div>
+                        </div>
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Session End</div>
+                            <div class="debrief-item-value" id="debriefSessionEnd">14:32:18 IST</div>
+                        </div>
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Total Duration</div>
+                            <div class="debrief-item-value" id="debriefDuration">05:16:36</div>
+                        </div>
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Market Window</div>
+                            <div class="debrief-item-value" id="debriefMarketWindow">NSE: 09:15-15:30</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 2: Infrastructure Health Summary -->
+            <div class="debrief-section">
+                <div class="debrief-section-header">
+                    <div class="debrief-section-title">
+                        <span>💓</span>
+                        Infrastructure Health Summary
+                    </div>
+                    <span class="debrief-header-badge factual">Observed</span>
+                </div>
+                <div class="debrief-section-content">
+                    <div class="debrief-grid">
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">CIA-SIE-PURE Availability</div>
+                            <div class="debrief-item-value healthy" id="debriefUptime">100.0%</div>
+                        </div>
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Average Latency Band</div>
+                            <div class="debrief-item-value healthy" id="debriefLatency">38-52ms (OK)</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <div class="debrief-item-label" style="margin-bottom: 12px;">Subsystem Status</div>
+                        <div class="debrief-subsystem-row">
+                            <span class="debrief-subsystem-name">Process</span>
+                            <span class="debrief-subsystem-status healthy">HEALTHY</span>
+                        </div>
+                        <div class="debrief-subsystem-row">
+                            <span class="debrief-subsystem-name">Database</span>
+                            <span class="debrief-subsystem-status healthy">HEALTHY</span>
+                        </div>
+                        <div class="debrief-subsystem-row">
+                            <span class="debrief-subsystem-name">AI Service</span>
+                            <span class="debrief-subsystem-status healthy">HEALTHY</span>
+                        </div>
+                        <div class="debrief-subsystem-row">
+                            <span class="debrief-subsystem-name">Webhooks</span>
+                            <span class="debrief-subsystem-status healthy">HEALTHY</span>
+                        </div>
+                    </div>
+                    
+                    <div class="debrief-grid" style="margin-top: 20px;">
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Warnings Logged</div>
+                            <div class="debrief-item-value warning" id="debriefWarnings">1</div>
+                        </div>
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Errors Logged</div>
+                            <div class="debrief-item-value healthy" id="debriefErrors">0</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 16px; font-size: 12px; color: var(--text-muted);">
+                        <strong>Warning at 13:45:22:</strong> Token TTL below 2 hours remaining
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 3: Observed Trading State -->
+            <div class="debrief-section">
+                <div class="debrief-section-header">
+                    <div class="debrief-section-title">
+                        <span>📊</span>
+                        Observed Trading State
+                    </div>
+                    <span class="debrief-header-badge observational">Read-Only</span>
+                </div>
+                <div class="debrief-section-content">
+                    <div class="debrief-grid">
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Positions Observed</div>
+                            <div class="debrief-item-value" id="debriefPositions">3</div>
+                        </div>
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Net P&L Snapshot</div>
+                            <div class="debrief-item-value healthy" id="debriefPnL">+2,517.50</div>
+                        </div>
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Orders Observed</div>
+                            <div class="debrief-item-value" id="debriefOrders">7</div>
+                        </div>
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Backend Monitored</div>
+                            <div class="debrief-item-value" id="debriefBackend">Zerodha Kite</div>
+                        </div>
+                    </div>
+                    
+                    <div class="debrief-observation-notice">
+                        <span class="debrief-observation-notice-icon">👁️</span>
+                        <span class="debrief-observation-notice-text">
+                            Observation only — no trading decisions made by MCI. All trading was executed by CIA-SIE-PURE.
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 4: Governance & Constitutional Verification -->
+            <div class="debrief-section">
+                <div class="debrief-section-header">
+                    <div class="debrief-section-title">
+                        <span>⚖️</span>
+                        Governance & Constitutional Verification
+                    </div>
+                    <span class="debrief-header-badge governance">Verified</span>
+                </div>
+                <div class="debrief-section-content">
+                    <div class="debrief-governance-grid">
+                        <div class="debrief-governance-item verified">
+                            <div class="debrief-governance-code">CR-001</div>
+                            <div class="debrief-governance-status">✓ COMPLIANT</div>
+                        </div>
+                        <div class="debrief-governance-item verified">
+                            <div class="debrief-governance-code">CR-002</div>
+                            <div class="debrief-governance-status">✓ COMPLIANT</div>
+                        </div>
+                        <div class="debrief-governance-item verified">
+                            <div class="debrief-governance-code">CR-003</div>
+                            <div class="debrief-governance-status">✓ COMPLIANT</div>
+                        </div>
+                        <div class="debrief-governance-item verified">
+                            <div class="debrief-governance-code">CR-004</div>
+                            <div class="debrief-governance-status">✓ COMPLIANT</div>
+                        </div>
+                        <div class="debrief-governance-item verified">
+                            <div class="debrief-governance-code">CR-005</div>
+                            <div class="debrief-governance-status">✓ COMPLIANT</div>
+                        </div>
+                    </div>
+                    
+                    <div class="debrief-grid" style="margin-top: 20px;">
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Invariant Integrity</div>
+                            <div class="debrief-item-value healthy">6/6 INTACT</div>
+                        </div>
+                        <div class="debrief-item">
+                            <div class="debrief-item-label">Kill Switch Status</div>
+                            <div class="debrief-item-value healthy">NOT ENGAGED</div>
+                        </div>
+                    </div>
+                    
+                    <div class="debrief-no-execution">
+                        <div class="debrief-no-execution-text">
+                            ✓ No execution authority exercised by MCI during this session
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 5: Operator Attestation -->
+            <div class="debrief-attestation">
+                <div class="debrief-attestation-title">
+                    <span>✍️</span>
+                    Operator Attestation
+                </div>
+                <div class="debrief-attestation-checkbox">
+                    <input type="checkbox" id="debriefAttestation" onchange="checkDebriefAttestation()">
+                    <label for="debriefAttestation">
+                        <strong>I confirm I have reviewed this session's factual record.</strong><br>
+                        I acknowledge that MCI operated in observation-only mode, that no trading decisions were made by this system, and that all constitutional constraints were honored.
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Proceed Button -->
+            <button class="btn btn-primary debrief-proceed-btn" id="debriefProceedBtn" disabled onclick="goToPhase(4)">
+                <span class="btn-text">Proceed to Shutdown</span>
+                <div class="spinner"></div>
+            </button>
+        </div>
+        
+        <div class="phase-nav">
+            <button class="btn btn-ghost" onclick="goToPhase(3)">← Return to Dashboard</button>
+        </div>
+    </div>
+    
+    <!-- ========================================================================
+         PHASE 4: SHUTDOWN
+         ======================================================================== -->
+    <div class="phase-container" id="phase4">
+        <div class="phase-header">
+            <h1 class="phase-title">
+                <span class="phase-number">PHASE 4</span>
+                Shutdown Protocol
+            </h1>
+            <p class="phase-description">
+                6-step graceful shutdown per CR-002. Emergency mode available.
+            </p>
+        </div>
+        
+        <div class="shutdown-container">
+            <div class="shutdown-warning">
+                <div class="shutdown-warning-title">
+                    <span>⚠️</span>
+                    Shutdown Confirmation Required
+                </div>
+                <p class="shutdown-warning-text">
+                    This will terminate all monitoring connections and end the current session.
+                    Token will remain valid until 6:00 AM IST.
+                </p>
+            </div>
+            
+            <div class="shutdown-steps">
+                <div class="shutdown-step">
+                    <div class="shutdown-step-number" id="step1">1</div>
+                    <div class="shutdown-step-name">Stop accepting new operations</div>
+                    <div class="shutdown-step-status">Pending</div>
+                </div>
+                <div class="shutdown-step">
+                    <div class="shutdown-step-number" id="step2">2</div>
+                    <div class="shutdown-step-name">Complete pending transactions</div>
+                    <div class="shutdown-step-status">Pending</div>
+                </div>
+                <div class="shutdown-step">
+                    <div class="shutdown-step-number" id="step3">3</div>
+                    <div class="shutdown-step-name">Close WebSocket connections</div>
+                    <div class="shutdown-step-status">Pending</div>
+                </div>
+                <div class="shutdown-step">
+                    <div class="shutdown-step-number" id="step4">4</div>
+                    <div class="shutdown-step-name">Clear sensitive data from memory</div>
+                    <div class="shutdown-step-status">Pending</div>
+                </div>
+                <div class="shutdown-step">
+                    <div class="shutdown-step-number" id="step5">5</div>
+                    <div class="shutdown-step-name">Log final application state</div>
+                    <div class="shutdown-step-status">Pending</div>
+                </div>
+                <div class="shutdown-step">
+                    <div class="shutdown-step-number" id="step6">6</div>
+                    <div class="shutdown-step-name">Exit process cleanly (code 0)</div>
+                    <div class="shutdown-step-status">Pending</div>
+                </div>
+            </div>
+            
+            <div class="shutdown-options">
+                <div class="shutdown-option">
+                    <input type="checkbox" id="optCancelOrders" checked>
+                    <label for="optCancelOrders">Cancel all pending orders</label>
+                </div>
+                <div class="shutdown-option">
+                    <input type="checkbox" id="optClosePositions">
+                    <label for="optClosePositions">Close all open positions</label>
+                </div>
+                <div class="shutdown-option">
+                    <input type="checkbox" id="optSaveState" checked>
+                    <label for="optSaveState">Save session state for recovery</label>
+                </div>
+                <div class="shutdown-option">
+                    <input type="checkbox" id="optEmergency">
+                    <label for="optEmergency">Emergency mode (accelerated)</label>
+                </div>
+            </div>
+            
+            <div class="shutdown-actions">
+                <button class="btn btn-ghost" onclick="goToPhase('debrief')">← Back to Debrief</button>
+                <button class="btn btn-danger" onclick="executeShutdown()">
+                    <span class="btn-text">Execute Shutdown</span>
+                    <div class="spinner"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ============================================================================
+        // MCI OPERATIONAL COCKPIT - STATE MANAGEMENT
+        // ============================================================================
+        
+        const state = {
+            currentPhase: 0,
+            tokenValid: false,
+            tokenExpiry: null,
+            scanResults: [],
+            isArmed: false,
+            selectedBackend: null,
+            isIgnited: false,
+            isShuttingDown: false
+        };
+        
+        // Scanner checks (12-point verification) with failure diagnostics
+        const scannerChecks = [
+            { 
+                id: 'token', name: 'Token Validity', detail: 'Kite token present & not expired',
+                failure: {
+                    what: 'Token validity check failed',
+                    why: 'Kite access token is missing, malformed, or has expired before scheduled 6:00 AM IST cutoff',
+                    how: 'Obtain a fresh token from Kite Connect login and re-enter in Phase 0'
+                }
+            },
+            { 
+                id: 'api', name: 'API Connectivity', detail: 'Kite API reachable, <100ms',
+                failure: {
+                    what: 'API connectivity check failed',
+                    why: 'Kite API endpoint did not respond within acceptable latency threshold (100ms)',
+                    how: 'Verify network connectivity and Kite API service status at status.zerodha.com'
+                }
+            },
+            { 
+                id: 'market', name: 'Market Status', detail: 'NSE/BSE trading hours',
+                failure: {
+                    what: 'Market status check failed',
+                    why: 'Current time is outside NSE/BSE regular trading hours (09:15-15:30 IST)',
+                    how: 'Wait for market opening or use simulation mode for after-hours testing'
+                }
+            },
+            { 
+                id: 'backend', name: 'Backend Health', detail: 'MCI backend responding',
+                failure: {
+                    what: 'Backend health check failed',
+                    why: 'MCI backend server is not responding to health endpoint requests',
+                    how: 'Restart MCI backend server using terminal commands from IGNITION_KEY.html'
+                }
+            },
+            { 
+                id: 'posSync', name: 'Position Sync', detail: 'Positions reconciled',
+                failure: {
+                    what: 'Position synchronization check failed',
+                    why: 'Local position cache does not match broker-reported positions within tolerance',
+                    how: 'Clear local cache and refresh positions from broker portal before reattempting'
+                }
+            },
+            { 
+                id: 'orders', name: 'Order Queue', detail: 'No stuck orders',
+                failure: {
+                    what: 'Order queue check failed',
+                    why: 'One or more orders are in pending/stuck state without broker acknowledgment',
+                    how: 'Review and resolve stuck orders in broker OMS before reattempting ignition'
+                }
+            },
+            { 
+                id: 'pnl', name: 'P&L Calculation', detail: 'Intraday P&L accurate',
+                failure: {
+                    what: 'P&L calculation consistency check failed',
+                    why: 'Reported intraday P&L does not reconcile with position ledger within tolerance',
+                    how: 'Resolve at broker / OMS / accounting layer before reattempting ignition'
+                }
+            },
+            { 
+                id: 'risk', name: 'Risk Limits', detail: 'Within thresholds',
+                failure: {
+                    what: 'Risk limits check failed',
+                    why: 'Current exposure exceeds configured risk thresholds (margin, position size, or loss limits)',
+                    how: 'Reduce exposure or adjust risk parameters in broker risk management settings'
+                }
+            },
+            { 
+                id: 'ai', name: 'Claude AI', detail: 'Anthropic API accessible',
+                failure: {
+                    what: 'AI service connectivity check failed',
+                    why: 'Anthropic Claude API did not respond or returned an error status',
+                    how: 'Verify API key validity and check Anthropic service status at status.anthropic.com'
+                }
+            },
+            { 
+                id: 'time', name: 'Clock Sync', detail: 'Time within tolerance',
+                failure: {
+                    what: 'Clock synchronization check failed',
+                    why: 'Local system time differs from exchange time by more than acceptable tolerance (500ms)',
+                    how: 'Synchronize system clock with network time server (NTP) before reattempting'
+                }
+            },
+            { 
+                id: 'ws', name: 'WebSocket', detail: 'Real-time feed ready',
+                failure: {
+                    what: 'WebSocket connection check failed',
+                    why: 'Real-time market data WebSocket connection could not be established',
+                    how: 'Check firewall settings and verify WebSocket endpoint accessibility'
+                }
+            },
+            { 
+                id: 'watchlist', name: 'Watchlist', detail: 'Instruments loaded',
+                failure: {
+                    what: 'Watchlist loading check failed',
+                    why: 'Configured instruments could not be loaded or validated against exchange master',
+                    how: 'Verify instrument symbols are valid and refresh watchlist configuration'
+                }
+            }
+        ];
+        
+        // ============================================================================
+        // PHASE NAVIGATION
+        // ============================================================================
+        
+        function goToPhase(phase) {
+            // Hide all phases
+            document.querySelectorAll('.phase-container').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Handle debrief phase specially
+            if (phase === 'debrief') {
+                document.getElementById('phaseDebrief').classList.add('active');
+                state.currentPhase = 'debrief';
+                
+                const phaseBadge = document.getElementById('phaseBadge');
+                phaseBadge.textContent = 'DEBRIEF';
+                phaseBadge.className = 'phase-badge debrief';
+                
+                // Hide abort button during debrief
+                document.getElementById('abortButton').classList.remove('visible');
+                
+                // Populate debrief data
+                populateDebriefData();
+                
+                showToast('Session Debrief - Review your factual record', 'info');
+                return;
+            }
+            
+            // Show target phase
+            document.getElementById(`phase${phase}`).classList.add('active');
+            state.currentPhase = phase;
+            
+            // Update phase badge
+            const phaseBadge = document.getElementById('phaseBadge');
+            const phaseNames = ['TOKEN', 'SCAN', 'IGNITION', 'RUNNING', 'SHUTDOWN'];
+            const phaseClasses = ['token', 'scan', 'ignition', 'running', 'shutdown'];
+            phaseBadge.textContent = `PHASE ${phase}`;
+            phaseBadge.className = `phase-badge ${phaseClasses[phase]}`;
+            
+            // Show/hide abort button
+            const abortBtn = document.getElementById('abortButton');
+            abortBtn.classList.toggle('visible', phase === 2 || phase === 3);
+            
+            // Phase-specific actions
+            if (phase === 1) {
+                runScanner();
+            }
+            
+            showToast(`Entered Phase ${phase}: ${phaseNames[phase]}`, 'info');
+        }
+        
+        // ============================================================================
+        // SESSION DEBRIEF
+        // ============================================================================
+        
+        function populateDebriefData() {
+            // Session metadata (simulated based on current session)
+            const now = new Date();
+            const sessionStart = new Date(now.getTime() - (5 * 60 + 16) * 60 * 1000); // 5h 16m ago
+            
+            const formatTime = (date) => {
+                return date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' IST';
+            };
+            
+            document.getElementById('debriefSessionStart').textContent = formatTime(sessionStart);
+            document.getElementById('debriefSessionEnd').textContent = formatTime(now);
+            
+            // Calculate duration
+            const durationMs = now - sessionStart;
+            const hours = Math.floor(durationMs / 3600000);
+            const mins = Math.floor((durationMs % 3600000) / 60000);
+            const secs = Math.floor((durationMs % 60000) / 1000);
+            document.getElementById('debriefDuration').textContent = 
+                `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            
+            // Set backend name
+            const backendNames = {
+                'zerodha': 'Zerodha Kite',
+                'icici': 'ICICI Direct',
+                'hdfc': 'HDFC Sky',
+                'kotak': 'Kotak Neo'
+            };
+            document.getElementById('debriefBackend').textContent = 
+                backendNames[state.selectedBackend] || 'Zerodha Kite';
+            
+            // Reset attestation
+            document.getElementById('debriefAttestation').checked = false;
+            document.getElementById('debriefProceedBtn').disabled = true;
+        }
+        
+        function checkDebriefAttestation() {
+            const checked = document.getElementById('debriefAttestation').checked;
+            document.getElementById('debriefProceedBtn').disabled = !checked;
+            
+            if (checked) {
+                showToast('Attestation confirmed - You may proceed to shutdown', 'success');
+            }
+        }
+        
+        // ============================================================================
+        // PHASE 0: TOKEN CAPTURE
+        // ============================================================================
+        
+        function validateToken() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const accessToken = document.getElementById('accessToken').value.trim();
+            const userId = document.getElementById('userId').value.trim();
+            
+            // Validation
+            if (!apiKey || !accessToken || !userId) {
+                showToast('All fields are required', 'error');
+                return;
+            }
+            
+            // Simulate validation
+            const btn = document.querySelector('#phase0 .btn-primary');
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.classList.remove('btn-loading');
+                btn.disabled = false;
+                
+                // Set token expiry to 6:00 AM IST
+                const now = new Date();
+                const expiry = new Date();
+                expiry.setHours(6, 0, 0, 0);
+                if (expiry <= now) {
+                    expiry.setDate(expiry.getDate() + 1);
+                }
+                state.tokenExpiry = expiry;
+                state.tokenValid = true;
+                
+                showToast('Token validated successfully', 'success');
+                updateTokenTimer();
+                goToPhase(1);
+            }, 1500);
+        }
+        
+        function updateTokenTimer() {
+            if (!state.tokenExpiry) return;
+            
+            const now = new Date();
+            const diff = state.tokenExpiry - now;
+            
+            if (diff <= 0) {
+                state.tokenValid = false;
+                showToast('Token expired! Please re-authenticate.', 'error');
+                goToPhase(0);
+                return;
+            }
+            
+            const hours = Math.floor(diff / 3600000);
+            const mins = Math.floor((diff % 3600000) / 60000);
+            const secs = Math.floor((diff % 60000) / 1000);
+            
+            const timeStr = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            
+            document.getElementById('tokenCountdown').textContent = timeStr;
+            document.getElementById('healthTokenTTL').textContent = timeStr;
+            
+            // Update timer styling based on remaining time
+            const timer = document.getElementById('tokenTimer');
+            timer.classList.remove('fresh', 'warning', 'critical');
+            
+            if (hours < 1) {
+                timer.classList.add('critical');
+            } else if (hours < 2) {
+                timer.classList.add('warning');
+            } else {
+                timer.classList.add('fresh');
+            }
+        }
+        
+        // ============================================================================
+        // PHASE 1: SCANNER
+        // ============================================================================
+        
+        function runScanner() {
+            const grid = document.getElementById('scannerGrid');
+            grid.innerHTML = '';
+            
+            // Reset visibility of action sections
+            document.getElementById('nextActionSection').classList.remove('visible');
+            document.getElementById('prototypeSimSection').classList.remove('visible');
+            
+            // Create check elements
+            scannerChecks.forEach(check => {
+                const el = document.createElement('div');
+                el.className = 'scan-check';
+                el.id = `check-${check.id}`;
+                el.innerHTML = `
+                    <div class="scan-check-icon pending">⏳</div>
+                    <div class="scan-check-content">
+                        <div class="scan-check-name">${check.name}</div>
+                        <div class="scan-check-detail">${check.detail}</div>
+                        <div class="scan-check-latency"></div>
+                        <div class="scan-check-blocking-badge" style="display: none;">
+                            🚫 BLOCKING — GOVERNANCE ENFORCED
+                        </div>
+                        <div class="scan-check-expand-hint" style="display: none;">
+                            <span>▶</span> Click to view diagnostic details
+                        </div>
+                        <div class="scan-check-failure-panel" id="failure-panel-${check.id}">
+                            <div class="failure-section">
+                                <div class="failure-label what">📋 WHAT</div>
+                                <div class="failure-text what">${check.failure.what}</div>
+                            </div>
+                            <div class="failure-section">
+                                <div class="failure-label why">❓ WHY</div>
+                                <div class="failure-text why">${check.failure.why}</div>
+                            </div>
+                            <div class="failure-section">
+                                <div class="failure-label how">🔧 HOW TO RESOLVE (OUTSIDE MCI)</div>
+                                <div class="failure-text how">${check.failure.how}</div>
+                            </div>
+                            <div class="failure-governance-notice">
+                                MCI does not provide corrective actions for failed checks. Resolution must occur externally.
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(el);
+            });
+            
+            // Run checks sequentially with animation
+            let passed = 0, warned = 0, failed = 0;
+            const failedChecks = [];
+            
+            scannerChecks.forEach((check, index) => {
+                setTimeout(() => {
+                    const el = document.getElementById(`check-${check.id}`);
+                    const icon = el.querySelector('.scan-check-icon');
+                    const latencyEl = el.querySelector('.scan-check-latency');
+                    const blockingBadge = el.querySelector('.scan-check-blocking-badge');
+                    const expandHint = el.querySelector('.scan-check-expand-hint');
+                    const failurePanel = document.getElementById(`failure-panel-${check.id}`);
+                    
+                    // Show running state
+                    icon.className = 'scan-check-icon running';
+                    icon.textContent = '⟳';
+                    
+                    // Simulate check completion
+                    setTimeout(() => {
+                        const latency = Math.floor(Math.random() * 80) + 10;
+                        const rand = Math.random();
+                        
+                        if (rand > 0.15) {
+                            icon.className = 'scan-check-icon pass';
+                            icon.textContent = '✓';
+                            passed++;
+                        } else if (rand > 0.05) {
+                            icon.className = 'scan-check-icon warn';
+                            icon.textContent = '⚠';
+                            warned++;
+                        } else {
+                            // FAILED - Show diagnostics UI
+                            icon.className = 'scan-check-icon fail';
+                            icon.textContent = '✗';
+                            failed++;
+                            failedChecks.push(check.id);
+                            
+                            // Mark as failed and clickable
+                            el.classList.add('failed');
+                            blockingBadge.style.display = 'inline-flex';
+                            expandHint.style.display = 'flex';
+                            
+                            // Add click handler for expanding
+                            el.onclick = () => toggleFailurePanel(check.id);
+                        }
+                        
+                        latencyEl.textContent = `${latency}ms`;
+                        
+                        // Update summary
+                        document.getElementById('passCount').textContent = passed;
+                        document.getElementById('warnCount').textContent = warned;
+                        document.getElementById('failCount').textContent = failed;
+                        
+                        // Final check
+                        if (index === scannerChecks.length - 1) {
+                            const goNogo = document.getElementById('goNogo');
+                            const proceedBtn = document.getElementById('scannerProceed');
+                            
+                            if (failed === 0) {
+                                goNogo.className = 'go-nogo go';
+                                goNogo.textContent = 'GO';
+                                proceedBtn.disabled = false;
+                                document.getElementById('nextActionSection').classList.remove('visible');
+                                document.getElementById('prototypeSimSection').classList.remove('visible');
+                                showToast('All systems GO - Ignition authorized', 'success');
+                            } else {
+                                goNogo.className = 'go-nogo nogo';
+                                goNogo.textContent = 'NO-GO';
+                                proceedBtn.disabled = true;
+                                // Show next action and prototype simulation sections
+                                document.getElementById('nextActionSection').classList.add('visible');
+                                document.getElementById('prototypeSimSection').classList.add('visible');
+                                showToast(`${failed} check(s) failed - Ignition blocked. Click failed checks for details.`, 'error');
+                            }
+                        }
+                    }, 200 + Math.random() * 300);
+                }, index * 150);
+            });
+        }
+        
+        function toggleFailurePanel(checkId) {
+            const panel = document.getElementById(`failure-panel-${checkId}`);
+            const el = document.getElementById(`check-${checkId}`);
+            const expandHint = el.querySelector('.scan-check-expand-hint span');
+            
+            if (panel.classList.contains('expanded')) {
+                panel.classList.remove('expanded');
+                expandHint.textContent = '▶';
+            } else {
+                // Close all other panels first
+                document.querySelectorAll('.scan-check-failure-panel.expanded').forEach(p => {
+                    p.classList.remove('expanded');
+                });
+                document.querySelectorAll('.scan-check-expand-hint span').forEach(s => {
+                    s.textContent = '▶';
+                });
+                
+                panel.classList.add('expanded');
+                expandHint.textContent = '▼';
+            }
+        }
+        
+        function simulateResolution() {
+            // This is a PROTOTYPE-ONLY function to allow walkthrough
+            showToast('PROTOTYPE: Simulating resolution of all failed checks...', 'warning');
+            
+            // Mark all failed checks as passed
+            document.querySelectorAll('.scan-check.failed').forEach(el => {
+                const icon = el.querySelector('.scan-check-icon');
+                const blockingBadge = el.querySelector('.scan-check-blocking-badge');
+                const expandHint = el.querySelector('.scan-check-expand-hint');
+                const failurePanel = el.querySelector('.scan-check-failure-panel');
+                
+                icon.className = 'scan-check-icon pass';
+                icon.textContent = '✓';
+                el.classList.remove('failed');
+                el.onclick = null;
+                blockingBadge.style.display = 'none';
+                expandHint.style.display = 'none';
+                failurePanel.classList.remove('expanded');
+            });
+            
+            // Update counters
+            const failCount = parseInt(document.getElementById('failCount').textContent);
+            const passCount = parseInt(document.getElementById('passCount').textContent);
+            document.getElementById('failCount').textContent = '0';
+            document.getElementById('passCount').textContent = passCount + failCount;
+            
+            // Update GO/NO-GO
+            const goNogo = document.getElementById('goNogo');
+            goNogo.className = 'go-nogo go';
+            goNogo.textContent = 'GO';
+            
+            // Enable proceed button
+            document.getElementById('scannerProceed').disabled = false;
+            
+            // Hide action sections
+            document.getElementById('nextActionSection').classList.remove('visible');
+            document.getElementById('prototypeSimSection').classList.remove('visible');
+            
+            showToast('PROTOTYPE: All checks simulated as passed. You may proceed.', 'success');
+        }
+        
+        // ============================================================================
+        // PHASE 2: IGNITION
+        // ============================================================================
+        
+        function selectBackend(backend) {
+            state.selectedBackend = backend;
+            
+            document.querySelectorAll('.backend-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            document.querySelector(`.backend-option[onclick="selectBackend('${backend}')"]`).classList.add('selected');
+            checkIgnitionReady();
+        }
+        
+        function checkConfirmation() {
+            checkIgnitionReady();
+        }
+        
+        function checkIgnitionReady() {
+            const confirmed = document.getElementById('confirmInput').value === 'CONFIRM TRADE';
+            const armBtn = document.getElementById('armButton');
+            
+            armBtn.disabled = !confirmed || !state.selectedBackend;
+        }
+        
+        function armSystem() {
+            const armBtn = document.getElementById('armButton');
+            const igniteBtn = document.getElementById('igniteButton');
+            
+            armBtn.classList.add('btn-loading');
+            armBtn.disabled = true;
+            
+            setTimeout(() => {
+                armBtn.classList.remove('btn-loading');
+                armBtn.classList.add('armed');
+                armBtn.querySelector('.btn-text').textContent = 'ARMED';
+                
+                igniteBtn.disabled = false;
+                state.isArmed = true;
+                
+                showToast('System ARMED - Ready for ignition', 'warning');
+            }, 1000);
+        }
+        
+        function igniteSystem() {
+            const igniteBtn = document.getElementById('igniteButton');
+            
+            igniteBtn.classList.add('btn-loading');
+            igniteBtn.disabled = true;
+            
+            setTimeout(() => {
+                igniteBtn.classList.remove('btn-loading');
+                state.isIgnited = true;
+                
+                // Update statuses
+                const backendStatus = document.getElementById('backendStatus');
+                backendStatus.querySelector('.status-dot').className = 'status-dot healthy';
+                
+                const engineStatus = document.getElementById('engineStatus');
+                engineStatus.querySelector('.status-dot').className = 'status-dot healthy';
+                
+                showToast('Ignition successful - System LIVE', 'success');
+                goToPhase(3);
+            }, 2000);
+        }
+        
+        // ============================================================================
+        // PHASE 4: SHUTDOWN
+        // ============================================================================
+        
+        function executeShutdown() {
+            state.isShuttingDown = true;
+            const steps = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6'];
+            const emergency = document.getElementById('optEmergency').checked;
+            const delay = emergency ? 300 : 800;
+            
+            const btn = document.querySelector('#phase4 .btn-danger');
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+            
+            steps.forEach((stepId, index) => {
+                setTimeout(() => {
+                    // Mark previous as complete
+                    if (index > 0) {
+                        const prevStep = document.getElementById(steps[index - 1]);
+                        prevStep.classList.remove('active');
+                        prevStep.classList.add('complete');
+                        prevStep.textContent = '✓';
+                        prevStep.nextElementSibling.nextElementSibling.textContent = 'Complete';
+                    }
+                    
+                    // Mark current as active
+                    const step = document.getElementById(stepId);
+                    step.classList.add('active');
+                    step.nextElementSibling.nextElementSibling.textContent = 'In Progress...';
+                    
+                    // Final step
+                    if (index === steps.length - 1) {
+                        setTimeout(() => {
+                            step.classList.remove('active');
+                            step.classList.add('complete');
+                            step.textContent = '✓';
+                            step.nextElementSibling.nextElementSibling.textContent = 'Complete';
+                            
+                            btn.classList.remove('btn-loading');
+                            
+                            showToast('Shutdown complete - Session ended', 'success');
+                            
+                            // Reset and go to Phase 0
+                            setTimeout(() => {
+                                resetSystem();
+                            }, 2000);
+                        }, delay);
+                    }
+                }, index * delay);
+            });
+        }
+        
+        // ============================================================================
+        // ABORT - Kill Switch Supremacy
+        // ============================================================================
+        
+        function executeAbort() {
+            showToast('ABORT EXECUTED - Emergency stop', 'error');
+            
+            // Reset all states
+            state.isArmed = false;
+            state.isIgnited = false;
+            
+            // Update UI
+            const armBtn = document.getElementById('armButton');
+            const igniteBtn = document.getElementById('igniteButton');
+            
+            armBtn.classList.remove('armed', 'btn-loading');
+            armBtn.querySelector('.btn-text').textContent = 'ARM SYSTEM';
+            armBtn.disabled = true;
+            
+            igniteBtn.disabled = true;
+            
+            document.getElementById('confirmInput').value = '';
+            
+            // Go to scanner
+            goToPhase(1);
+        }
+        
+        // ============================================================================
+        // SYSTEM RESET
+        // ============================================================================
+        
+        function resetSystem() {
+            state.currentPhase = 0;
+            state.tokenValid = false;
+            state.tokenExpiry = null;
+            state.scanResults = [];
+            state.isArmed = false;
+            state.selectedBackend = null;
+            state.isIgnited = false;
+            state.isShuttingDown = false;
+            
+            // Reset form
+            document.getElementById('accessToken').value = '';
+            document.getElementById('userId').value = '';
+            document.getElementById('confirmInput').value = '';
+            
+            // Reset buttons
+            const armBtn = document.getElementById('armButton');
+            const igniteBtn = document.getElementById('igniteButton');
+            
+            armBtn.classList.remove('armed', 'btn-loading');
+            armBtn.querySelector('.btn-text').textContent = 'ARM SYSTEM';
+            armBtn.disabled = true;
+            igniteBtn.disabled = true;
+            
+            // Reset backend selection
+            document.querySelectorAll('.backend-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Reset shutdown steps
+            for (let i = 1; i <= 6; i++) {
+                const step = document.getElementById(`step${i}`);
+                step.classList.remove('active', 'complete');
+                step.textContent = i;
+                step.nextElementSibling.nextElementSibling.textContent = 'Pending';
+            }
+            
+            // Reset status indicators
+            document.getElementById('backendStatus').querySelector('.status-dot').className = 'status-dot checking';
+            document.getElementById('engineStatus').querySelector('.status-dot').className = 'status-dot unknown';
+            
+            showToast('System reset - All states cleared', 'info');
+            goToPhase(0);
+        }
+        
+        // ============================================================================
+        // TOAST NOTIFICATIONS
+        // ============================================================================
+        
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            
+            const icons = {
+                success: '✓',
+                error: '✗',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type]}</span>
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Auto-dismiss (CR-005: 5000ms)
+            if (type !== 'error') {
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.remove();
+                    }
+                }, 5000);
+            }
+        }
+        
+        // ============================================================================
+        // INITIALIZATION
+        // ============================================================================
+        
+        // Start token timer update loop
+        setInterval(updateTokenTimer, 1000);
+        
+        // Initial status check simulation
+        setTimeout(() => {
+            document.getElementById('backendStatus').querySelector('.status-dot').className = 'status-dot healthy';
+        }, 1500);
+        
+        // Welcome toast
+        setTimeout(() => {
+            showToast('MCI Cockpit initialized - Ready for token capture', 'info');
+        }, 500);
+    </script>
+</body>
+</html>
