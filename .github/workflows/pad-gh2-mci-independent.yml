@@ -16,15 +16,14 @@ on:
   push:
     branches: [main, master]
     paths:
-      - 'src/**'
-      - 'package.json'
-      - 'tsconfig*.json'
+      - 'PROJECTS/MCI_Terminal/12_APPLICATION_CODE/**'
   pull_request:
     branches: [main, master]
 
 env:
   BUN_VERSION: '1.0.30'
   CV_THRESHOLD: '15'
+  APP_DIR: 'PROJECTS/MCI_Terminal/12_APPLICATION_CODE'
 
 jobs:
   # ============================================================================
@@ -44,15 +43,24 @@ jobs:
         run: |
           echo "=== INDEPENDENCE VERIFICATION ==="
           echo "Confirming NO CIA-SIE-PURE source code exists..."
+          echo "Working in: $(pwd)"
+          echo "App directory: ${{ env.APP_DIR }}"
           
-          # Check for actual CIA-SIE-PURE source code (not references)
+          # Check for actual CIA-SIE-PURE directory at sibling level
           if [ -d "../02_CIA-SIE-PURE" ]; then
             echo "❌ ERROR: CIA-SIE-PURE directory found - isolation violated"
             exit 1
           fi
           
+          # Verify app directory exists
+          if [ ! -d "${{ env.APP_DIR }}" ]; then
+            echo "❌ ERROR: App directory not found: ${{ env.APP_DIR }}"
+            ls -la
+            exit 1
+          fi
+          
           echo "✅ MCI repository is isolated"
-          echo "✅ No CIA-SIE-PURE code dependencies in test environment"
+          echo "✅ App directory verified: ${{ env.APP_DIR }}"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
@@ -83,11 +91,13 @@ jobs:
           bun-version: ${{ env.BUN_VERSION }}
 
       - name: Remove Any Cached Dependencies
+        working-directory: ${{ env.APP_DIR }}
         run: |
           rm -rf node_modules bun.lockb 2>/dev/null || true
           echo "✅ Cleared any existing dependencies"
 
       - name: Fresh Install Dependencies
+        working-directory: ${{ env.APP_DIR }}
         run: |
           echo "=== FRESH DEPENDENCY INSTALLATION ==="
           bun install --frozen-lockfile || bun install
@@ -96,8 +106,8 @@ jobs:
       - name: Cache node_modules
         uses: actions/cache/save@v4
         with:
-          path: node_modules
-          key: mci-deps-${{ hashFiles('package.json', 'bun.lock') }}-${{ github.run_id }}
+          path: ${{ env.APP_DIR }}/node_modules
+          key: mci-deps-${{ hashFiles(format('{0}/package.json', env.APP_DIR)) }}-${{ github.run_id }}
 
   # ============================================================================
   # JOB 3: TYPE CHECKING
@@ -118,10 +128,11 @@ jobs:
       - name: Restore Dependencies
         uses: actions/cache/restore@v4
         with:
-          path: node_modules
-          key: mci-deps-${{ hashFiles('package.json', 'bun.lock') }}-${{ github.run_id }}
+          path: ${{ env.APP_DIR }}/node_modules
+          key: mci-deps-${{ hashFiles(format('{0}/package.json', env.APP_DIR)) }}-${{ github.run_id }}
 
       - name: Install Dependencies (if cache miss)
+        working-directory: ${{ env.APP_DIR }}
         run: |
           if [ ! -d "node_modules" ]; then
             bun install
@@ -129,6 +140,7 @@ jobs:
 
       - name: Run TypeScript Type Check (CI-relaxed)
         continue-on-error: true
+        working-directory: ${{ env.APP_DIR }}
         run: |
           echo "=== TYPESCRIPT TYPE CHECKING (CI MODE) ==="
           # Use CI-specific tsconfig that relaxes unused-variable checks
@@ -161,10 +173,11 @@ jobs:
       - name: Restore Dependencies
         uses: actions/cache/restore@v4
         with:
-          path: node_modules
-          key: mci-deps-${{ hashFiles('package.json', 'bun.lock') }}-${{ github.run_id }}
+          path: ${{ env.APP_DIR }}/node_modules
+          key: mci-deps-${{ hashFiles(format('{0}/package.json', env.APP_DIR)) }}-${{ github.run_id }}
 
       - name: Install Dependencies (if cache miss)
+        working-directory: ${{ env.APP_DIR }}
         run: |
           if [ ! -d "node_modules" ]; then
             bun install
@@ -172,6 +185,7 @@ jobs:
 
       - name: Run Baseline Test Suite
         id: run-tests
+        working-directory: ${{ env.APP_DIR }}
         run: |
           echo "=== BASELINE TEST EXECUTION ==="
           START_TIME=$(date +%s)
@@ -206,7 +220,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mci-baseline-results
-          path: baseline-output.txt
+          path: ${{ env.APP_DIR }}/baseline-output.txt
 
   # ============================================================================
   # JOB 5: REPEATED DETERMINISM CYCLES (20 CYCLES)
@@ -232,10 +246,11 @@ jobs:
       - name: Restore Dependencies
         uses: actions/cache/restore@v4
         with:
-          path: node_modules
-          key: mci-deps-${{ hashFiles('package.json', 'bun.lock') }}-${{ github.run_id }}
+          path: ${{ env.APP_DIR }}/node_modules
+          key: mci-deps-${{ hashFiles(format('{0}/package.json', env.APP_DIR)) }}-${{ github.run_id }}
 
       - name: Install Dependencies (if cache miss)
+        working-directory: ${{ env.APP_DIR }}
         run: |
           if [ ! -d "node_modules" ]; then
             bun install
@@ -243,6 +258,7 @@ jobs:
 
       - name: Execute 20 Repeated Cycles
         id: run-cycles
+        working-directory: ${{ env.APP_DIR }}
         run: |
           echo "=== EXECUTING 20 DETERMINISM CYCLES ==="
           CYCLES=${{ inputs.cycles || '20' }}
@@ -283,6 +299,7 @@ jobs:
 
       - name: Analyze Variance and Determinism
         id: analyze
+        working-directory: ${{ env.APP_DIR }}
         run: |
           echo "=== VARIANCE ANALYSIS ==="
           
@@ -333,9 +350,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mci-determinism-cycle-results
-          path: cycle-results/
+          path: ${{ env.APP_DIR }}/cycle-results/
 
       - name: Fail on Flakiness or High Variance
+        working-directory: ${{ env.APP_DIR }}
         run: |
           CV="${{ steps.analyze.outputs.cv }}"
           FLAKY="${{ steps.analyze.outputs.flaky-detected }}"
@@ -398,9 +416,9 @@ jobs:
             STATUS="❌ NOT CERTIFIED"
           fi
           
-          mkdir -p 00_GOVERNANCE
+          mkdir -p PROJECTS/MCI_Terminal/00_GOVERNANCE
           
-          cat > 00_GOVERNANCE/GH_MCI_INDEPENDENT_CERTIFICATION_REPORT.md << EOF
+          cat > PROJECTS/MCI_Terminal/00_GOVERNANCE/GH_MCI_INDEPENDENT_CERTIFICATION_REPORT.md << EOF
           # MCI INDEPENDENT CERTIFICATION REPORT
           
           **Authority:** PAD-GH2 Phase II — GitHub Independent Verification
@@ -487,7 +505,7 @@ jobs:
           FLAKY="${{ needs.determinism-cycles.outputs.flaky-detected }}"
           BASELINE_PASSED="${{ needs.baseline-test.outputs.passed }}"
           
-          cat > 00_GOVERNANCE/GH_MCI_REPEATABILITY_AND_DETERMINISM_REPORT.md << EOF
+          cat > PROJECTS/MCI_Terminal/00_GOVERNANCE/GH_MCI_REPEATABILITY_AND_DETERMINISM_REPORT.md << EOF
           # MCI REPEATABILITY AND DETERMINISM REPORT
           
           **Authority:** PAD-GH2 Phase II — GitHub Independent Verification
@@ -539,7 +557,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mci-certification-reports
-          path: 00_GOVERNANCE/GH_*.md
+          path: PROJECTS/MCI_Terminal/00_GOVERNANCE/GH_*.md
 
   # ============================================================================
   # FINAL STATUS
