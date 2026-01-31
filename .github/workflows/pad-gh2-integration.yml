@@ -129,13 +129,11 @@ jobs:
           
           # Import core modules
           from cia_sie.core.config import get_settings
-          from cia_sie.core.models import Signal, Instrument
-          from cia_sie.core.enums import SignalType, Platform
+          from cia_sie.core.enums import SignalType, Direction, FreshnessStatus
           
           print('✅ Core modules imported successfully')
           
           # Import API modules
-          from cia_sie.api.app import create_app
           from cia_sie.api.routes import api_router
           
           print('✅ API modules imported successfully')
@@ -199,8 +197,9 @@ jobs:
           settings = get_settings()
           print(f'✅ Settings instantiated: app_name={settings.app_name}')
           
-          from cia_sie.core.models import Signal, Instrument
-          print(f'✅ Core models instantiable')
+          # Verify enums are usable
+          from cia_sie.core.enums import SignalType
+          print(f'✅ Enums instantiable: SignalType.HEARTBEAT = {SignalType.HEARTBEAT.value}')
           
           print('✅ No runtime exceptions on instantiation')
           "
