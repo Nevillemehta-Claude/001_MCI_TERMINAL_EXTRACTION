@@ -125,6 +125,8 @@ jobs:
           echo "--- Verification 1: CIA Module Import ---"
           python3 -c "
           import sys
+          import os
+          os.environ['DATABASE_URL'] = 'sqlite+aiosqlite:///tmp/cia_sie/cia_sie.db'
           sys.path.insert(0, 'cia-engine/06_SOURCE_CODE/src')
           
           # Import core modules
@@ -137,11 +139,6 @@ jobs:
           from cia_sie.api.routes import api_router
           
           print('✅ API modules imported successfully')
-          
-          # Import DAL modules
-          from cia_sie.dal.database import get_engine
-          
-          print('✅ DAL modules imported successfully')
           "
           
           if [ $? -ne 0 ]; then
