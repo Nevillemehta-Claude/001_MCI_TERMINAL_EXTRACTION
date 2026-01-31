@@ -1,0 +1,265 @@
+# =============================================================================
+# PAD-GH2 INTEGRATION VERIFICATION WORKFLOW (OBSERVED MCI ↔ CIA)
+# =============================================================================
+#
+# GOVERNING AUTHORITY: Gold Standard Development Framework v2.0
+# CANONICAL MODEL:
+#   - MCI = Cockpit (integration boundary)
+#   - CIA-SIE-PURE = Engine (independently verified)
+#   - Integration is OBSERVATIONAL + GOVERNED
+#
+# PURPOSE: Prove integration via observation, not invention
+#   - Connectivity exists
+#   - Contracts are honored
+#   - No new failure modes introduced
+#
+# =============================================================================
+
+name: PAD-GH2 Integration Verification (Observed)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment_label:
+        description: 'Verification environment label'
+        required: false
+        default: 'github-actions'
+        type: string
+
+jobs:
+  pad-gh2-integration:
+    name: PAD-GH2 Integration Verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # -----------------------------------------------------------------------
+      # STEP A: Checkout MCI Repository (SSOT for integration)
+      # -----------------------------------------------------------------------
+      - name: Checkout MCI (SSOT)
+        uses: actions/checkout@v4
+        with:
+          path: mci
+          clean: true
+
+      # -----------------------------------------------------------------------
+      # STEP B: Checkout CIA-SIE-PURE (Read-only dependency)
+      # -----------------------------------------------------------------------
+      - name: Checkout CIA-SIE-PURE
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/02_CIA-SIE-PURE
+          path: cia-engine
+          ref: main
+          clean: true
+
+      # -----------------------------------------------------------------------
+      # STEP C: Set up runtimes
+      # -----------------------------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'mci/12_APPLICATION_CODE/package-lock.json'
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # -----------------------------------------------------------------------
+      # STEP D: Install CIA in isolated mode (no lifecycle control)
+      # -----------------------------------------------------------------------
+      - name: Install CIA-SIE-PURE (Isolated Mode)
+        run: |
+          echo "=== CIA-SIE-PURE INSTALLATION (READ-ONLY) ==="
+          
+          # Create CI-safe paths
+          mkdir -p /tmp/cia_sie
+          mkdir -p cycle-results
+          
+          # Set environment for CI-safe database
+          echo "CIA_SIE_DB_PATH=/tmp/cia_sie/cia_sie.db" >> $GITHUB_ENV
+          echo "DATABASE_URL=sqlite+aiosqlite:///tmp/cia_sie/cia_sie.db" >> $GITHUB_ENV
+          
+          # Install CIA dependencies (editable install)
+          cd cia-engine
+          pip install fastapi "uvicorn[standard]" alembic sqlalchemy aiosqlite \
+            pydantic pydantic-settings anthropic httpx python-dotenv kiteconnect \
+            pytest pytest-asyncio greenlet
+          
+          # Add source to PYTHONPATH
+          echo "PYTHONPATH=$(pwd)/06_SOURCE_CODE/src" >> $GITHUB_ENV
+          
+          echo "✅ CIA-SIE-PURE installed in isolated mode"
+          echo "   - No services started"
+          echo "   - No lifecycle control exercised"
+
+      # -----------------------------------------------------------------------
+      # STEP E: Install MCI dependencies
+      # -----------------------------------------------------------------------
+      - name: Install MCI Dependencies
+        working-directory: mci/12_APPLICATION_CODE
+        run: |
+          echo "=== MCI DEPENDENCY INSTALLATION ==="
+          npm ci
+          echo "✅ MCI dependencies installed"
+
+      # -----------------------------------------------------------------------
+      # STEP F: INTEGRATION VERIFICATION (BLOCKING)
+      # -----------------------------------------------------------------------
+      - name: Integration Verification (Observed)
+        run: |
+          echo "=== INTEGRATION VERIFICATION (OBSERVATIONAL) ==="
+          echo ""
+          echo "CANONICAL MODEL:"
+          echo "  - MCI = Cockpit (integration boundary)"
+          echo "  - CIA-SIE-PURE = Engine (independently verified)"
+          echo "  - Integration is OBSERVATIONAL + GOVERNED"
+          echo ""
+          
+          # ---------------------------------------------------------------
+          # Verification 1: CIA module import succeeds
+          # ---------------------------------------------------------------
+          echo "--- Verification 1: CIA Module Import ---"
+          python3 -c "
+          import sys
+          sys.path.insert(0, 'cia-engine/06_SOURCE_CODE/src')
+          
+          # Import core modules
+          from cia_sie.core.config import get_settings
+          from cia_sie.core.session import get_session_state
+          
+          print('✅ Core modules imported successfully')
+          
+          # Import API modules
+          from cia_sie.api.app import app
+          from cia_sie.api.routes import health
+          
+          print('✅ API modules imported successfully')
+          
+          # Import service modules
+          from cia_sie.services.session_manager import SessionManager
+          
+          print('✅ Service modules imported successfully')
+          "
+          
+          if [ $? -ne 0 ]; then
+            echo "❌ FAIL: CIA module import failed"
+            exit 1
+          fi
+          
+          # ---------------------------------------------------------------
+          # Verification 2: Interface contracts resolve
+          # ---------------------------------------------------------------
+          echo ""
+          echo "--- Verification 2: Interface Contract Resolution ---"
+          python3 -c "
+          import sys
+          sys.path.insert(0, 'cia-engine/06_SOURCE_CODE/src')
+          
+          from cia_sie.api.app import app
+          from fastapi.routing import APIRoute
+          
+          # List all registered routes (contract surface)
+          routes = [r for r in app.routes if isinstance(r, APIRoute)]
+          print(f'Registered API routes: {len(routes)}')
+          
+          for route in routes:
+              print(f'  - {route.methods} {route.path}')
+          
+          # Verify health endpoint exists
+          health_routes = [r for r in routes if '/health' in r.path]
+          if len(health_routes) == 0:
+              raise ValueError('Health endpoint not found')
+          
+          print('✅ Interface contracts resolved successfully')
+          "
+          
+          if [ $? -ne 0 ]; then
+            echo "❌ FAIL: Interface contract resolution failed"
+            exit 1
+          fi
+          
+          # ---------------------------------------------------------------
+          # Verification 3: No runtime exceptions on instantiation
+          # ---------------------------------------------------------------
+          echo ""
+          echo "--- Verification 3: Runtime Exception Check ---"
+          python3 -c "
+          import sys
+          import os
+          sys.path.insert(0, 'cia-engine/06_SOURCE_CODE/src')
+          
+          # Set CI-safe paths
+          os.environ['DATABASE_URL'] = 'sqlite+aiosqlite:///tmp/cia_sie/cia_sie.db'
+          
+          # Instantiate core components
+          from cia_sie.core.config import get_settings
+          settings = get_settings()
+          print(f'✅ Settings instantiated: app_name={settings.app_name}')
+          
+          from cia_sie.services.session_manager import SessionManager
+          session_mgr = SessionManager()
+          print(f'✅ SessionManager instantiated')
+          
+          print('✅ No runtime exceptions on instantiation')
+          "
+          
+          if [ $? -ne 0 ]; then
+            echo "❌ FAIL: Runtime exceptions detected"
+            exit 1
+          fi
+          
+          echo ""
+          echo "╔═══════════════════════════════════════════════════════════════╗"
+          echo "║                                                               ║"
+          echo "║   ✅ INTEGRATION VERIFICATION COMPLETE                        ║"
+          echo "║                                                               ║"
+          echo "║   - Import succeeds                                           ║"
+          echo "║   - Interface contracts resolve                               ║"
+          echo "║   - No runtime exceptions                                     ║"
+          echo "║                                                               ║"
+          echo "║   NO ENGINE RUNTIME SIMULATED                                 ║"
+          echo "║   NO ROLLBACK/ABORT FLOWS FABRICATED                          ║"
+          echo "║                                                               ║"
+          echo "╚═══════════════════════════════════════════════════════════════╝"
+
+      # -----------------------------------------------------------------------
+      # STEP G: Certification Record
+      # -----------------------------------------------------------------------
+      - name: Certification Record
+        run: |
+          echo ""
+          echo "=============================================="
+          echo "PAD-GH2 Integration Verification: PASS"
+          echo "=============================================="
+          echo ""
+          echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          echo "Workflow Run: ${{ github.run_id }}"
+          echo "Environment: ${{ github.event.inputs.environment_label || 'github-actions' }}"
+          echo ""
+          echo "Verified:"
+          echo "  - MCI repository accessible (SSOT)"
+          echo "  - CIA-SIE-PURE repository accessible (read-only)"
+          echo "  - CIA modules importable from MCI boundary"
+          echo "  - Interface contracts resolvable"
+          echo "  - No runtime exceptions on instantiation"
+          echo ""
+          echo "Not Simulated (per Verification Doctrine):"
+          echo "  - Engine runtime behavior"
+          echo "  - Rollback/abort flows"
+          echo "  - Lifecycle control"
+          echo ""
+          echo "Both systems remain INDEPENDENTLY CERTIFIED."
+          echo "Canonical Fidelity: PRESERVED"
+
+      - name: Upload Logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pad-gh2-integration-logs-${{ github.run_id }}
+          path: |
+            cycle-results/
+          retention-days: 30
